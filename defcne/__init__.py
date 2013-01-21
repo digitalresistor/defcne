@@ -34,6 +34,7 @@ def main(global_config, **settings):
 
 def add_routes(config):
     config.add_static_view('static', 'static', cache_max_age=3600)
+    config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
 
     # Routes:
     # /
@@ -87,6 +88,9 @@ def add_routes(config):
 def add_views(config):
     config.add_view('defcne.views.home.home', route_name='cne.home',
             renderer='chronological.mako')
+
+    config.add_view('defcne.views.user.create',
+            route_name='defcne.user.create', renderer='user/create.mako')
 
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
