@@ -1,0 +1,3 @@
+<%inherit file="site.mako" />
+
+This is the new homepage ...

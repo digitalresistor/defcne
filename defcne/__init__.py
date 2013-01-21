@@ -86,8 +86,7 @@ def add_routes(config):
     config.add_route('defcne.event.name.edit', '/e/{defcon:\d{2}}/{eventname}/edit')
 
 def add_views(config):
-    config.add_view('defcne.views.home.home', route_name='cne.home',
-            renderer='chronological.mako')
+    config.add_view('defcne.views.home.home', route_name='defcne.home', renderer='home.mako')
 
     config.add_view('defcne.views.user.create',
             route_name='defcne.user.create', renderer='user/create.mako')
