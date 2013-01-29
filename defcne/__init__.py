@@ -58,11 +58,20 @@ def add_routes(config):
     # /user/create
     config.add_route('defcne.user.create', '/user/create')
 
+    # /user/create/complete
+    config.add_route('defcne.user.create.complete', '/user/create/complete')
+
+    # /user/create/validation
+    config.add_route('defcne.user.create.validation', '/user/create/validation')
+
     # /usr/create/validate
     config.add_route('defcne.user.create.validate', '/usr/create/validate')
 
     # /user/edit
     config.add_route('defcne.user.edit', '/user/edit')
+
+    # /user/
+    config.add_route('defcne.user', '/user/')
 
     # /g/
     config.add_route('defcne.g', '/g/')
