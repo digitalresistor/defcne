@@ -5,6 +5,9 @@ from Group import (
         UserGroups,
         )
 
-from User import User
+from User import (
+        User,
+        UserValidation,
+        )
 
 
