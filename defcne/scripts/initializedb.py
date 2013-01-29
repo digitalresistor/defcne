@@ -19,6 +19,17 @@ def usage(argv):
           '(example: "%s development.ini")' % (cmd, cmd))
     sys.exit(1)
 
+
+defaults = {
+        'groups': [
+            (u'event_owners', u'Event owners'),
+            (u'event_staff', u'Event staff'),
+            (u'goons', u'Defcon Contests and Events goons'),
+            (u'staff', u'Defcon staff'),
+            (u'administrators', u'Site administrators')
+            ]
+        }
+
 def main(argv=sys.argv):
     if len(argv) != 2:
         usage(argv)
@@ -28,3 +39,17 @@ def main(argv=sys.argv):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
+
+    with transaction.manager:
+        for (kw, items) in defaults.items():
+            if kw == 'groups':
+                for (name, desc) in items:
+                    try:
+                        group = Group(name=name, description=desc)
+                        DBSession.add(group)
+                        DBSession.flush()
+                    except IntegrityError, e:
+                        DBSession.rollback()
+                        print 'Group "{name}" already exists.'.format(name=name)
+
+
