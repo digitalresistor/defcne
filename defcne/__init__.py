@@ -58,6 +58,9 @@ def add_routes(config):
     # /user/create
     config.add_route('defcne.user.create', '/user/create')
 
+    # /usr/create/validate
+    config.add_route('defcne.user.create.validate', '/usr/create/validate')
+
     # /user/edit
     config.add_route('defcne.user.edit', '/user/edit')
 
@@ -88,8 +91,14 @@ def add_routes(config):
 def add_views(config):
     config.add_view('defcne.views.home.home', route_name='defcne.home', renderer='home.mako')
 
-    config.add_view('defcne.views.user.create',
-            route_name='defcne.user.create', renderer='user/create.mako')
+    config.add_view('defcne.views.user.User', attr='create',
+            route_name='defcne.user.create', renderer='user/create.mako',
+            request_method='GET')
+
+    config.add_view('defcne.views.user.User', attr='create_submit',
+            route_name='defcne.user.create', renderer='user/create.mako',
+            request_method='POST', check_csrf=True)
+
 
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
