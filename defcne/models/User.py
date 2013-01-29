@@ -24,7 +24,7 @@ class User(Base):
             Column('id', Integer, primary_key=True, unique=True),
             Column('username', Unicode(128), unique=True, index=True),
             Column('realname', Unicode(256), index=True),
-            Column('email', Unicode(256), unique=True),
+            Column('email', Unicode(256), unique=True, index=True),
             Column('credentials', Unicode(60)), # bcrypt
             Column('validated', Boolean, default=False),
             )
@@ -34,6 +34,10 @@ class User(Base):
     @classmethod
     def find_user(cls, username):
         return DBSession.query(cls).filter(cls.username == username).first()
+
+    @classmethod
+    def find_user_by_email(cls, email):
+        return DBSession.query(cls).filter(cls.email == email).first()
 
 class UserValidation(Base):
     __table__ = Table('user_validation', Base.metadata,
