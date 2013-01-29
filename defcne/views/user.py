@@ -7,6 +7,7 @@ from pyramid.httpexceptions import HTTPFound
 from deform import (Form, ValidationFailure)
 
 from ..forms import UserForm
+from .. import models as m
 
 class User(object):
     """View for User functionality"""
@@ -30,6 +31,10 @@ class User(object):
 
         try:
             appstruct = uf.validate(controls)
+            # Add the user to the database
+            user = m.User(username=appstruct['username'], realname=appstruct['realname'], email=appstruct['email'], credentials=appstruct['password'])
+            m.DBSession.add(user)
+            m.DBSession.flush()
             # Redirect user to waiting on validation
             return HTTPFound(location = self.request.route_url('defcne.user.create.validation'))
         except ValidationFailure, e:
