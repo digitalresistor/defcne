@@ -7,10 +7,17 @@ import deform
 
 from csrf import CSRFSchema
 
+from ..models import User
+
+def validate_unique_username(node, value):
+    if User.find_user(value) != None:
+        raise colander.Invalid(node, msg='Username already exists.')
+
 class UserForm(CSRFSchema):
     """The user registration form."""
-    username = colander.SchemaNode(colander.String(), title="User name")
+    username = colander.SchemaNode(colander.String(), title="Username", validator=validate_unique_username)
     realname = colander.SchemaNode(colander.String(), title="Name")
+    email    = colander.SchemaNode(colander.String(), title="Email address", validator=colander.Length(max=254))
     password = colander.SchemaNode(
                 colander.String(),
                 validator=colander.Length(min=5),
