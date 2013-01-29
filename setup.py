@@ -18,6 +18,7 @@ requires = [
     'cryptacular',
     'misaka',
     'deform',
+    'deform_bootstrap',
     ]
 
 setup(name='defcne',

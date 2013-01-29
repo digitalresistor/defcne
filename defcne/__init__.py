@@ -10,6 +10,8 @@ from sqlalchemy import engine_from_config
 
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
 
+import deform_bootstrap
+
 from models import DBSession
 
 from sqlalchemy.exc import DBAPIError
@@ -30,6 +32,8 @@ def main(global_config, **settings):
     config.include(add_routes)
     config.include(add_views)
 #    config.include(add_events)
+
+    deform_bootstrap.includeme(config)
     return config.make_wsgi_app()
 
 def add_routes(config):
