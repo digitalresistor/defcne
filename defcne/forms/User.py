@@ -5,10 +5,12 @@
 import colander
 import deform
 
-class UserForm(colander.MappingSchema):
+from csrf import CSRFSchema
+
+class UserForm(CSRFSchema):
     """The user registration form."""
     username = colander.SchemaNode(colander.String(), title="User name")
-    realname = colander.SchemaNode(colander.String(), title="Real name")
+    realname = colander.SchemaNode(colander.String(), title="Name")
     password = colander.SchemaNode(
                 colander.String(),
                 validator=colander.Length(min=5),
