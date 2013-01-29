@@ -19,7 +19,7 @@ from User import User
 class Group(Base):
     __table__ = Table('groups', Base.metadata,
             Column('id', Integer, primary_key=True, unique=True),
-            Column('name', Unicode(256), index=True),
+            Column('name', Unicode(256), unique=True, index=True),
             Column('description', Unicode(256)),
             )
 
