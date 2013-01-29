@@ -28,3 +28,13 @@ class User(Base):
 
     groups = relationship("Group", secondary="user_groups", lazy="joined")
 
+class UserValidation(Base):
+    __table__ = Table('user_validation', Base.metadata,
+            Column('token', Unicode(128), primary_key=True, unique=True),
+            Column('user_id', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE")),
+            )
+
+    @classmethod
+    def find_token(cls, token):
+        return DBSession.query(cls).filter(cls.token == token).first()
+
