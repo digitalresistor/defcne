@@ -4,10 +4,11 @@
         <title><%block name="title"></%block></title>
         <link rel="shortcut icon" href="${request.static_url('defcne:static/favicon.ico')}">
         <%block name="stylesheets">
-        <link rel="stylesheet" href="${request.static_url('defcne:static/defcne.css')}" type="text/css" media="screen" />
+            <link rel="stylesheet" href="${request.static_url('defcne:static/defcne.css')}" type="text/css" />
+            <link rel="stylesheet" href="${request.static_url('defcne:static/bootstrap/css/bootstrap.min.css')}" type="text/css" />
         </%block>
         <meta charset="utf-8" />
-        <%block name="javascript"></%block>
+        <%block name="javascript_head"></%block>
     </%block></head>
     <body>
         <header>
@@ -27,8 +28,10 @@
         <footer>
         <%block name="footer"></%block>
         </footer>
-
-        <%block name="end"></%block>
     </body>
+    <%block name="javascript_end">
+        <script type="text/javascript" src="${request.static_url('defcne:static/jquery-1.9.0.min.js')}"></script>
+        <script type="text/javascript" src="${request.static_url('defcne:static/bootstrap/js/bootstrap.min.js')}"></script>
+    </%block>
 </html>
 
