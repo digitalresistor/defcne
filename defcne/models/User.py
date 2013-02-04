@@ -19,6 +19,10 @@ from sqlalchemy.orm import (
         relationship,
         )
 
+from sqlalchemy.ext.hybrid import hybrid_property
+
+from cryptacular.bcrypt import BCRYPTPasswordManager
+
 class User(Base):
     __table__ = Table('users', Base.metadata,
             Column('id', Integer, primary_key=True, unique=True),
@@ -30,6 +34,17 @@ class User(Base):
             )
 
     groups = relationship("Group", secondary="user_groups", lazy="joined")
+
+    _credentials = __table__.c.credentials
+
+    @hybrid_property
+    def credentials(self):
+        return self._credentials
+
+    @credentials.setter
+    def credentials(self, value):
+        manager = BCRYPTPasswordManager()
+        self._credentials = manager.encode(value, rounds=12)
 
     @classmethod
     def find_user(cls, username):
