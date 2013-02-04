@@ -146,6 +146,7 @@ def add_views(config):
 
     # Add a slash if the view has not been found.
     config.add_notfound_view('defcne.views.errors.not_found', renderer='not_found.mako', append_slash=True)
+    config.add_forbidden_view('defcne.views.errors.forbidden', renderer='not_found.mako')
 
 def add_events(config):
     pass
