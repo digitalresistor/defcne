@@ -9,6 +9,8 @@ from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 
 import deform_bootstrap
 
@@ -28,7 +30,13 @@ def main(global_config, **settings):
         log.error('pyramid.secretcookie is not set. Refusing to start.')
         quit(-1)
 
+    if not 'pyramid.auth.secret' in settings:
+        log.error('pyramid.auth.secret is not set. Refusing to start.')
+        quit(-1)
+
     config.set_session_factory(UnencryptedCookieSessionFactoryConfig(settings['pyramid.secretcookie']))
+    config.set_authentication_policy(AuthTktAuthenticationPolicy(settings['pyramid.auth.secret']))
+    config.set_authorization_policy(ACLAuthorizationPolicy())
     config.include(add_routes)
     config.include(add_views)
 #    config.include(add_events)
