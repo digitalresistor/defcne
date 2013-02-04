@@ -10,7 +10,12 @@ from pyramid.httpexceptions import HTTPFound
 from sqlalchemy.exc import IntegrityError
 from deform import (Form, ValidationFailure)
 
-from ..forms import UserForm
+from ..forms import (
+        UserForm,
+        ValidateForm,
+        )
+
+from ..forms.User import validate_token_matches
 from .. import models as m
 
 class User(object):
@@ -60,6 +65,40 @@ class User(object):
             # Send out validation email to email address on for user
 
             # Redirect user to waiting on validation
-            return HTTPFound(location = self.request.route_url('defcne.user.create.validation'))
+            return HTTPFound(location = self.request.route_url('defcne.user.create.validate'))
         except ValidationFailure, e:
             return {'form': e.render()}
+
+    def _validate_form(self, controls):
+        schema = ValidateForm(validator=validate_token_matches).bind(request=self.request)
+        vf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = vf.validate(controls)
+            print "Found the token, and the username matches."
+
+            m.DBSession.delete(m.UserValidation.find_token(appstruct['token']))
+            # Log the user in if they are here, for one they have access to the email account where reset passwords are sent, so it is not a security issue
+
+            return HTTPFound(location = self.request.route_url('defcne.user.complete'))
+
+        except ValidationFailure, e:
+            return {'form': e.render()}
+
+    def validate(self):
+        if 'username' in self.request.GET and 'token' in self.request.GET:
+            self.request.GET['csrf_token'] = self.request.session.get_csrf_token()
+            controls = self.request.GET.items()
+            return self._validate_form(controls)
+
+        schema = ValidateForm(validator=validate_token_matches).bind(request=self.request)
+        vf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+        return {'form': vf.render()}
+
+    def validate_submit(self):
+        controls = self.request.POST.items()
+        return self._validate_form(controls)
+
+    def complete(self):
+        return {}
+
