@@ -54,6 +54,19 @@ class User(Base):
     def find_user_by_email(cls, email):
         return DBSession.query(cls).filter(cls.email == email).first()
 
+    @classmethod
+    def validate_user_password(cls, username, password):
+        user = DBSession.query(cls).filter(cls.username == username).first()
+
+        if user is None:
+            return False
+
+        manager = BCRYPTPasswordManager()
+        if manager.check(user.credentials, password):
+            return True
+
+        return False
+
 class UserValidation(Base):
     __table__ = Table('user_validation', Base.metadata,
             Column('token', Unicode(128), primary_key=True, unique=True),
