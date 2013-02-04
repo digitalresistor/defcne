@@ -121,6 +121,18 @@ def add_views(config):
             route_name='defcne.user.complete', renderer='user/complete.mako',
             request_method='GET')
 
+    config.add_view('defcne.views.user.User', attr='auth',
+            route_name='defcne.user.auth', renderer='user/auth.mako',
+            request_method='GET')
+
+    config.add_view('defcne.views.user.User', attr='auth_submit',
+            route_name='defcne.user.auth', renderer='user/auth.mako',
+            request_method='POST')
+
+    config.add_view('defcne.views.user.User', attr='deauth',
+            route_name='defcne.user.deauth', renderer='user/deauth.mako',
+            request_method='GET')
+
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
 
