@@ -26,14 +26,11 @@ class User(object):
         self.request = request
 
     def create(self):
-        print "Running create function ..."
         schema = UserForm().bind(request=self.request)
         uf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
         return {'form': uf.render()}
 
     def create_submit(self):
-        print "Running create_submit"
-
         controls = self.request.POST.items()
         schema = UserForm().bind(request=self.request)
         uf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
