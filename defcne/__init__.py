@@ -51,13 +51,13 @@ def add_routes(config):
     config.add_route('defcne.u.username', '/u/{username}/')
 
     # /u/<username>/contact
-    config.add_route('defcne.u.username.contact', '/u/{username}/contact')
+    config.add_route('defcne.u.username.contact', '/u/{username}/contact/')
 
     # /user/auth
-    config.add_route('defcne.user.auth', '/user/auth')
+    config.add_route('defcne.user.auth', '/user/auth/')
 
     # /user/deauth
-    config.add_route('defcne.user.deauth', '/user/deauth')
+    config.add_route('defcne.user.deauth', '/user/deauth/')
     
     # /user/create
     config.add_route('defcne.user.create', '/user/create/')
@@ -69,7 +69,7 @@ def add_routes(config):
     config.add_route('defcne.user.validate', '/user/validate/')
 
     # /user/edit
-    config.add_route('defcne.user.edit', '/user/edit')
+    config.add_route('defcne.user.edit', '/user/edit/')
 
     # /user/
     config.add_route('defcne.user', '/user/')
@@ -93,10 +93,10 @@ def add_routes(config):
     config.add_route('defcne.event.create', '/e/create/')
 
     # /e/<dc>/<eventshort>/
-    config.add_route('defcne.event.name', '/e/{defcon:\d{2}}/{eventname}')
+    config.add_route('defcne.event.name', '/e/{defcon:\d{2}}/{eventname}/')
 
     # /e/<dc>/<eventshort>/edit
-    config.add_route('defcne.event.name.edit', '/e/{defcon:\d{2}}/{eventname}/edit')
+    config.add_route('defcne.event.name.edit', '/e/{defcon:\d{2}}/{eventname}/edit/')
 
 def add_views(config):
     config.add_view('defcne.views.home.home', route_name='defcne.home', renderer='home.mako')
