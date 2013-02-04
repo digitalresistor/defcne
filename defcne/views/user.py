@@ -70,7 +70,7 @@ class User(object):
             # Send out validation email to email address on for user
 
             # Redirect user to waiting on validation
-            return HTTPFound(location = self.request.route_url('defcne.user.create.validate'))
+            return HTTPFound(location = self.request.route_url('defcne.user.validate'))
         except ValidationFailure, e:
             return {'form': e.render()}
 
@@ -80,12 +80,12 @@ class User(object):
 
         try:
             appstruct = vf.validate(controls)
-            print "Found the token, and the username matches."
-
             m.DBSession.delete(m.UserValidation.find_token(appstruct['token']))
-            # Log the user in if they are here, for one they have access to the email account where reset passwords are sent, so it is not a security issue
+            user = m.User.find_user(appstruct['username'])
+            user.validated = True
 
-            return HTTPFound(location = self.request.route_url('defcne.user.complete'))
+            headers = remember(self.request, appstruct['username'])
+            return HTTPFound(location = self.request.route_url('defcne.user.complete'), headers=headers)
 
         except ValidationFailure, e:
             return {'form': e.render()}
