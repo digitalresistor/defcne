@@ -45,6 +45,8 @@ class UserValidation(Base):
             Column('user_id', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE")),
             )
 
+    user = relationship("User", lazy="joined")
+
     @classmethod
     def find_token(cls, token):
         return DBSession.query(cls).filter(cls.token == token).first()
