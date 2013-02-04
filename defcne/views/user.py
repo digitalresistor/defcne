@@ -46,9 +46,8 @@ class User(object):
                 return HTTPFound(location = self.request.current_route_url())
 
             # Create new validation token
-
-            sp = transaction.savepoint()
             while 1:
+                sp = transaction.savepoint()
                 try:
                     uservalidation = m.UserValidation(user_id=user.id, token=unicode(uuid4()))
                     m.DBSession.add(uservalidation)
