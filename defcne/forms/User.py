@@ -31,6 +31,19 @@ class UserForm(CSRFSchema):
                 widget=deform.widget.CheckedPasswordWidget(size=20),
                 description='Please type your password twice')
 
+
+def login_username_password_matches(form, value):
+    if not User.validate_user_password(value['username'], value['password']):
+        exc = colander.Invalid(form, 'Username or password is incorrect')
+        exc['username'] = ''
+        exc['password'] = ''
+        raise exc
+
+class LoginForm(CSRFSchema):
+    """The user login form."""
+    username = colander.SchemaNode(colander.String(), title="Username")
+    password = colander.SchemaNode(colander.String(), title="Password", validator=colander.Length(min=5), widget=deform.widget.PasswordWidget(size=20))
+
 def validate_token_matches(form, value):
     validate = UserValidation.find_token(value['token'])
     if validate is None:
