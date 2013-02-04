@@ -60,16 +60,13 @@ def add_routes(config):
     config.add_route('defcne.user.deauth', '/user/deauth')
     
     # /user/create
-    config.add_route('defcne.user.create', '/user/create')
+    config.add_route('defcne.user.create', '/user/create/')
 
     # /user/create/complete
-    config.add_route('defcne.user.create.complete', '/user/create/complete')
-
-    # /user/create/validation
-    config.add_route('defcne.user.create.validation', '/user/create/validation')
+    config.add_route('defcne.user.complete', '/user/complete/')
 
     # /usr/create/validate
-    config.add_route('defcne.user.create.validate', '/usr/create/validate')
+    config.add_route('defcne.user.validate', '/user/validate/')
 
     # /user/edit
     config.add_route('defcne.user.edit', '/user/edit')
@@ -112,6 +109,17 @@ def add_views(config):
             route_name='defcne.user.create', renderer='user/create.mako',
             request_method='POST', check_csrf=True)
 
+    config.add_view('defcne.views.user.User', attr='validate',
+            route_name='defcne.user.validate', renderer='user/validate.mako',
+            request_method='GET')
+
+    config.add_view('defcne.views.user.User', attr='validate_submit',
+            route_name='defcne.user.validate', renderer='user/validate.mako',
+            request_method='POST', check_csrf=True)
+
+    config.add_view('defcne.views.user.User', attr='complete',
+            route_name='defcne.user.complete', renderer='user/complete.mako',
+            request_method='GET')
 
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
