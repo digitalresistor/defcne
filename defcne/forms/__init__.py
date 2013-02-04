@@ -1,3 +1,6 @@
 # Package
 
-from User import UserForm
+from User import (
+        UserForm,
+        ValidateForm,
+        )

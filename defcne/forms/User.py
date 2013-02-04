@@ -7,7 +7,10 @@ import deform
 
 from csrf import CSRFSchema
 
-from ..models import User
+from ..models import (
+        User,
+        UserValidation,
+        )
 
 def validate_unique_username(node, value):
     if User.find_user(value) != None:
@@ -27,3 +30,22 @@ class UserForm(CSRFSchema):
                 validator=colander.Length(min=5),
                 widget=deform.widget.CheckedPasswordWidget(size=20),
                 description='Please type your password twice')
+
+def validate_token_matches(form, value):
+    validate = UserValidation.find_token(value['token'])
+    if validate is None:
+        exc = colander.Invalid(form, 'Validation token is invalid')
+        exc['username'] = 'Username does not exist or is not valid for token'
+        exc['token'] = 'Token is invalid'
+        raise exc
+
+    if validate.user.username != value['username']:
+        exc = colander.Invalid(form, 'Validation token is invalid')
+        exc['username'] = 'Username does not exist or is not valid for token'
+        exc['token'] = 'Token is invalid'
+        raise exc
+
+class ValidateForm(CSRFSchema):
+    """The validation form, where the user enters their token"""
+    username = colander.SchemaNode(colander.String(), title="Username")
+    token = colander.SchemaNode(colander.String(), title="Validation token")
