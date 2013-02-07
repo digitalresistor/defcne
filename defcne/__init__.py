@@ -34,9 +34,25 @@ def main(global_config, **settings):
         log.error('pyramid.auth.secret is not set. Refusing to start.')
         quit(-1)
 
-    config.set_session_factory(UnencryptedCookieSessionFactoryConfig(settings['pyramid.secretcookie']))
-    config.set_authentication_policy(AuthTktAuthenticationPolicy(settings['pyramid.auth.secret']))
-    config.set_authorization_policy(ACLAuthorizationPolicy())
+    _session_factory = UnencryptedCookieSessionFactoryConfig(
+            settings['pyramid.secretcookie'],
+            cookie_httponly=True,
+            cookie_max_age=864000
+            )
+
+    _authn_policy = AuthTktAuthenticationPolicy(
+            settings['pyramid.auth.secret'],
+            max_age=864000,
+            reissue_time=172800,
+            http_only=True,
+            debug=True
+            )
+
+    _authz_policy = ACLAuthorizationPolicy()
+
+    config.set_session_factory(_session_factory)
+    config.set_authentication_policy(_authn_policy)
+    config.set_authorization_policy(_authz_policy)
     config.include(add_routes)
     config.include(add_views)
 #    config.include(add_events)
@@ -51,7 +67,7 @@ def add_routes(config):
     # Routes:
     # /
     config.add_route('defcne', '/')
-    
+
     # /u/
     config.add_route('defcne.u', '/u/')
 
@@ -66,7 +82,7 @@ def add_routes(config):
 
     # /user/deauth
     config.add_route('defcne.user.deauth', '/user/deauth/')
-    
+
     # /user/create
     config.add_route('defcne.user.create', '/user/create/')
 
