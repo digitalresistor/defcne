@@ -42,9 +42,9 @@ def main(global_config, **settings):
     _authn_policy = AuthTktAuthenticationPolicy(
             settings['pyramid.auth.secret'],
             max_age=864000,
-            reissue_time=172800,
             http_only=True,
-            debug=True
+            debug=True,
+            hashalg='sha512',
             )
 
     _authz_policy = ACLAuthorizationPolicy()
