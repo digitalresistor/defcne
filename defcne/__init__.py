@@ -58,6 +58,8 @@ def main(global_config, **settings):
 #    config.include(add_events)
 
     deform_bootstrap.includeme(config)
+
+    config.set_request_property(auth.current_user, 'user', reify=True)
     return config.make_wsgi_app()
 
 def add_routes(config):
