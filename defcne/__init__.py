@@ -45,6 +45,7 @@ def main(global_config, **settings):
             http_only=True,
             debug=True,
             hashalg='sha512',
+            callback=auth.user_groups,
             )
 
     _authz_policy = ACLAuthorizationPolicy()
