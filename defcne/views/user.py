@@ -130,8 +130,11 @@ class User(object):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
 
+        next_loc = self.request.params.get('next')
+
+        action_loc = self.request.current_route_url() if next_loc is None else self.request.current_route_url(_query=(('next', next_loc),))
         schema = LoginForm(validator=login_username_password_matches).bind(request=self.request)
-        af = Form(schema, action=self.request.current_route_url(_query=( ('next', self.request.params.get('next')),)), buttons=('submit',))
+        af = Form(schema, action=action_loc, buttons=('submit',))
         return {'form': af.render()}
 
     def auth_submit(self):
