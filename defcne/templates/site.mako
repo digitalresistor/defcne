@@ -30,7 +30,7 @@
         </footer>
     </body>
     <%block name="javascript_end">
-        <script type="text/javascript" src="${request.static_url('defcne:static/jquery-1.9.0.min.js')}"></script>
+        <script type="text/javascript" src="${request.static_url('defcne:static/jquery-1.9.1.min.js')}"></script>
         <script type="text/javascript" src="${request.static_url('defcne:static/bootstrap/js/bootstrap.min.js')}"></script>
     </%block>
 </html>
