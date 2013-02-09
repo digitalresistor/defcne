@@ -5,8 +5,6 @@
 from uuid import uuid4
 
 from pyramid.security import authenticated_userid
-from pyramid.security import forget
-from pyramid.security import remember
 from pyramid.httpexceptions import HTTPFound
 
 import transaction
@@ -26,6 +24,11 @@ from ..forms.User import (
         )
 
 from .. import models as m
+
+from ..auth import (
+        remember,
+        forget,
+        )
 
 class User(object):
     """View for User functionality"""
