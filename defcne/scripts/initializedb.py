@@ -31,6 +31,10 @@ defaults = {
         'users': [
             (u'X-Istence', u'Bert JW Regeer', u'xistence@0x58.com', 'testing123'),
             ],
+        'user_groups': [
+            (u'X-Istence', u'administrators'),
+            (u'X-Istence', u'goons'),
+            ],
         }
 
 def main(argv=sys.argv):
@@ -65,5 +69,18 @@ def main(argv=sys.argv):
                     except IntegrityError, e:
                         sp.rollback()
                         print 'User "{name}" already exists.'.format(name=u)
+            if kw == 'user_groups':
+                for (u, g) in items:
+                    sp = transaction.savepoint()
+                    try:
+                        user = User.find_user(u)
+                        group = Group.find_group(g)
+
+                        user.groups.append(group)
+
+                        DBSession.flush()
+                    except IntegrityError, e:
+                        sp.rollback()
+                        print 'User "{name}" already part of "{group}"'.format(name=u, group=g)
 
 
