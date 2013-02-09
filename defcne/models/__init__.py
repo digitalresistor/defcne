@@ -8,6 +8,7 @@ from Group import (
 from User import (
         User,
         UserValidation,
+        UserTickets,
         )
 
 

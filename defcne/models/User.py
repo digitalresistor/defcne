@@ -2,6 +2,8 @@
 # Author: Bert JW Regeer <bertjw@regeer.org>
 # Created: 2013-01-05
 
+import datetime
+
 from meta import Base
 from meta import DBSession
 
@@ -13,10 +15,15 @@ from sqlalchemy import (
         String,
         Table,
         Unicode,
+        DateTime,
+        PrimaryKeyConstraint,
+        and_,
+        Index,
         )
 
 from sqlalchemy.orm import (
         relationship,
+        contains_eager,
         )
 
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -34,6 +41,7 @@ class User(Base):
             )
 
     groups = relationship("Group", secondary="user_groups", lazy="joined")
+    tickets = relationship("UserTickets", lazy="noload")
 
     _credentials = __table__.c.credentials
 
@@ -78,4 +86,25 @@ class UserValidation(Base):
     @classmethod
     def find_token(cls, token):
         return DBSession.query(cls).filter(cls.token == token).first()
+
+class UserTickets(Base):
+    __table__ = Table('user_tickets', Base.metadata,
+            Column('ticket', String(128)),
+            Column('user_id', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE")),
+            Column('remote_addr', String(45)),
+            Column('created', DateTime, default=datetime.datetime.utcnow, nullable=False),
+
+            PrimaryKeyConstraint('ticket', 'user_id'),
+            Index('ix_ticket_userid', 'ticket', 'user_id'),
+            )
+
+    user = relationship("User", lazy="joined")
+
+    @classmethod
+    def find_ticket(cls, user_id, ticket):
+        return DBSession.query(cls).filter(cls.user_id == user_id).filter(cls.ticket == ticket).first()
+
+    @classmethod
+    def find_ticket_username(cls, ticket, username):
+        return DBSession.query(cls).join(User, and_(User.username == username, User.id == cls.user_id)).filter(cls.ticket == ticket).options(contains_eager('user')).first()
 
