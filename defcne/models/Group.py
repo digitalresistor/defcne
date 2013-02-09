@@ -31,8 +31,8 @@ class Group(Base):
 
 class UserGroups(Base):
     __table__ = Table('user_groups', Base.metadata,
-            Column('userid', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE")),
-            Column('groupid', Integer, ForeignKey('groups.id', onupdate="CASCADE", ondelete="CASCADE")),
+            Column('userid', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
+            Column('groupid', Integer, ForeignKey('groups.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
 
             PrimaryKeyConstraint('userid', 'groupid'),
             )
