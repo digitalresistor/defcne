@@ -9,6 +9,7 @@ from pyramid import security
 
 from models import (
         DBSession,
+        User,
         UserTickets,
         )
 
@@ -109,8 +110,6 @@ def remember(request, principal, **kw):
         kw['tokens'].append('tkt_' + ticket)
     else:
         kw['tokens'] = ['tkt_' + ticket]
-
-    print kw['tokens']
 
     return security.remember(request, principal, **kw)
 
