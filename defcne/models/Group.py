@@ -3,6 +3,8 @@
 # Created: 2013-01-05
 
 from meta import Base
+from meta import DBSession
+
 
 from sqlalchemy import (
         Column,
@@ -23,6 +25,9 @@ class Group(Base):
             Column('description', Unicode(256)),
             )
 
+    @classmethod
+    def find_group(cls, name):
+        return DBSession.query(cls).filter(cls.name == name).first()
 
 class UserGroups(Base):
     __table__ = Table('user_groups', Base.metadata,
