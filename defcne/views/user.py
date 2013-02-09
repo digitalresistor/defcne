@@ -150,8 +150,9 @@ class User(object):
             headers = remember(self.request, appstruct['username'])
             log.info('Logging in "{user}"'.format(user=appstruct['username']))
 
-            location = self.request.params.get('next') or ''
-            location = self.request.route_url('defcne', *[loc for loc in location.split('/') if loc != ''])
+            next_loc = self.request.params.get('next') or ''
+            next_loc = [loc for loc in next_loc.split('/') if loc != '']
+            location = self.request.route_url('defcne') if next_loc is None else self.request.route_url('defcne', *next_loc)
             return HTTPSeeOther(location = location, headers=headers)
         except ValidationFailure, e:
             return {'form': e.render()}
