@@ -120,14 +120,14 @@ def add_views(config):
             attr='create',
             route_name='defcne.user',
             name='create',
-            renderer='user/create.mako',
+            renderer='user/form.mako',
             request_method='GET')
 
     config.add_view('defcne.views.User',
             attr='create_submit',
             route_name='defcne.user',
             name='create',
-            renderer='user/create.mako',
+            renderer='user/form.mako',
             request_method='POST',
             check_csrf=True)
 
@@ -136,14 +136,14 @@ def add_views(config):
             attr='auth',
             route_name='defcne.user',
             name='auth',
-            renderer='user/auth.mako',
+            renderer='user/form.mako',
             request_method='GET')
 
     config.add_view('defcne.views.User',
             attr='auth_submit',
             route_name='defcne.user',
             name='auth',
-            renderer='user/auth.mako',
+            renderer='user/form.mako',
             request_method='POST',
             check_csrf=True)
 
@@ -168,14 +168,14 @@ def add_views(config):
             attr='validate',
             route_name='defcne.user',
             name='validate',
-            renderer='user/validate.mako',
+            renderer='user/form.mako',
             request_method='GET')
 
     config.add_view('defcne.views.User',
             attr='validate_submit',
             route_name='defcne.user',
             name='validate',
-            renderer='user/validate.mako',
+            renderer='user/form.mako',
             request_method='POST',
             check_csrf=True)
 
@@ -184,7 +184,7 @@ def add_views(config):
             attr='edit',
             route_name='defcne.user',
             name='edit',
-            renderer='user/edit.mako',
+            renderer='user/form.mako',
             request_method='GET',
             permission='edit')
 
@@ -192,7 +192,7 @@ def add_views(config):
             attr='edit',
             route_name='defcne.user',
             name='edit',
-            renderer='user/edit.mako',
+            renderer='user/form.mako',
             request_method='POST',
             permission='edit',
             check_csrf=True)
@@ -202,14 +202,14 @@ def add_views(config):
             attr='forgot',
             route_name='defcne.user',
             name='forgot',
-            renderer='user/forgot.mako',
+            renderer='user/form.mako',
             request_method='GET')
 
     config.add_view('defcne.views.User',
             attr='forgot',
             route_name='defcne.user',
             name='forgot',
-            renderer='user/forgot.mako',
+            renderer='user/form.mako',
             request_method='POST',
             check_csrf=True)
 
@@ -218,14 +218,14 @@ def add_views(config):
             attr='reset_password',
             route_name='defcne.user',
             name='reset_password',
-            renderer='user/reset_password.mako',
+            renderer='user/form.mako',
             request_method='GET')
 
     config.add_view('defcne.views.User',
             attr='reset_password',
             route_name='defcne.user',
             name='reset_password',
-            renderer='user/reset_password.mako',
+            renderer='user/form.mako',
             request_method='POST',
             check_csrf=True)
 
