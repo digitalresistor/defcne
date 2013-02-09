@@ -111,58 +111,123 @@ def add_views(config):
     config.add_view('defcne.views.home.home', route_name='defcne', renderer='home.mako')
 
     # /user/
-    config.add_view('defcne.views.user.User', attr='user',
+    config.add_view('defcne.views.User', attr='user',
             route_name='defcne.user', name='', renderer='user/user.mako',
             request_method='GET', permission='view')
 
-    # /user/create
-    config.add_view('defcne.views.user.User', attr='create',
-            route_name='defcne.user', name='create',
-            renderer='user/create.mako', request_method='GET',
-            permission='view')
+    # /user/create (GET/POST)
+    config.add_view('defcne.views.User',
+            attr='create',
+            route_name='defcne.user',
+            name='create',
+            renderer='user/create.mako',
+            request_method='GET')
 
-    config.add_view('defcne.views.user.User', attr='create_submit',
-            route_name='defcne.user', name='create',
-            renderer='user/create.mako', request_method='POST',
-            permission='view', check_csrf=True)
+    config.add_view('defcne.views.User',
+            attr='create_submit',
+            route_name='defcne.user',
+            name='create',
+            renderer='user/create.mako',
+            request_method='POST',
+            check_csrf=True)
 
-    # /user/auth
-    config.add_view('defcne.views.user.User', attr='auth',
-            route_name='defcne.user', name='auth', renderer='user/auth.mako',
-            request_method='GET', permission='view')
+    # /user/auth (GET/POST)
+    config.add_view('defcne.views.User',
+            attr='auth',
+            route_name='defcne.user',
+            name='auth',
+            renderer='user/auth.mako',
+            request_method='GET')
 
-    config.add_view('defcne.views.user.User', attr='auth_submit',
-            route_name='defcne.user', name='auth', renderer='user/auth.mako',
-            request_method='POST', permission='view', check_csrf=True)
+    config.add_view('defcne.views.User',
+            attr='auth_submit',
+            route_name='defcne.user',
+            name='auth',
+            renderer='user/auth.mako',
+            request_method='POST',
+            check_csrf=True)
 
     # /user/deauth
-    config.add_view('defcne.views.user.User', attr='deauth',
-            route_name='defcne.user', name='deauth', request_method='GET',
-            permission='view')
+    config.add_view('defcne.views.User',
+            attr='deauth',
+            route_name='defcne.user',
+            name='deauth',
+            request_method='GET')
 
     # /user/complete
-    config.add_view('defcne.views.user.User', attr='complete',
-            route_name='defcne.user', name='complete',
-            renderer='user/complete.mako', request_method='GET',
+    config.add_view('defcne.views.User',
+            attr='complete',
+            route_name='defcne.user',
+            name='complete',
+            renderer='user/complete.mako',
+            request_method='GET',
             permission='view')
 
-    # /user/validate
-    config.add_view('defcne.views.user.User', attr='validate',
-            route_name='defcne.user', name='validate', request_method='GET',
-            permission='view')
+    # /user/validate (GET/POST)
+    config.add_view('defcne.views.User',
+            attr='validate',
+            route_name='defcne.user',
+            name='validate',
+            renderer='user/validate.mako',
+            request_method='GET')
 
-    config.add_view('defcne.views.user.User', attr='validate_submit',
-            route_name='defcne.user', name='validate', request_method='POST',
-            permission='view', check_csrf=True)
+    config.add_view('defcne.views.User',
+            attr='validate_submit',
+            route_name='defcne.user',
+            name='validate',
+            renderer='user/validate.mako',
+            request_method='POST',
+            check_csrf=True)
 
-    # /user/edit/
-    config.add_view('defcne.views.user.User', attr='edit',
-            route_name='defcne.user', name='edit', renderer='user/edit.mako',
-            request_method='GET', permission='edit')
+    # /user/edit/ (GET/POST)
+    config.add_view('defcne.views.User',
+            attr='edit',
+            route_name='defcne.user',
+            name='edit',
+            renderer='user/edit.mako',
+            request_method='GET',
+            permission='edit')
 
-    config.add_view('defcne.views.user.User', attr='edit',
-            route_name='defcne.user', name='edit', renderer='user/edit.mako',
-            request_method='POST', permission='edit', check_csrf=True)
+    config.add_view('defcne.views.User',
+            attr='edit',
+            route_name='defcne.user',
+            name='edit',
+            renderer='user/edit.mako',
+            request_method='POST',
+            permission='edit',
+            check_csrf=True)
+
+    # /user/forgot (GET/POST)
+    config.add_view('defcne.views.User',
+            attr='forgot',
+            route_name='defcne.user',
+            name='forgot',
+            renderer='user/forgot.mako',
+            request_method='GET')
+
+    config.add_view('defcne.views.User',
+            attr='forgot',
+            route_name='defcne.user',
+            name='forgot',
+            renderer='user/forgot.mako',
+            request_method='POST',
+            check_csrf=True)
+
+    # /user/reset_password (GET/POST)
+    config.add_view('defcne.views.User',
+            attr='reset_password',
+            route_name='defcne.user',
+            name='reset_password',
+            renderer='user/reset_password.mako',
+            request_method='GET')
+
+    config.add_view('defcne.views.User',
+            attr='reset_password',
+            route_name='defcne.user',
+            name='reset_password',
+            renderer='user/reset_password.mako',
+            request_method='POST',
+            check_csrf=True)
 
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
