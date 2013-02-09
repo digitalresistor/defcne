@@ -4,14 +4,16 @@
 
 from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPForbidden
+from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPSeeOther
 
-def not_found(request):
+def not_found(context, request):
     return {}
 
-def forbidden(request):
+def forbidden(context, request):
     # do not allow a user to login if they are already logged in
     if authenticated_userid(request):
         return HTTPForbidden()
 
-    loc = request.route_url('defcne.user.auth', _query=(('next', request.path),))
-    return HTTPFound(location=loc)
+    loc = request.route_url('defcne.user', traverse='auth', _query=(('next', request.path),))
+    return HTTPSeeOther(location=loc)
