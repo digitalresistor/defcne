@@ -27,7 +27,10 @@ defaults = {
             (u'goons', u'Defcon Contests and Events goons'),
             (u'staff', u'Defcon staff'),
             (u'administrators', u'Site administrators')
-            ]
+            ],
+        'users': [
+            (u'X-Istence', u'Bert JW Regeer', u'xistence@0x58.com', 'testing123'),
+            ],
         }
 
 def main(argv=sys.argv):
@@ -44,12 +47,23 @@ def main(argv=sys.argv):
         for (kw, items) in defaults.items():
             if kw == 'groups':
                 for (name, desc) in items:
+                    sp = transaction.savepoint()
                     try:
                         group = Group(name=name, description=desc)
                         DBSession.add(group)
                         DBSession.flush()
                     except IntegrityError, e:
-                        DBSession.rollback()
+                        sp.rollback()
                         print 'Group "{name}" already exists.'.format(name=name)
+            if kw == 'users':
+                for (u, r, e, c) in items:
+                    sp = transaction.savepoint()
+                    try:
+                        user = User(username=u, realname=r, email=e, credentials=c, validated=True)
+                        DBSession.add(user)
+                        DBSession.flush()
+                    except IntegrityError, e:
+                        sp.rollback()
+                        print 'User "{name}" already exists.'.format(name=u)
 
 
