@@ -126,7 +126,7 @@ class User(object):
 
         try:
             appstruct = af.validate(controls)
-            headers = remember(self.request, appstruct['username'], tokens=["testicle"])
+            headers = remember(self.request, appstruct['username'])
             log.info('Logging in "{user}"'.format(user=appstruct['username']))
             return HTTPSeeOther(location = self.request.route_url('defcne.user'), headers=headers)
         except ValidationFailure, e:
