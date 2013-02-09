@@ -46,7 +46,10 @@ class User(object):
 
         schema = UserForm().bind(request=self.request)
         uf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
-        return {'form': uf.render()}
+        return {
+                'form': uf.render(),
+                'page_title': 'Create User',
+                }
 
     def create_submit(self):
         if authenticated_userid(self.request) is not None:
@@ -84,7 +87,10 @@ class User(object):
             # Redirect user to waiting on validation
             return HTTPSeeOther(location = self.request.route_url('defcne.user.validate'))
         except ValidationFailure, e:
-            return {'form': e.render()}
+            return {
+                    'form': e.render(),
+                    'page_title': 'Create User',
+                    }
 
     def _validate_form(self, controls):
         schema = ValidateForm(validator=validate_token_matches).bind(request=self.request)
@@ -101,7 +107,10 @@ class User(object):
             return HTTPSeeOther(location = self.request.route_url('defcne.user.complete'), headers=headers)
 
         except ValidationFailure, e:
-            return {'form': e.render()}
+            return {
+                    'form': e.render(),
+                    'page_title': 'Validate Email Address',
+                    }
 
     def validate(self):
         if authenticated_userid(self.request) is not None:
@@ -114,7 +123,10 @@ class User(object):
 
         schema = ValidateForm(validator=validate_token_matches).bind(request=self.request)
         vf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
-        return {'form': vf.render()}
+        return {
+                'form': vf.render(),
+                'page_title': 'Validate Email Address',
+                }
 
     def validate_submit(self):
         if authenticated_userid(self.request) is not None:
@@ -135,7 +147,10 @@ class User(object):
         action_loc = self.request.current_route_url() if next_loc is None else self.request.current_route_url(_query=(('next', next_loc),))
         schema = LoginForm(validator=login_username_password_matches).bind(request=self.request)
         af = Form(schema, action=action_loc, buttons=('submit',))
-        return {'form': af.render()}
+        return {
+                'form': af.render(),
+                'page_title': 'Authenticate',
+                }
 
     def auth_submit(self):
         if authenticated_userid(self.request) is not None:
@@ -155,7 +170,10 @@ class User(object):
             location = self.request.route_url('defcne') if next_loc is None else self.request.route_url('defcne', *next_loc)
             return HTTPSeeOther(location = location, headers=headers)
         except ValidationFailure, e:
-            return {'form': e.render()}
+            return {
+                    'form': e.render(),
+                    'page_title': 'Authenticate',
+                    }
 
     def deauth(self):
         headers = forget(self.request)
