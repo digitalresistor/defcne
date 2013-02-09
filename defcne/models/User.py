@@ -29,7 +29,7 @@ class User(Base):
             Column('username', Unicode(128), unique=True, index=True),
             Column('realname', Unicode(256), index=True),
             Column('email', Unicode(256), unique=True, index=True),
-            Column('credentials', Unicode(60)), # bcrypt
+            Column('credentials', String(60)), # bcrypt
             Column('validated', Boolean, default=False),
             )
 
