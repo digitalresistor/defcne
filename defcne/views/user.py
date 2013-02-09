@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 from uuid import uuid4
 
 from pyramid.security import authenticated_userid
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPSeeOther
 
 import transaction
 
@@ -76,7 +76,7 @@ class User(object):
             # Send out validation email to email address on for user
 
             # Redirect user to waiting on validation
-            return HTTPFound(location = self.request.route_url('defcne.user.validate'))
+            return HTTPSeeOther(location = self.request.route_url('defcne.user.validate'))
         except ValidationFailure, e:
             return {'form': e.render()}
 
@@ -91,8 +91,8 @@ class User(object):
             user.validated = True
 
             headers = remember(self.request, appstruct['username'])
-            return HTTPFound(location = self.request.route_url('defcne.user.complete'), headers=headers)
             log.info('User "{user}" has been validated.'.format(user=appstruct['username']))
+            return HTTPSeeOther(location = self.request.route_url('defcne.user.complete'), headers=headers)
 
         except ValidationFailure, e:
             return {'form': e.render()}
@@ -126,13 +126,13 @@ class User(object):
 
         try:
             appstruct = af.validate(controls)
-            headers = remember(self.request, appstruct['username'])
-            return HTTPFound(location = self.request.route_url('defcne.user'), headers=headers)
+            headers = remember(self.request, appstruct['username'], tokens=["testicle"])
             log.info('Logging in "{user}"'.format(user=appstruct['username']))
+            return HTTPSeeOther(location = self.request.route_url('defcne.user'), headers=headers)
         except ValidationFailure, e:
             return {'form': e.render()}
 
     def deauth(self):
         headers = forget(self.request)
-        return HTTPFound(location = self.request.route_url('defcne'), headers=headers)
+        return HTTPSeeOther(location = self.request.route_url('defcne'), headers=headers)
 
