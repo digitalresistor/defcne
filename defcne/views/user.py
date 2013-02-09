@@ -131,7 +131,7 @@ class User(object):
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
 
         schema = LoginForm(validator=login_username_password_matches).bind(request=self.request)
-        af = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+        af = Form(schema, action=self.request.current_route_url(_query=( ('next', self.request.params.get('next')),)), buttons=('submit',))
         return {'form': af.render()}
 
     def auth_submit(self):
@@ -146,7 +146,10 @@ class User(object):
             appstruct = af.validate(controls)
             headers = remember(self.request, appstruct['username'])
             log.info('Logging in "{user}"'.format(user=appstruct['username']))
-            return HTTPSeeOther(location = self.request.route_url('defcne.user'), headers=headers)
+
+            location = self.request.params.get('next') or ''
+            location = self.request.route_url('defcne', *[loc for loc in location.split('/') if loc != ''])
+            return HTTPSeeOther(location = location, headers=headers)
         except ValidationFailure, e:
             return {'form': e.render()}
 
