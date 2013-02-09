@@ -41,11 +41,17 @@ class User(object):
         self.request = request
 
     def create(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
         schema = UserForm().bind(request=self.request)
         uf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
         return {'form': uf.render()}
 
     def create_submit(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
         controls = self.request.POST.items()
         schema = UserForm().bind(request=self.request)
         uf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
@@ -98,6 +104,9 @@ class User(object):
             return {'form': e.render()}
 
     def validate(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
         if 'username' in self.request.GET and 'token' in self.request.GET:
             self.request.GET['csrf_token'] = self.request.session.get_csrf_token()
             controls = self.request.GET.items()
@@ -108,6 +117,9 @@ class User(object):
         return {'form': vf.render()}
 
     def validate_submit(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
         controls = self.request.POST.items()
         return self._validate_form(controls)
 
@@ -115,11 +127,17 @@ class User(object):
         return {}
 
     def auth(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
         schema = LoginForm(validator=login_username_password_matches).bind(request=self.request)
         af = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
         return {'form': af.render()}
 
     def auth_submit(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
         controls = self.request.POST.items()
         schema = LoginForm(validator=login_username_password_matches).bind(request=self.request)
         af = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
