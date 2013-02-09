@@ -6,18 +6,17 @@ import logging
 log = logging.getLogger(__name__)
 
 from pyramid.config import Configurator
-from sqlalchemy import engine_from_config
-
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 
 import deform_bootstrap
 
-from models import DBSession
-
+from sqlalchemy import engine_from_config
 from sqlalchemy.exc import DBAPIError
 
+from models import DBSession
+import auth
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
