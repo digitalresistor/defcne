@@ -136,3 +136,12 @@ class User(object):
         headers = forget(self.request)
         return HTTPSeeOther(location = self.request.route_url('defcne'), headers=headers)
 
+    def user(self):
+        return {}
+
+    def edit(self):
+        return {}
+
+    def edit_submit(self):
+        return {}
+

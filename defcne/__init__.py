@@ -17,6 +17,7 @@ from sqlalchemy.exc import DBAPIError
 
 from models import DBSession
 import auth
+import acl
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -79,26 +80,8 @@ def add_routes(config):
     # /u/<username>/contact
     config.add_route('defcne.u.username.contact', '/u/{username}/contact/')
 
-    # /user/auth
-    config.add_route('defcne.user.auth', '/user/auth/')
-
-    # /user/deauth
-    config.add_route('defcne.user.deauth', '/user/deauth/')
-
-    # /user/create
-    config.add_route('defcne.user.create', '/user/create/')
-
-    # /user/create/complete
-    config.add_route('defcne.user.complete', '/user/complete/')
-
-    # /usr/create/validate
-    config.add_route('defcne.user.validate', '/user/validate/')
-
-    # /user/edit
-    config.add_route('defcne.user.edit', '/user/edit/')
-
-    # /user/
-    config.add_route('defcne.user', '/user/')
+    # /user/*traverse
+    config.add_route('defcne.user', '/user/*traverse', factory=acl.User)
 
     # /g/
     config.add_route('defcne.g', '/g/')
@@ -127,37 +110,59 @@ def add_routes(config):
 def add_views(config):
     config.add_view('defcne.views.home.home', route_name='defcne', renderer='home.mako')
 
+    # /user/
+    config.add_view('defcne.views.user.User', attr='user',
+            route_name='defcne.user', name='', renderer='user/user.mako',
+            request_method='GET', permission='view')
+
+    # /user/create
     config.add_view('defcne.views.user.User', attr='create',
-            route_name='defcne.user.create', renderer='user/create.mako',
-            request_method='GET')
+            route_name='defcne.user', name='create',
+            renderer='user/create.mako', request_method='GET',
+            permission='view')
 
     config.add_view('defcne.views.user.User', attr='create_submit',
-            route_name='defcne.user.create', renderer='user/create.mako',
-            request_method='POST', check_csrf=True)
+            route_name='defcne.user', name='create',
+            renderer='user/create.mako', request_method='POST',
+            permission='view', check_csrf=True)
 
-    config.add_view('defcne.views.user.User', attr='validate',
-            route_name='defcne.user.validate', renderer='user/validate.mako',
-            request_method='GET')
-
-    config.add_view('defcne.views.user.User', attr='validate_submit',
-            route_name='defcne.user.validate', renderer='user/validate.mako',
-            request_method='POST', check_csrf=True)
-
-    config.add_view('defcne.views.user.User', attr='complete',
-            route_name='defcne.user.complete', renderer='user/complete.mako',
-            request_method='GET')
-
+    # /user/auth
     config.add_view('defcne.views.user.User', attr='auth',
-            route_name='defcne.user.auth', renderer='user/auth.mako',
-            request_method='GET')
+            route_name='defcne.user', name='auth', renderer='user/auth.mako',
+            request_method='GET', permission='view')
 
     config.add_view('defcne.views.user.User', attr='auth_submit',
-            route_name='defcne.user.auth', renderer='user/auth.mako',
-            request_method='POST')
+            route_name='defcne.user', name='auth', renderer='user/auth.mako',
+            request_method='POST', permission='view', check_csrf=True)
 
+    # /user/deauth
     config.add_view('defcne.views.user.User', attr='deauth',
-            route_name='defcne.user.deauth', renderer='user/deauth.mako',
-            request_method='GET')
+            route_name='defcne.user', name='deauth', request_method='GET',
+            permission='view')
+
+    # /user/complete
+    config.add_view('defcne.views.user.User', attr='complete',
+            route_name='defcne.user', name='complete',
+            renderer='user/complete.mako', request_method='GET',
+            permission='view')
+
+    # /user/validate
+    config.add_view('defcne.views.user.User', attr='validate',
+            route_name='defcne.user', name='validate', request_method='GET',
+            permission='view')
+
+    config.add_view('defcne.views.user.User', attr='validate_submit',
+            route_name='defcne.user', name='validate', request_method='POST',
+            permission='view', check_csrf=True)
+
+    # /user/edit/
+    config.add_view('defcne.views.user.User', attr='edit',
+            route_name='defcne.user', name='edit', renderer='user/edit.mako',
+            request_method='GET', permission='edit')
+
+    config.add_view('defcne.views.user.User', attr='edit',
+            route_name='defcne.user', name='edit', renderer='user/edit.mako',
+            request_method='POST', permission='edit', check_csrf=True)
 
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
