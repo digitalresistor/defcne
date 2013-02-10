@@ -66,7 +66,8 @@ def current_user(request):
         user = ticket.user
        
         # Load up all the groups that the user is in
-        user_groups = ['group:' + grp.name for grp in user.groups]
+        user_groups = ['userid:' + unicode(user.id)]
+        user_groups.extend(['group:' + grp.name for grp in user.groups])
 
         # Return a valid user containing data
         return _user_exists(user, ticket, user_groups)
