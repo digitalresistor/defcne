@@ -1,18 +1,35 @@
 <%inherit file="site.mako" />
 
-This is the new homepage ...
+<%block name="maincontent">
+<div class="jumbotron">
+    <h1>DEFCON</h1>
+    <h1>Contests and Events</h1>
+    <p class="lead">
+        This years contests and events at DEFCON are going to be absolutely fantastic!
+    </p>
+</div>
+<hr>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span4">
+            <h3><a href="#">Events</a></h3>
+            <p>Learn about the events that are going to be at DEFCON</p>
+            &gt;&gt; <a href="#">See all events</a>
+        </div>
+        <div class="span4">
+            <h3><a href="#">Goons</a></h3>
+            <p>Learn more about the red badge wearing badasses that help make your conference experience awesome</p>
+            &gt;&gt; <a href="#">Learn more about the goons</a>
+        </div>
+        <div class="span4">
+            <h3>Participate</h3>
+            &gt;&gt; <a href="#">Create an event</a><br>
+            &gt;&gt; <a href="#">More info</a><br>
+            &gt;&gt; <a href="#">F.A.Q</a>
+        </div>
+    </div>
+</div>
 
-% if user:
-    ${user}
-% endif
+</%block>
 
-<p>
-
-% if not user:
-<a href="/user/auth/">Authenticate</a> <br />
-% else:
-<a href="/user/deauth/">Deauthenticate</a> <br />
-% endif
-<a href="/user/create/">Create</a> <br />
-<a href="/user/validate/">Validate</a> <br />
-</p>
+<%block name="title">${parent.title()} - Home</%block>
