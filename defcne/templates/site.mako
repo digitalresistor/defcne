@@ -4,8 +4,8 @@
         <title><%block name="title"></%block></title>
         <link rel="shortcut icon" href="${request.static_url('defcne:static/favicon.ico')}">
         <%block name="stylesheets">
-            <link rel="stylesheet" href="${request.static_url('defcne:static/defcne.css')}" type="text/css" />
             <link rel="stylesheet" href="${request.static_url('defcne:static/bootstrap/css/bootstrap.min.css')}" type="text/css" />
+            <link rel="stylesheet" href="${request.static_url('defcne:static/defcne.css')}" type="text/css" />
         </%block>
         <meta charset="utf-8" />
         <%block name="javascript_head"></%block>
