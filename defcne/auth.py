@@ -38,7 +38,7 @@ def current_user(request):
 
     def _user_exists(user, ticket, groups):
         udata = UserData()
-        udata.username = user.username
+        udata.username = user.disp_uname
         udata.user = user
         udata.ticket = ticket
         udata.groups = groups
