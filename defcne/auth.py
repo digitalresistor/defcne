@@ -104,7 +104,7 @@ def remember(request, principal, **kw):
 
     ticket = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in range(128))
 
-    user = User.find_user(principal)
+    user = User.find_user_no_groups(principal)
     user.tickets.append(UserTickets(ticket=ticket, remote_addr=request.environ['REMOTE_ADDR'] if 'REMOTE_ADDR' in request.environ else None))
 
     if 'tokens' in kw:
