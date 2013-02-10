@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head><%block name="head">
-        <title><%block name="title"></%block></title>
+        <title><%block name="title">DEFCON CnE</%block></title>
         <link rel="shortcut icon" href="${request.static_url('defcne:static/favicon.ico')}">
         <%block name="stylesheets">
             <link rel="stylesheet" href="${request.static_url('defcne:static/bootstrap/css/bootstrap.min.css')}" type="text/css" />
