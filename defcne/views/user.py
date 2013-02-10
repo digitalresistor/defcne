@@ -85,7 +85,7 @@ class User(object):
             # Send out validation email to email address on for user
 
             # Redirect user to waiting on validation
-            return HTTPSeeOther(location = self.request.route_url('defcne.user.validate'))
+            return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='validate'))
         except ValidationFailure, e:
             return {
                     'form': e.render(),
@@ -104,7 +104,7 @@ class User(object):
 
             headers = remember(self.request, appstruct['username'])
             log.info('User "{user}" has been validated.'.format(user=appstruct['username']))
-            return HTTPSeeOther(location = self.request.route_url('defcne.user.complete'), headers=headers)
+            return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='complete'), headers=headers)
 
         except ValidationFailure, e:
             return {
