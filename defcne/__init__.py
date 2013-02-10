@@ -206,23 +206,23 @@ def add_views(config):
             request_method='GET')
 
     config.add_view('defcne.views.User',
-            attr='forgot',
+            attr='forgot_submit',
             route_name='defcne.user',
             name='forgot',
             renderer='user/form.mako',
             request_method='POST',
             check_csrf=True)
 
-    # /user/reset_password (GET/POST)
+    # /user/reset (GET/POST)
     config.add_view('defcne.views.User',
             attr='reset_password',
             route_name='defcne.user',
-            name='reset_password',
+            name='reset',
             renderer='user/form.mako',
             request_method='GET')
 
     config.add_view('defcne.views.User',
-            attr='reset_password',
+            attr='reset_submit',
             route_name='defcne.user',
             name='reset_password',
             renderer='user/form.mako',
