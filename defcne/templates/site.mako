@@ -10,20 +10,35 @@
         <meta charset="utf-8" />
         <%block name="javascript_head"></%block>
     </%block></head>
-    <body>
-        <header>
-        <%block name="header"></%block>
+    <body class="container">
+        <header class="masthead">
+        <%block name="header">
+        <h1><a href="${request.route_url('defcne')}">DEFCnE</a></h1>
+        <p class="muted">Defcon Contests and Events</p>
+        </%block>
+        <%block name="navigation">
+        <nav>
+        <%block name="nav">
+            <ul class="nav">
+                <li><a href="${request.route_url('defcne')}">Home</a></li>
+                <li><a href="${request.route_url('defcne')}">Events</a></li>
+                <li><a href="${request.route_url('defcne')}">Goons</a></li>
+                <li><a href="${request.route_url('defcne.user', traverse='auth')}">Authenticate</a></li>
+            </ul>
+        </%block>
+        </nav>
+        </%block>
         </header>
-        <div id="Main">
+
+        <%block name="maincontent">
+        <div id="Main" class="container">
             % if hasattr(next, "body"):
                 ${next.body()}
             % endif
         </div>
-        <aside>
-        <nav>
-        <%block name="menu"></%block>
-        </nav>
-        </aside>
+        </%block>
+
+
 
         <footer>
         <%block name="footer"></%block>
