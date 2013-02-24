@@ -33,6 +33,22 @@ from ..auth import (
         forget,
         )
 
+_auth_explain = """
+<p>If you have a user account you may authenticate to the left, if you do not currently have an account you may <a href="{create_url}">create an account</a>.</p>
+<p>If you have forgotten your username and password please visit the <a href="{forgot_url}">forgot my password</a> page.</p>
+"""
+
+_create_explain = """
+<p>If you already have a user account, you may wish to <a href="{auth_url}">authenticate</a>.</p>
+<h3>Why do I need an account?</h3>
+<p>You only need to create a user account when you are planning on submitting a contest or event to run at DEFCON. We require an account so that we have a central location to contact event owners/event staff.</p>
+<p>It also allows us to track who is in charge of what events so that we don't have any imposters attempting to impersonate you and or your contest.</p>
+"""
+
+_validate_explain = """
+<p>An email has been sent to the email address you provided us. Please click the contained link or copy and paste the token into the web form.</p>
+"""
+
 class User(object):
     """View for User functionality"""
 
@@ -49,6 +65,7 @@ class User(object):
         return {
                 'form': uf.render(),
                 'page_title': 'Create User',
+                'explanation': _create_explain.format(auth_url=self.request.route_url('defcne.user', traverse='auth')),
                 }
 
     def create_submit(self):
@@ -90,6 +107,7 @@ class User(object):
             return {
                     'form': e.render(),
                     'page_title': 'Create User',
+                    'explanation': _create_explain.format(auth_url=self.request.route_url('defcne.user', traverse='auth')),
                     }
 
     def _validate_form(self, controls):
@@ -110,6 +128,7 @@ class User(object):
             return {
                     'form': e.render(),
                     'page_title': 'Validate Email Address',
+                    'explanation': _validate_explain,
                     }
 
     def validate(self):
@@ -126,6 +145,7 @@ class User(object):
         return {
                 'form': vf.render(),
                 'page_title': 'Validate Email Address',
+                'explanation': _validate_explain,
                 }
 
     def validate_submit(self):
@@ -150,6 +170,7 @@ class User(object):
         return {
                 'form': af.render(),
                 'page_title': 'Authenticate',
+                'explanation': _auth_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), forgot_url=self.request.route_url('defcne.user', traverse='forgot')),
                 }
 
     def auth_submit(self):
@@ -173,6 +194,7 @@ class User(object):
             return {
                     'form': e.render(),
                     'page_title': 'Authenticate',
+                    'explanation': _auth_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), forgot_url=self.request.route_url('defcne.user', traverse='forgot')),
                     }
 
     def deauth(self):
