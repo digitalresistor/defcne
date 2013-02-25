@@ -102,15 +102,26 @@ class User(Base):
 
 class UserValidation(Base):
     __table__ = Table('user_validation', Base.metadata,
-            Column('token', Unicode(128), primary_key=True, unique=True),
+            Column('token', Unicode(128)),
             Column('user_id', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE")),
+
+            PrimaryKeyConstraint('token', 'user_id'),
+            Index('ix_uv_token_userid', 'token', 'user_id'),
             )
 
     user = relationship("User", lazy="joined")
 
     @classmethod
-    def find_token(cls, token):
-        return DBSession.query(cls).filter(cls.token == token).first()
+    def find_token_username(cls, token, username):
+        return DBSession.query(cls).join(User, and_(User.username == username.lower(), User.id == cls.user_id)).filter(cls.token == token).options(contains_eager('user')).first()
+
+            )
+
+    user = relationship("User", lazy="joined")
+
+    @classmethod
+    def find_token_username(cls, token, username):
+        return DBSession.query(cls).join(User, and_(User.username == username.lower(), User.id == cls.user_id)).filter(cls.token == token).options(contains_eager('user')).first()
 
 class UserTickets(Base):
     __table__ = Table('user_tickets', Base.metadata,
@@ -124,10 +135,6 @@ class UserTickets(Base):
             )
 
     user = relationship("User", lazy="joined")
-
-    @classmethod
-    def find_ticket(cls, user_id, ticket):
-        return DBSession.query(cls).filter(cls.user_id == user_id).filter(cls.ticket == ticket).first()
 
     @classmethod
     def find_ticket_username(cls, ticket, username):
