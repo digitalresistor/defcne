@@ -98,7 +98,8 @@ class User(object):
                     sp.rollback()
                     continue
 
-            print ("Created a new user \"{user}\" with token \"{token}\"".format(user=user.username, token=uservalidation.token))
+            validate_url = self.request.route_url('defcne.user', traverse='validate', _query=(('username', user.username), ('token', uservalidation.token)))
+            log.info("Created a new user \"{user}\" with token \"{token}\". {url}".format(user=user.username, token=uservalidation.token, url=validate_url))
             # Send out validation email to email address on for user
 
             # Redirect user to waiting on validation
@@ -116,8 +117,8 @@ class User(object):
 
         try:
             appstruct = vf.validate(controls)
-            m.DBSession.delete(m.UserValidation.find_token(appstruct['token']))
-            user = m.User.find_user(appstruct['username'])
+            m.DBSession.delete(appstruct['_internal']['validation'])
+            user = appstruct['_internal']['user']
             user.validated = True
 
             headers = remember(self.request, appstruct['username'])
@@ -183,8 +184,14 @@ class User(object):
 
         try:
             appstruct = af.validate(controls)
-            headers = remember(self.request, appstruct['username'])
-            log.info('Logging in "{user}"'.format(user=appstruct['username']))
+            user = appstruct['_internal']['user']
+
+            headers = remember(self.request, user.username)
+            log.info('Logging in "{user}"'.format(user=user.username))
+
+            # Invalidate any outstanding reset tokens
+            if user.credreset:
+                user.credreset = False
 
             next_loc = self.request.params.get('next') or ''
             next_loc = [loc for loc in next_loc.split('/') if loc != '']
