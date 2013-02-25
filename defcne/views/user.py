@@ -20,12 +20,14 @@ from ..forms import (
         ValidateForm,
         LoginForm,
         LostPassword,
+        ResetForm,
         )
 
 from ..forms.User import (
         validate_token_matches,
         login_username_password_matches,
         lost_password_username_email_matches,
+        reset_token_matches,
         )
 
 from .. import models as m
@@ -55,6 +57,11 @@ _forgot_password_explain = """
 <p>If you have forgotten your password you may attempt to reset it by providing your username/email address. We will at that point send you a link to be able to reset your password</p>
 <p>If you already have an user account, you may wish to <a href="{auth_url}">authenticate</a>.</p>
 <p>If you do not yet have a user account you may create <a href="{create_url}">create an account</a>.</p>
+"""
+
+_reset_explain = """
+<p>An email has been sent to the email address you provided us. Please click the contained link, or copy and paste the token into the web form.</p>
+<p>If you remember your password, you may instead wish to <a href="{auth_url}">authenticate</a>. If you don't have an account, you may <a href="{create_url}">create an account</a>.</p>
 """
 
 class User(object):
@@ -268,3 +275,47 @@ class User(object):
                     'page_title': 'Forgot Password',
                     'explanation': _forgot_password_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), auth_url=self.request.route_url('defcne.user', traverse='auth')),
                     }
+
+    def _reset_form(self, controls):
+        schema = ResetForm(validator=reset_token_matches).bind(request=self.request)
+        rf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = rf.validate(controls)
+            user = appstruct['_internal']['user']
+            m.DBSession.query(m.UserForgot).filter(m.UserForgot.user_id == user.id).delete()
+            m.DBSession.query(m.UserTickets).filter(m.UserTickets.user_id == user.id).delete()
+
+            headers = remember(self.request, user.username)
+            log.info('User "{user}" has requested to reset password. They are now logged in, sending to main page.'.format(user=appstruct['username']))
+            return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='edit/password'), headers=headers)
+        except ValidationFailure, e:
+            return {
+                    'form': e.render(),
+                    'page_title': 'Reset Password',
+                    'explanation': _reset_explain.format(auth_url=self.request.route_url('defcne.user', traverse='auth'), create_url=self.request.route_url('defcne.user', traverse='create')),
+                    }
+
+    def reset(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
+        if 'username' in self.request.GET and 'token' in self.request.GET:
+            self.request.GET['csrf_token'] = self.request.session.get_csrf_token()
+            controls = self.request.GET.items()
+            return self._reset_form(controls)
+
+        schema = ResetForm(validator=reset_token_matches).bind(request=self.request)
+        rf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+        return {
+                'form': rf.render(),
+                'page_title': 'Reset Password',
+                'explanation': _reset_explain.format(auth_url=self.request.route_url('defcne.user', traverse='auth'), create_url=self.request.route_url('defcne.user', traverse='create')),
+                }
+
+    def reset_submit(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
+        controls = self.request.POST.items()
+        return self._validate_form(controls)

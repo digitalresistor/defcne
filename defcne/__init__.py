@@ -215,7 +215,7 @@ def add_views(config):
 
     # /user/reset (GET/POST)
     config.add_view('defcne.views.User',
-            attr='reset_password',
+            attr='reset',
             route_name='defcne.user',
             name='reset',
             renderer='user/form.mako',

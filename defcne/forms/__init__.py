@@ -5,4 +5,5 @@ from User import (
         ValidateForm,
         LoginForm,
         LostPassword,
+        ResetForm,
         )

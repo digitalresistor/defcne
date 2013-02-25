@@ -86,3 +86,25 @@ class ValidateForm(CSRFSchema):
     """The validation form, where the user enters their token"""
     username = colander.SchemaNode(colander.String(), title="Username")
     token = colander.SchemaNode(colander.String(), title="Validation token")
+
+def reset_token_matches(form, value):
+    exc = colander.Invalid(form, 'Reset token is invalid')
+    exc['username'] = 'Username does not exist or is not valid for token'
+    exc['token'] = 'Token is invalid'
+
+    userforgot = UserForgot.find_token_username(value['token'], value['username'])
+
+    if userforgot is None:
+        raise exc
+
+    if userforgot.user.credreset is False:
+        raise exc
+
+    value['_internal'] = {}
+    value['_internal']['user'] = userforgot.user
+    value['_internal']['userforgot'] = userforgot
+
+class ResetForm(CSRFSchema):
+    """The validation form, where the user enters their token"""
+    username = colander.SchemaNode(colander.String(), title="Username")
+    token = colander.SchemaNode(colander.String(), title="Reset token")
