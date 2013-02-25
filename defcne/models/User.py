@@ -92,13 +92,13 @@ class User(Base):
         user = DBSession.query(cls).options(noload(cls.groups)).filter(cls.username == username.lower()).first()
 
         if user is None:
-            return False
+            return None
 
         manager = BCRYPTPasswordManager()
         if manager.check(user.credentials, password):
-            return True
+            return user
 
-        return False
+        return None
 
 class UserValidation(Base):
     __table__ = Table('user_validation', Base.metadata,
