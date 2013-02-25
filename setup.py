@@ -44,7 +44,7 @@ setup(name='defcne',
       [paste.app_factory]
       main = defcne:main
       [console_scripts]
-      initialize_defcne_db = defcne.scripts.initializedb:main
-      destroy_defcne_db = defcne.scripts.destroydb:main
+      defcne_create_db = defcne.scripts.initializedb:main
+      defcne_destroy_db = defcne.scripts.destroydb:main
       """,
       )
