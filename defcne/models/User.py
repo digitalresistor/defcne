@@ -40,6 +40,7 @@ class User(Base):
             Column('email', Unicode(256), unique=True, index=True),
             Column('credentials', String(60)), # bcrypt
             Column('validated', Boolean, default=False),
+            Column('credreset', Boolean, default=False),
             )
 
     groups = relationship("Group", secondary="user_groups", lazy="joined")
@@ -115,6 +116,13 @@ class UserValidation(Base):
     def find_token_username(cls, token, username):
         return DBSession.query(cls).join(User, and_(User.username == username.lower(), User.id == cls.user_id)).filter(cls.token == token).options(contains_eager('user')).first()
 
+class UserForgot(Base):
+    __table__ = Table('user_forgot', Base.metadata,
+            Column('token', String(128)),
+            Column('user_id', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
+
+            PrimaryKeyConstraint('token', 'user_id'),
+            Index('ix_uf_token_userid', 'token', 'user_id'),
             )
 
     user = relationship("User", lazy="joined")

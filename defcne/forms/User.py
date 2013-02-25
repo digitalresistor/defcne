@@ -10,6 +10,7 @@ from csrf import CSRFSchema
 from ..models import (
         User,
         UserValidation,
+        UserForgot,
         )
 
 def validate_unique_username(node, value):
@@ -49,6 +50,25 @@ class LoginForm(CSRFSchema):
     """The user login form."""
     username = colander.SchemaNode(colander.String(), title="Username")
     password = colander.SchemaNode(colander.String(), title="Password", validator=colander.Length(min=5), widget=deform.widget.PasswordWidget(size=20))
+
+def lost_password_username_email_matches(form, value):
+    user = User.find_user(value['username'])
+
+    exc = colander.Invalid(form, "Username and email do not match")
+    exc['username'] = ''
+    exc['email'] = ''
+    if user is None:
+        raise exc
+
+    if user.email != value['email']:
+        raise exc
+
+    value['_internal'] = {}
+    value['_internal']['user'] = user
+
+class LostPassword(CSRFSchema):
+    username = colander.SchemaNode(colander.String(), title="Username")
+    email    = colander.SchemaNode(colander.String(), title="Email address", validator=colander.Length(max=254))
 
 def validate_token_matches(form, value):
     validate = UserValidation.find_token_username(value['token'], value['username'])

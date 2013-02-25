@@ -9,6 +9,7 @@ from User import (
         User,
         UserValidation,
         UserTickets,
+        UserForgot,
         )
 
 

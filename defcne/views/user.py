@@ -19,11 +19,13 @@ from ..forms import (
         UserForm,
         ValidateForm,
         LoginForm,
+        LostPassword,
         )
 
 from ..forms.User import (
         validate_token_matches,
-        login_username_password_matches
+        login_username_password_matches,
+        lost_password_username_email_matches,
         )
 
 from .. import models as m
@@ -47,6 +49,12 @@ _create_explain = """
 
 _validate_explain = """
 <p>An email has been sent to the email address you provided us. Please click the contained link or copy and paste the token into the web form.</p>
+"""
+
+_forgot_password_explain = """
+<p>If you have forgotten your password you may attempt to reset it by providing your username/email address. We will at that point send you a link to be able to reset your password</p>
+<p>If you already have an user account, you may wish to <a href="{auth_url}">authenticate</a>.</p>
+<p>If you do not yet have a user account you may create <a href="{create_url}">create an account</a>.</p>
 """
 
 class User(object):
@@ -217,3 +225,46 @@ class User(object):
     def edit_submit(self):
         return {}
 
+    def forgot(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
+        schema = LostPassword(validator=lost_password_username_email_matches).bind(request=self.request)
+        lpf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+        return {
+                'form': lpf.render(),
+                'page_title': 'Forgot Password',
+                'explanation': _forgot_password_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), auth_url=self.request.route_url('defcne.user', traverse='auth')),
+                }
+
+    def forgot_submit(self):
+        if authenticated_userid(self.request) is not None:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+
+        controls = self.request.POST.items()
+        schema = LostPassword(validator=lost_password_username_email_matches).bind(request=self.request)
+        lpf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = lpf.validate(controls)
+            user = appstruct['_internal']['user']
+            user.credreset = True
+
+            # Remove all previously generated tokens if they still exist ... basically we want to make sure we invalidate all previous attempts
+            m.DBSession.query(m.UserForgot).filter(m.UserForgot.user_id == user.id).delete()
+
+            # Create new token
+            userforgot = m.UserForgot(user_id=user.id, token=unicode(uuid4()))
+            m.DBSession.add(userforgot)
+
+            reset_url = self.request.route_url('defcne.user', traverse='reset', _query=(('username', user.username), ('token', userforgot.token)))
+            log.info("User \"{user}\" forgot password, generated token \"{token}\". {url}".format(user=user.username, token=userforgot.token, url=reset_url))
+
+            location = self.request.route_url('defcne.user', traverse='reset')
+            return HTTPSeeOther(location = location)
+        except ValidationFailure, e:
+            return {
+                    'form': lpf.render(),
+                    'page_title': 'Forgot Password',
+                    'explanation': _forgot_password_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), auth_url=self.request.route_url('defcne.user', traverse='auth')),
+                    }
