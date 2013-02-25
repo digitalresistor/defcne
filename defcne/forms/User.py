@@ -33,11 +33,17 @@ class UserForm(CSRFSchema):
 
 
 def login_username_password_matches(form, value):
-    if not User.validate_user_password(value['username'], value['password']):
+    user = User.validate_user_password(value['username'], value['password'])
+    if not user:
         exc = colander.Invalid(form, 'Username or password is incorrect')
         exc['username'] = ''
         exc['password'] = ''
         raise exc
+
+    # Normalize username
+    value['username'] = user.username
+    value['_internal'] = {}
+    value['_internal']['user'] = user
 
 class LoginForm(CSRFSchema):
     """The user login form."""
@@ -45,18 +51,16 @@ class LoginForm(CSRFSchema):
     password = colander.SchemaNode(colander.String(), title="Password", validator=colander.Length(min=5), widget=deform.widget.PasswordWidget(size=20))
 
 def validate_token_matches(form, value):
-    validate = UserValidation.find_token(value['token'])
+    validate = UserValidation.find_token_username(value['token'], value['username'])
     if validate is None:
         exc = colander.Invalid(form, 'Validation token is invalid')
         exc['username'] = 'Username does not exist or is not valid for token'
         exc['token'] = 'Token is invalid'
         raise exc
 
-    if validate.user.username != value['username']:
-        exc = colander.Invalid(form, 'Validation token is invalid')
-        exc['username'] = 'Username does not exist or is not valid for token'
-        exc['token'] = 'Token is invalid'
-        raise exc
+    value['_internal'] = {}
+    value['_internal']['user'] = validate.user
+    value['_internal']['validation'] = validate
 
 class ValidateForm(CSRFSchema):
     """The validation form, where the user enters their token"""
