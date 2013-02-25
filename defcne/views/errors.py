@@ -8,6 +8,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPSeeOther
 
 def not_found(context, request):
+    request.response.status_int = 404
     return {}
 
 def forbidden(context, request):
