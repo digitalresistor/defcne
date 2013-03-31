@@ -345,7 +345,7 @@ class User(object):
             return HTTPSeeOther(location = location)
         except ValidationFailure, e:
             return {
-                    'form': lpf.render(),
+                    'form': e.render(),
                     'page_title': 'Forgot Password',
                     'explanation': _forgot_password_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), auth_url=self.request.route_url('defcne.user', traverse='auth')),
                     }
