@@ -37,13 +37,12 @@
 
         <%block name="maincontent">
         <div id="Main" class="container">
+            <%block name="flash"></%block>
             % if hasattr(next, "body"):
                 ${next.body()}
             % endif
         </div>
         </%block>
-
-
 
         <footer>
         <%block name="footer"></%block>
