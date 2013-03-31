@@ -4,11 +4,14 @@
 
 from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPForbidden
-from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPSeeOther
 
 def not_found(context, request):
     request.response.status_int = 404
+    return {}
+
+def bad_request(context, request):
+    request.response.status_int = 400
     return {}
 
 def forbidden(context, request):
