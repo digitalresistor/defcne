@@ -34,6 +34,10 @@ def main(global_config, **settings):
         log.error('pyramid.auth.secret is not set. Refusing to start.')
         quit(-1)
 
+    if not 'defcne.upload_path' in settings:
+        log.error('defcne.upload_path is not set. Refusing to start.')
+        quit(-1)
+
     _session_factory = UnencryptedCookieSessionFactoryConfig(
             settings['pyramid.secretcookie'],
             cookie_httponly=True,
@@ -66,6 +70,7 @@ def main(global_config, **settings):
 def add_routes(config):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static', cache_max_age=3600)
+    config.add_static_view('files', config.registry.settings['defcne.upload_path'], cache_max_age=3600)
 
     # Routes:
     # /
