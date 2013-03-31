@@ -126,6 +126,15 @@ def add_views(config):
             request_method='GET',
             permission='view')
 
+    # /user/profile
+    config.add_view('defcne.views.User',
+            attr='profile',
+            route_name='defcne.user',
+            name='profile',
+            renderer='user/profile.mako',
+            request_method='GET',
+            permission='view')
+
     # /user/create (GET/POST)
     config.add_view('defcne.views.User',
             attr='create',

@@ -395,3 +395,13 @@ class User(object):
 
         controls = self.request.POST.items()
         return self._validate_form(controls)
+
+    def profile(self):
+        pfields = []
+
+        pfields.append(('Real Name', self.request.user.user.realname))
+        pfields.append(('Email', self.request.user.user.email))
+        return {
+                'page_title': 'User Profile',
+                'profile_fields': pfields,
+                }
