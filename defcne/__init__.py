@@ -195,15 +195,15 @@ def add_views(config):
             attr='edit',
             route_name='defcne.user',
             name='edit',
-            renderer='user/form.mako',
+            renderer='user/form_menu.mako',
             request_method='GET',
             permission='edit')
 
     config.add_view('defcne.views.User',
-            attr='edit',
+            attr='edit_submit',
             route_name='defcne.user',
             name='edit',
-            renderer='user/form.mako',
+            renderer='user/form_menu.mako',
             request_method='POST',
             permission='edit',
             check_csrf=True)
