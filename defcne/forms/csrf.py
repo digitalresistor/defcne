@@ -18,7 +18,7 @@ def deferred_csrf_validator(node, kw):
         csrf_token = request.session.get_csrf_token()
         if value != csrf_token:
             raise ValueError('Bad CSRF token')
-        return validate_csrf
+    return validate_csrf
 
 class CSRFSchema(colander.Schema):
     csrf_token = colander.SchemaNode(colander.String(),
