@@ -12,4 +12,7 @@ from User import (
         UserForgot,
         )
 
+from Defcon import (
+        Defcon
+        )
 

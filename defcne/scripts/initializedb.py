@@ -35,6 +35,9 @@ defaults = {
             (u'X-Istence', u'administrators'),
             (u'X-Istence', u'goons'),
             ],
+        'defcon': [
+            (21, 'http://www.defcon.org'),
+            ]
         }
 
 def main(argv=sys.argv):
@@ -82,5 +85,15 @@ def main(argv=sys.argv):
                     except IntegrityError, e:
                         sp.rollback()
                         print 'User "{name}" already part of "{group}"'.format(name=u, group=g)
+            if kw == 'defcon':
+                for (i, u) in items:
+                    sp = transaction.savepoint()
+                    try:
+                        dc = Defcon(id=i, url=u)
+                        DBSession.add(dc)
+                        DBSession.flush()
+                    except IntegrityError, e:
+                        sp.rollback()
+                        print 'Defcon "{id}" already exists.'.format(id=i)
 
 
