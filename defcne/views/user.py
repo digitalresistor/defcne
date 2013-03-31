@@ -298,6 +298,12 @@ class User(object):
                     'form': e.render(),
                     }
 
+    def edit_profile(self):
+        return {
+                'page_title': "Edit user profile",
+                }
+
+    def edit_profile_submit(self):
         return {}
 
     def forgot(self):
