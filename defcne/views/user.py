@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 from uuid import uuid4
 
 from pyramid.security import authenticated_userid
-from pyramid.httpexceptions import HTTPSeeOther
+from pyramid.httpexceptions import HTTPSeeOther, HTTPNotFound
 
 import transaction
 
@@ -227,9 +227,25 @@ class User(object):
         return {}
 
     def edit(self):
-        return {}
+        # Redirect to the right location if the user just went to /user/edit/
+        if len(self.request.subpath) == 0:
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=('edit', 'profile')))
+
+        if 'password' == self.request.subpath[0]:
+            return self.edit_password()
+
+        if 'profile' == self.request.subpath[0]:
+            return self.edit_profile()
+
+        raise HTTPNotFound()
 
     def edit_submit(self):
+        if 'password' == self.request.subpath[0]:
+            return self.edit_password_submit()
+        if 'profile' == self.request.subpath[0]:
+            return self.edit_profile_submit()
+
+        raise HTTPNotFound()
         return {}
 
     def forgot(self):
