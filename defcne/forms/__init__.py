@@ -6,4 +6,7 @@ from User import (
         LoginForm,
         LostPassword,
         ResetForm,
+        SetPassword,
+        )
+
         )

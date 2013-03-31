@@ -13,6 +13,26 @@ from ..models import (
         UserForgot,
         )
 
+@colander.deferred
+def deferred_username_default(node, kw):
+    request = kw.get('request')
+    if request.user is None:
+        print "No user found ..."
+        raise ValueError('No user is logged in ...')
+
+    print "RETURNING", request.user.username
+    return request.user.username
+
+@colander.deferred
+def deferred_username_validator(node, kw):
+    def validate_username(node, value):
+        request = kw.get('request')
+        if request.user is None:
+            raise ValueError('No user is logged in ...')
+        if value != request.user.username:
+            raise ValueError('Username does not match current logged in user ...')
+    return validate_username
+
 def validate_unique_username(node, value):
     if User.find_user(value) != None:
         raise colander.Invalid(node, msg='Username already exists.')
@@ -69,6 +89,30 @@ def lost_password_username_email_matches(form, value):
 class LostPassword(CSRFSchema):
     username = colander.SchemaNode(colander.String(), title="Username")
     email    = colander.SchemaNode(colander.String(), title="Email address", validator=colander.Length(max=254))
+
+def username_password_matches(form, value):
+    if 'password' not in value:
+        user = user.find_user(value['username'])
+        if not user:
+            exc = colander.Invalid(form, 'Username not found')
+            raise exc
+    else:
+        user = User.validate_user_password(value['username'], value['password'])
+        if not user:
+            exc = colander.Invalid(form, 'Username or password is incorrect')
+            exc['username'] = ''
+            exc['password'] = ''
+            raise exc
+
+    # Normalize username
+    value['username'] = user.username
+    value['_internal'] = {}
+    value['_internal']['user'] = user
+
+class SetPassword(CSRFSchema):
+    username = colander.SchemaNode(colander.String(), widget=deform.widget.HiddenWidget(), default=deferred_username_default, validator=deferred_username_validator)
+    password = colander.SchemaNode(colander.String(), title="Current password", validator=colander.Length(min=5), widget=deform.widget.PasswordWidget(size=20), description='Please enter your current password')
+    new_password = colander.SchemaNode(colander.String(), title="New password", validator=colander.Length(min=5), widget=deform.widget.CheckedPasswordWidget(size=20), description='Please enter your desired password, twice')
 
 def validate_token_matches(form, value):
     validate = UserValidation.find_token_username(value['token'], value['username'])
