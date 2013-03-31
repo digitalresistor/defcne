@@ -21,9 +21,14 @@
         <%block name="nav">
             <ul class="nav">
                 <li><a href="${request.route_url('defcne')}">Home</a></li>
-                <li><a href="${request.route_url('defcne')}">Events</a></li>
+                <li><a href="${request.route_url('defcne.e', traverse='')}">Events</a></li>
                 <li><a href="${request.route_url('defcne')}">Goons</a></li>
-                <li><a href="${request.route_url('defcne.user', traverse='auth')}">Authenticate</a></li>
+                % if request.user.username is None:
+                    <li><a href="${request.route_url('defcne.user', traverse='auth')}">Auth</a></li>
+                % else:
+                    <li><a href="${request.route_url('defcne.user', traverse='')}">Manage Account</a></li>
+                    <li><a href="${request.route_url('defcne.user', traverse='deauth')}">Deauth</a></li>
+                % endif
             </ul>
         </%block>
         </nav>
