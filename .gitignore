@@ -1,4 +1,13 @@
+# Ignore database files
 *.db
 *.sqlite
+
+# Ignore egg info
 *.egg-info
+
+# Ignore ini files
 *.ini
+
+# Ignore source distribution
+sdist
+dist
