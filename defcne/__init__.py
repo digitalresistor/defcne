@@ -113,12 +113,18 @@ def add_routes(config):
     config.add_route('defcne.event.name.edit', '/e/{defcon:\d{2}}/{eventname}/edit/')
 
 def add_views(config):
-    config.add_view('defcne.views.home.home', route_name='defcne', renderer='home.mako')
+    config.add_view('defcne.views.home.home',
+            route_name='defcne',
+            renderer='home.mako')
 
     # /user/
-    config.add_view('defcne.views.User', attr='user',
-            route_name='defcne.user', name='', renderer='user/user.mako',
-            request_method='GET', permission='view')
+    config.add_view('defcne.views.User',
+            attr='user',
+            route_name='defcne.user',
+            name='',
+            renderer='user/user.mako',
+            request_method='GET',
+            permission='view')
 
     # /user/create (GET/POST)
     config.add_view('defcne.views.User',
