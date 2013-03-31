@@ -226,7 +226,11 @@ class User(object):
         return HTTPSeeOther(location = self.request.route_url('defcne'), headers=headers)
 
     def user(self):
-        return {}
+        events = m.DBSession.query(m.Event).filter(m.Event.owner.contains(self.request.user.user)).all()
+        return {
+                'page_title': 'User',
+                'events': events,
+                }
 
     def edit(self):
         # Redirect to the right location if the user just went to /user/edit/
