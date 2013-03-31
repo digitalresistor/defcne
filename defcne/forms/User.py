@@ -24,7 +24,7 @@ def validate_unique_email(node, value):
 class UserForm(CSRFSchema):
     """The user registration form."""
     username = colander.SchemaNode(colander.String(), title="Username", validator=validate_unique_username)
-    realname = colander.SchemaNode(colander.String(), title="Name")
+    realname = colander.SchemaNode(colander.String(), title="Name", missing=unicode(''))
     email    = colander.SchemaNode(colander.String(), title="Email address", validator=colander.All(colander.Length(max=254), validate_unique_email))
     password = colander.SchemaNode(
                 colander.String(),
