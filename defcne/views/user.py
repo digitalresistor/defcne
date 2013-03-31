@@ -21,6 +21,7 @@ from ..forms import (
         LoginForm,
         LostPassword,
         ResetForm,
+        SetPassword,
         )
 
 from ..forms.User import (
@@ -28,6 +29,7 @@ from ..forms.User import (
         login_username_password_matches,
         lost_password_username_email_matches,
         reset_token_matches,
+        username_password_matches,
         )
 
 from .. import models as m
@@ -246,6 +248,52 @@ class User(object):
             return self.edit_profile_submit()
 
         raise HTTPNotFound()
+
+    def edit_password(self):
+        if self.request.user.user.credreset:
+            schema = SetPassword().clone()
+            del schema['password']
+            schema.bind(request=self.request)
+        else:
+            schema = SetPassword(validator=username_password_matches)
+
+        schema = schema.bind(request=self.request)
+
+        epf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        return {
+                'page_title': "Change password",
+                'form': epf.render(),
+                }
+
+    def edit_password_submit(self):
+        if self.request.user.user.credreset:
+            schema = SetPassword().clone()
+            del schema['password']
+        else:
+            schema = SetPassword(validator=username_password_matches)
+
+        controls = self.request.POST.items()
+        schema = schema.bind(request=self.request)
+        epf = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = epf.validate(controls)
+            user = self.request.user.user
+            user.credreset = False
+            user.credentials = appstruct['new_password']
+
+            m.DBSession.query(m.UserForgot).filter(m.UserForgot.user_id == user.id).delete()
+            m.DBSession.query(m.UserTickets).filter(m.UserTickets.user_id == user.id).delete()
+
+            self.request.session.flash('Password has been updated!', queue='user')
+            return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
+        except ValidationFailure, e:
+            return {
+                    'page_title': "Change password",
+                    'form': e.render(),
+                    }
+
         return {}
 
     def forgot(self):
@@ -301,6 +349,8 @@ class User(object):
             user = appstruct['_internal']['user']
             m.DBSession.query(m.UserForgot).filter(m.UserForgot.user_id == user.id).delete()
             m.DBSession.query(m.UserTickets).filter(m.UserTickets.user_id == user.id).delete()
+
+            user.credreset = True
 
             headers = remember(self.request, user.username)
             log.info('User "{user}" has requested to reset password. They are now logged in, sending to main page.'.format(user=appstruct['username']))
