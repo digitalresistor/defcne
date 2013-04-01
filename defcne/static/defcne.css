@@ -15,18 +15,51 @@
     padding-top: 20px;
 }
 
-header {
+body > header {
     border-bottom: 1px #000 solid;
 }
 
-nav {
+body > header > nav {
     position: relative;
     float: right;
 
     top: -20px;
+    margin-bottom: -20px;
 }
 
-nav ul.nav li {
+body > header > nav ul.nav li {
     display: inline-block;
     padding-left: 15px;
+}
+
+.event {
+    width: 440px;
+    height: 150px;
+    float: left;
+    padding-right: 10px;
+}
+
+.event .name {
+    height: 20px;
+    font-size: 30px;
+    padding: 5px;
+    border-bottom: 2px solid black;
+}
+
+.event .description {
+    padding: 5px;
+}
+
+.event .website {
+    text-align: right;
+
+    padding: 10px;
+}
+
+#Main {
+    margin-top: 20px;
+}
+
+#Content h1, #Content h2, #Content h3, #Content h4, #Content h5, #Content h6 {
+    margin-top: 0px;
 }
