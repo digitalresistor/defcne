@@ -9,4 +9,6 @@ from User import (
         SetPassword,
         )
 
+from Event import (
+        EventForm,
         )
