@@ -141,7 +141,8 @@ class User(object):
 
             headers = remember(self.request, appstruct['username'])
             log.info('User "{user}" has been validated.'.format(user=appstruct['username']))
-            return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='complete'), headers=headers)
+            self.request.session.flash('Your email has been validated, and your account has been successfully activated.', queue='user')
+            return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse=''), headers=headers)
 
         except ValidationFailure, e:
             return {
@@ -173,9 +174,6 @@ class User(object):
 
         controls = self.request.POST.items()
         return self._validate_form(controls)
-
-    def complete(self):
-        return {}
 
     def auth(self):
         if authenticated_userid(self.request) is not None:

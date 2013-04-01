@@ -166,15 +166,6 @@ def add_views(config):
             name='deauth',
             request_method='GET')
 
-    # /user/complete
-    config.add_view('defcne.views.User',
-            attr='complete',
-            route_name='defcne.user',
-            name='complete',
-            renderer='user/complete.mako',
-            request_method='GET',
-            permission='view')
-
     # /user/validate (GET/POST)
     config.add_view('defcne.views.User',
             attr='validate',
