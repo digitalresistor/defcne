@@ -33,6 +33,7 @@ from ..forms.User import (
         )
 
 from .. import models as m
+from ..models.Event import status_types as event_status_types
 
 from ..auth import (
         remember,
@@ -226,10 +227,17 @@ class User(object):
         return HTTPSeeOther(location = self.request.route_url('defcne'), headers=headers)
 
     def user(self):
-        events = m.DBSession.query(m.Event).filter(m.Event.owner.contains(self.request.user.user)).all()
+        events = m.DBSession.query(m.Event).filter(m.Event.owner.contains(self.request.user.user)).order_by(m.Event.disp_name).all()
+        eventlist = []
+        for event in events:
+            event_info = {}
+            event_info['name'] = event.disp_name
+            event_info['status'] = event_status_types[event.status]
+            eventlist.append(event_info)
+
         return {
                 'page_title': 'User',
-                'events': events,
+                'events': eventlist,
                 }
 
     def edit(self):
