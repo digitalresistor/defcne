@@ -101,6 +101,9 @@ def add_routes(config):
     # /e/*traverse
     config.add_route('defcne.e', '/e/*traverse', factory=acl.Events)
 
+    # /magic/*traverse
+    config.add_route('defcne.magic', '/magic/*traverse', factory=acl.Magic)
+
 def add_views(config):
     config.add_view('defcne.views.home.home',
             route_name='defcne',

@@ -56,3 +56,20 @@ class Event(object):
 
     def __getitem__(self, key):
         raise KeyError
+
+# The traversal for /magic/
+
+class Magic(object):
+    __acl__ = [
+                (Allow, 'group:administrators', 'view'),
+                (Allow, 'group:administrators', 'edit'),
+                (Allow, 'group:staff', 'view'),
+                (Allow, 'group:staff', 'edit'),
+              ]
+
+    def __init__(self, request):
+        pass
+
+    def __getitem__(self, key):
+        raise KeyError
+
