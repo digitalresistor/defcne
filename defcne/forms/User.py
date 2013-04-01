@@ -19,8 +19,6 @@ def deferred_username_default(node, kw):
     if request.user is None:
         print "No user found ..."
         raise ValueError('No user is logged in ...')
-
-    print "RETURNING", request.user.username
     return request.user.username
 
 @colander.deferred
