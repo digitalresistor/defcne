@@ -12,6 +12,15 @@ from User import (
         UserForgot,
         )
 
+from Event import (
+        Event,
+        EventPOC,
+        EventPower,
+        EventWiredDrop,
+        EventAP,
+        DefconEvents,
+        )
+
 from Defcon import (
         Defcon
         )
