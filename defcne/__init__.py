@@ -97,20 +97,9 @@ def add_routes(config):
     # /g/<dc>/<username>/
     config.add_route('defcne.g.username', '/g/{defcon:\d{2}}/{username}/')
 
-    # /e/
-    config.add_route('defcne.events', '/e/')
 
-    # /e/<dc>/
-    config.add_route('defcne.events.defcon', '/e/{defcon:\d{2}}/')
-
-    # /e/create/
-    config.add_route('defcne.event.create', '/e/create/')
-
-    # /e/<dc>/<eventshort>/
-    config.add_route('defcne.event.name', '/e/{defcon:\d{2}}/{eventname}/')
-
-    # /e/<dc>/<eventshort>/edit
-    config.add_route('defcne.event.name.edit', '/e/{defcon:\d{2}}/{eventname}/edit/')
+    # /e/*traverse
+    config.add_route('defcne.e', '/e/*traverse', factory=acl.Events)
 
 def add_views(config):
     config.add_view('defcne.views.home.home',
@@ -248,6 +237,60 @@ def add_views(config):
             renderer='user/form.mako',
             request_method='POST',
             check_csrf=True)
+
+    # /e/guidelines (GET)
+    config.add_view('defcne.views.Event',
+            attr='guidelines',
+            route_name='defcne.e',
+            name='guidelines',
+            renderer='event/rules.mako',
+            request_method='GET')
+
+    # /e/create (GET/POST)
+    config.add_view('defcne.views.Event',
+            attr='create',
+            route_name='defcne.e',
+            name='create',
+            renderer='event/form.mako',
+            request_method='GET',
+            permission='authenticated')
+
+    config.add_forbidden_view('defcne.views.Event',
+            attr='create_not_authed',
+            route_name='defcne.e',
+            #name='create',
+            renderer='event/accountneeded.mako',
+            request_method='GET')
+
+    config.add_view('defcne.views.Event',
+            attr='create_submit',
+            route_name='defcne.e',
+            name='create',
+            renderer='event/form.mako',
+            request_method='POST',
+            permission='authenticated',
+            check_csrf=True)
+
+    # /e/
+    config.add_view('defcne.views.Event',
+            attr='main',
+            route_name='defcne.e',
+            context=acl.Events,
+            request_method='GET')
+
+    config.add_view('defcne.views.Event',
+            attr='defcon',
+            route_name='defcne.e',
+            context=acl.DefconEvent,
+            renderer='event/all.mako',
+            request_method='GET')
+
+    config.add_view('defcne.views.Event',
+            attr='event',
+            route_name='defcne.e',
+            context=acl.Event,
+            renderer='event/one.mako',
+            request_method='GET')
 
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
