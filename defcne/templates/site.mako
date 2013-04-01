@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+    <!--
+    This is all Pyr0's fault.
+
+    Don't believe me? That's probably for the best.
+    -->
     <head><%block name="head">
         <title><%block name="title">DEFCON CnE</%block></title>
         <link rel="shortcut icon" href="${request.static_url('defcne:static/favicon.ico')}">
