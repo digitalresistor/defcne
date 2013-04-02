@@ -101,7 +101,7 @@ class Event(object):
                 event.aps.append(m.EventAP(hwmac=ap['hwmac'], apbrand=ap['apbrand'], ssid=ap['ssid']))
 
             event.owner.append(self.request.user.user)
-            event.dc.append(m.Defcon.find_defcon(21))
+            event.dc = 21;
 
             m.DBSession.add(event)
             m.DBSession.flush()
