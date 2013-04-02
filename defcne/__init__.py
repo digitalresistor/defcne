@@ -289,6 +289,15 @@ def add_views(config):
             renderer='event/one.mako',
             request_method='GET')
 
+    config.add_view('defcne.views.Event',
+            attr='manage',
+            route_name='defcne.e',
+            name='manage',
+            context=acl.Event,
+            renderer='event/manage.mako',
+            request_method='GET',
+            permission='manage')
+
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
 

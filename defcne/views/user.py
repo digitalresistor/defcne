@@ -231,6 +231,7 @@ class User(object):
             event_info = {}
             event_info['name'] = event.disp_name
             event_info['status'] = event_status_types[event.status]
+            event_info['url'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
             eventlist.append(event_info)
 
         return {
