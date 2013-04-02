@@ -153,3 +153,16 @@ class Event(object):
         print self.context.__name__
         return {}
 
+    def edit(self):
+        event = self.context.event
+        return {
+                'page_title': "Edit contest/event: {}".format(event.disp_name),
+                }
+
+    def manage(self):
+        event = self.context.event
+
+        return {
+                'page_title': "Manage contest/event: {}".format(event.disp_name),
+                }
+
