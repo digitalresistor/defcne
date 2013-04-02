@@ -18,7 +18,6 @@ from Event import (
         EventPower,
         EventWiredDrop,
         EventAP,
-        DefconEvents,
         )
 
 from Defcon import (

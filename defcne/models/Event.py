@@ -42,6 +42,7 @@ status_types = {
 class Event(Base):
     __table__ = Table('events', Base.metadata,
             Column('id', Integer, primary_key=True, unique=True),
+            Column('dc', Integer, ForeignKey('defcon.id', onupdate="CASCADE", ondelete="CASCADE")),
             Column('name', Unicode, unique=True, nullable=False),
             Column('disp_name', Unicode),
             Column('shortname', Unicode, unique=True, nullable=False),
@@ -58,12 +59,11 @@ class Event(Base):
             )
     CheckConstraint(__table__.c.status.in_(status_types.keys()))
 
-    pocs = relationship("EventPOC", lazy="noload")
-    power = relationship("EventPower", lazy="noload")
-    drops = relationship("EventWiredDrop", lazy="noload")
-    aps = relationship("EventAP", lazy="noload")
+    pocs = relationship("EventPOC")
+    power = relationship("EventPower")
+    drops = relationship("EventWiredDrop")
+    aps = relationship("EventAP")
     owner = relationship("User", secondary="user_events", lazy="join")
-    dc = relationship("Defcon", secondary="defcon_events", lazy="noload")
 
     _name = __table__.c.name
     _shortname = __table__.c.shortname
@@ -134,12 +134,4 @@ class UserEvents(Base):
             Column('eventid', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
 
             PrimaryKeyConstraint('userid', 'eventid'),
-            )
-
-class DefconEvents(Base):
-    __table__ = Table('defcon_events', Base.metadata,
-            Column('defconid', Integer, ForeignKey('defcon.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
-            Column('eventid', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
-
-            PrimaryKeyConstraint('defconid', 'eventid'),
             )

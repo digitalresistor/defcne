@@ -23,7 +23,7 @@ class Defcon(Base):
             Column('url', Unicode(256), index=True),
             )
 
-    events = relationship("Event", secondary="defcon_events", lazy="noload")
+    events = relationship("Event", lazy="noload")
 
     @classmethod
     def find_defcon(cls, num):
