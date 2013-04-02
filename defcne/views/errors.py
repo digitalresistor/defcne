@@ -17,7 +17,8 @@ def bad_request(context, request):
 def forbidden(context, request):
     # do not allow a user to login if they are already logged in
     if authenticated_userid(request):
-        return HTTPForbidden()
+        request.response.status_int = 403
+        return {}
 
     loc = request.route_url('defcne.user', traverse='auth', _query=(('next', request.path),))
     return HTTPSeeOther(location=loc)
