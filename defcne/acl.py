@@ -47,12 +47,33 @@ class DefconEvent(object):
         self.dc = dc
 
     def __getitem__(self, key):
-        return Event(self, key)
+        event = m.Event.find_event_short(key)
+
+        if event is None:
+            return None
+        else:
+            return Event(self, event)
 
 class Event(object):
-    def __init__(self, dc, name):
+    @property
+    def __acl__(self):
+
+        acl = [
+                (Allow, "group:administrators", 'edit'),
+                (Allow, "group:administrators", 'view'),
+                (Allow, "group:staff", 'edit'),
+                (Allow, "group:staff", 'view'),
+                ]
+
+        for user in self.event.owner:
+            acl.append((Allow, "userid:{id}".format(id=user.id), 'edit'))
+            acl.append((Allow, "userid:{id}".format(id=user.id), 'manage'))
+        return acl
+
+    def __init__(self, dc, event):
         self.__parent__ = self.dc = dc
-        self.__name__ = self.name = name
+        self.event = event
+        self.__name__ = event.shortname
 
     def __getitem__(self, key):
         raise KeyError
