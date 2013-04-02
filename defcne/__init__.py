@@ -10,6 +10,8 @@ from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 
+from pyramid.httpexceptions import HTTPForbidden
+
 import deform_bootstrap
 
 from sqlalchemy import engine_from_config
@@ -249,10 +251,11 @@ def add_views(config):
             request_method='GET',
             permission='authenticated')
 
-    config.add_forbidden_view('defcne.views.Event',
+    config.add_view('defcne.views.Event',
             attr='create_not_authed',
             route_name='defcne.e',
-            #name='create',
+            context=HTTPForbidden,
+            name='create',
             renderer='event/accountneeded.mako',
             request_method='GET')
 
