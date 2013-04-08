@@ -26,7 +26,7 @@ class ContestEventEvents(object):
 class ContestEventCreated(ContestEventEvents):
     pass
 
-class ContestEventUpdated(object):
+class ContestEventUpdated(ContestEventEvents):
     pass
 
 
