@@ -20,6 +20,7 @@ requires = [
     'deform',
     'deform_bootstrap',
     'pyramid_deform',
+    'pyramid_mailer',
     ]
 
 setup(name='defcne',
