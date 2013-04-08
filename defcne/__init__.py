@@ -298,6 +298,25 @@ def add_views(config):
             request_method='GET',
             permission='manage')
 
+    config.add_view('defcne.views.Event',
+            attr='edit',
+            route_name='defcne.e',
+            name='edit',
+            context=acl.Event,
+            renderer='event/edit.mako',
+            request_method='GET',
+            permission='edit')
+
+    config.add_view('defcne.views.Event',
+            attr='edit_submit',
+            route_name='defcne.e',
+            name='edit',
+            context=acl.Event,
+            renderer='event/edit.mako',
+            request_method='POST',
+            permission='edit',
+            check_csrf=True)
+
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
 

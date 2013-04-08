@@ -156,14 +156,182 @@ class Event(object):
 
     def edit(self):
         event = self.context.event
+
+        e = {}
+        e['name'] = event.name
+        e['url'] = {}
+        e['url']['manage'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit'))
+        e['url']['tickets'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'tickets'))
+
+        astruct = {}
+        astruct['website'] = event.website
+        astruct['hrsoperation'] = event.hrsofoperation
+        astruct['represent'] = event.represent
+        astruct['name'] = event.disp_name
+        astruct['shortname'] = event.shortname
+        astruct['description'] = event.description
+        astruct['numparticipants'] = event.numparticipants
+        astruct['tables'] = event.tables
+        astruct['power'] = [{'id': p.id, 'outlets': p.outlets, 'amps': p.amps, 'justify': p.justification} for p in event.power]
+        astruct['pocs'] = [{'id': p.id, 'email': p.email, 'cellphone': p.cellphone, 'name': p.name} for p in event.pocs]
+        astruct['wiredaccess'] = [{'id': w.id, 'justify': w.justification, 'typeof': w.typeof} for w in event.drops]
+        astruct['wirelessap'] = [{'id': w.id, 'ssid': w.ssid, 'apbrand': w.apbrand, 'hwmac': w.hwmac} for w in event.aps]
+
+        schema = EventForm().bind(request=self.request)
+        if event.logo:
+            schema['logo'].description = "A logo has already been uploaded. Uploading a new logo will overwrite the previous logo!"
+
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
         return {
-                'page_title': "Edit contest/event: {}".format(event.disp_name),
+                'page_title': 'Edit contest/event: {}'.format(event.disp_name),
+                'event': e,
+                'form': f.render(astruct),
                 }
+
+    def edit_submit(self):
+        event = self.context.event
+
+        e = {}
+        e['name'] = event.name
+        e['url'] = {}
+        e['url']['manage'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit'))
+        e['url']['tickets'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'tickets'))
+
+        controls = self.request.POST.items()
+        schema = EventForm().bind(request=self.request, eventname=event.disp_name, shortname=event.shortname)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            if appstruct['logo'] is not None:
+                logo_path = '/' + string.replace(str(uuid4()), '-', '/') + os.path.splitext(appstruct['logo']['filename'])[1]
+                logo_save = self.request.registry.settings['defcne.upload_path'] + logo_path
+                logo_save_path = os.path.dirname(logo_save)
+
+                try:
+                    os.makedirs(logo_save_path)
+                except:
+                    raise HTTPInternalServerError()
+
+                with open(logo_save, 'w+b') as f:
+                    appstruct['logo']['fp'].seek(0)
+                    shutil.copyfileobj(appstruct['logo']['fp'], f)
+            else:
+                logo_path = None
+
+            event.name=appstruct['name']
+            event.shortname=appstruct['shortname']
+            event.description=appstruct['description']
+            event.website=appstruct['website']
+            if logo_path is not None:
+                event.logo=logo_path
+            event.hrsofoperation=appstruct['hrsoperation']
+            event.tables=appstruct['tables']
+            event.chairs=appstruct['chairs']
+            event.represent=appstruct['represent']
+            event.numparticipants=appstruct['numparticipants']
+
+            new_power_ids = set([p['id'] for p in appstruct['power'] if p['id'] != -1])
+            cur_power_ids = set([p.id for p in event.power])
+            del_power_ids = cur_power_ids - new_power_ids
+
+            if len(del_power_ids):
+                for power in event.power:
+                    if power.id in del_power_ids:
+                        m.DBSession.delete(power)
+
+            for power in appstruct['power']:
+                if power['id'] in cur_power_ids:
+                    cur_power = [p for p in event.power if p.id == power['id']][0]
+                    cur_power.amps = power['amps']
+                    cur_power.outlets = power['outlets']
+                    cur_power.justification = power['justify']
+                else:
+                    event.power.append(m.EventPower(amps=power['amps'], outlets=power['outlets'], justification=power['justify']))
+
+            new_poc_ids = set([p['id'] for p in appstruct['pocs'] if p['id'] != -1])
+            cur_poc_ids = set([p.id for p in event.pocs])
+            del_poc_ids = cur_poc_ids - new_poc_ids
+
+            if len(del_poc_ids):
+                for poc in event.pocs:
+                    if poc.id in del_poc_ids:
+                        m.DBSession.delete(poc)
+
+            for poc in appstruct['pocs']:
+                if poc['id'] in cur_poc_ids:
+                    cur_poc = [p for p in event.pocs if p.id == poc['id']][0]
+                    cur_poc.name = poc['name']
+                    cur_poc.email = poc['email']
+                    cur_poc.cellphone = poc['cellphone']
+                else:
+                    event.pocs.append(m.EventPOC(name=poc['name'], email=poc['email'], cellphone=poc['cellphone']))
+
+            new_drop_ids = set([d['id'] for d in appstruct['wiredaccess'] if d['id'] != -1])
+            cur_drop_ids = set([d.id for d in event.drops])
+            del_drop_ids = cur_drop_ids - new_drop_ids
+
+            if len(del_drop_ids):
+                for drop in event.drops:
+                    if drop.id in del_drop_ids:
+                        m.DBSession.delete(drop)
+
+            for drop in appstruct['wiredaccess']:
+                if drop['id'] in cur_drop_ids:
+                    cur_drop = [d for d in event.drops if d.id == drop['id']][0]
+                    cur_drop.typeof = drop['typeof']
+                    cur_drop.justification = drop['justify']
+                else:
+                    event.drops.append(m.EventWiredDrop(typeof=drop['typeof'], justification=drop['justify']))
+
+            new_ap_ids = set([a['id'] for a in appstruct['wirelessap'] if a['id'] != -1])
+            cur_ap_ids = set([a.id for a in event.aps])
+            del_ap_ids = cur_ap_ids - new_ap_ids
+
+            if len(del_ap_ids):
+                for ap in event.aps:
+                    if ap.id in del_ap_ids:
+                        m.DBSession.delete(ap)
+
+            for ap in appstruct['wirelessap']:
+                if ap['id'] in cur_ap_ids:
+                    cur_ap = [a for a in event.aps if a.id == ap['id']][0]
+                    cur_ap.hwmac = ap['hwmac']
+                    cur_ap.apbrand = ap['apbrand']
+                    cur_ap.ssid = ap['ssid']
+                else:
+                    event.aps.append(m.EventAP(hwmac=ap['hwmac'], apbrand=ap['apbrand'], ssid=ap['ssid']))
+
+            self.request.session.flash('Your contest/event has been updated!', queue='event')
+            return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage')))
+        except ValidationFailure, ef:
+            return {
+                'form': ef.render(),
+                'page_title': 'Edit contest/event: {}'.format(event.disp_name),
+                'event': e,
+                }
+
+        return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit')))
 
     def manage(self):
         event = self.context.event
 
+        e = {}
+        e['name'] = event.name
+        e['description'] = event.description
+        e['website'] = event.website
+        e['owner'] = [x.disp_uname for x in event.owner]
+        e['url'] = {}
+        e['url']['manage'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit'))
+        e['url']['tickets'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'tickets'))
+
         return {
                 'page_title': "Manage contest/event: {}".format(event.disp_name),
+                'event': e,
                 }
 
