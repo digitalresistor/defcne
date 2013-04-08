@@ -117,10 +117,7 @@ class User(object):
                     continue
 
             validate_url = self.request.route_url('defcne.user', traverse='validate', _query=(('username', user.username), ('token', uservalidation.token)))
-            log.info("Created a new user \"{user}\" with token \"{token}\". {url}".format(user=user.username, token=uservalidation.token, url=validate_url))
-            # Send out validation email to email address on for user
 
-            # Redirect user to waiting on validation
             return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='validate'))
         except ValidationFailure, e:
             return {

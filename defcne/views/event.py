@@ -26,11 +26,8 @@ from ..forms import (
         EventForm,
         )
 
-#from ..forms.Event import (
-#        )
 
 from .. import models as m
-
 
 class Event(object):
     """View for Event functionality"""
@@ -158,7 +155,6 @@ class Event(object):
                 }
 
     def event(self):
-        print self.context.__name__
         return {}
 
     def edit(self):

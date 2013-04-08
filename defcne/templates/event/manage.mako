@@ -13,4 +13,3 @@
 <%block name="title">${parent.title()} ${' - ' + page_title if page_title else ''}</%block>
 <%block name="flash"><%include file="../flash.mako" args="queue_name='event', alert_type='success'" /></%block>
 
-
