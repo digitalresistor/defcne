@@ -40,6 +40,10 @@ from ..auth import (
         forget,
         )
 
+from ..events import (
+        UserRegistered,
+        )
+
 _auth_explain = """
 <p>If you have a user account you may authenticate to the left, if you do not currently have an account you may <a href="{create_url}">create an account</a>.</p>
 <p>If you have forgotten your username and password please visit the <a href="{forgot_url}">forgot my password</a> page.</p>
@@ -118,6 +122,8 @@ class User(object):
 
             validate_url = self.request.route_url('defcne.user', traverse='validate', _query=(('username', user.username), ('token', uservalidation.token)))
 
+            self.request.registry.notify(UserRegistered(self.request, self.context, user, validate_url=validate_url, token=uservalidation.token))
+            log.info("Created a new user \"{user}\" with token \"{token}\". {url}".format(user=user.username, token=uservalidation.token, url=validate_url))
             return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='validate'))
         except ValidationFailure, e:
             return {
