@@ -42,6 +42,8 @@ from ..auth import (
 
 from ..events import (
         UserRegistered,
+        UserForgetPassword,
+        UserChangedPassword,
         )
 
 _auth_explain = """
@@ -373,7 +375,7 @@ class User(object):
 
             reset_url = self.request.route_url('defcne.user', traverse='reset', _query=(('username', user.username), ('token', userforgot.token)))
 
-            self.request.registry.notify(UserForgetPassword(self.request, self.context, user, reset_url=validate_url, token=userforgot.token))
+            self.request.registry.notify(UserForgetPassword(self.request, self.context, user, reset_url=reset_url, token=userforgot.token))
             log.info("User \"{user}\" forgot password, generated token \"{token}\". {url}".format(user=user.username, token=userforgot.token, url=reset_url))
 
             location = self.request.route_url('defcne.user', traverse='reset')
