@@ -62,7 +62,7 @@ def main(global_config, **settings):
     config.set_authorization_policy(_authz_policy)
     config.include(add_routes)
     config.include(add_views)
-#    config.include(add_events)
+    config.include(add_events)
 
     deform_bootstrap.includeme(config)
 
@@ -312,6 +312,13 @@ def add_views(config):
     config.add_forbidden_view('defcne.views.errors.forbidden', renderer='forbidden.mako')
 
 def add_events(config):
-    pass
-#    config.add_subscriber('usingnamespace.events.view_helpers.view_helpers',
-#            'pyramid.events.BeforeRender')
+    config.add_subscriber('defcne.subscribers.user_created',
+            'defcne.events.UserRegistered')
+    config.add_subscriber('defcne.subscribers.user_forgotpassword',
+            'defcne.events.UserForgetPassword')
+    config.add_subscriber('defcne.subscribers.user_passwordupdated',
+            'defcne.events.UserChangedPassword')
+    config.add_subscriber('defcne.subscribers.cne_created',
+            'defcne.events.ContestEventCreated')
+    config.add_subscriber('defcne.subscribers.cne_updated',
+            'defcne.events.ContestEventUpdated')
