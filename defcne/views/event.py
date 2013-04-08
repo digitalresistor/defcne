@@ -116,6 +116,13 @@ class Event(object):
                 }
 
     def create_not_authed(self):
+        if 'create' not in self.request.path:
+            self.request.override_renderer = 'not_found.mako'
+            self.request.status_int = 404
+            return {}
+
+        self.request.override_renderer='event/accountneeded.mako'
+
         if 'letsgo' in self.request.subpath:
             return {}
         else:

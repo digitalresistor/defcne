@@ -239,14 +239,6 @@ def add_views(config):
             permission='authenticated')
 
     config.add_view('defcne.views.Event',
-            attr='create_not_authed',
-            route_name='defcne.e',
-            context=HTTPForbidden,
-            name='create',
-            renderer='event/accountneeded.mako',
-            request_method='GET')
-
-    config.add_view('defcne.views.Event',
             attr='create_submit',
             route_name='defcne.e',
             name='create',
@@ -303,6 +295,13 @@ def add_views(config):
             request_method='POST',
             permission='edit',
             check_csrf=True)
+
+    config.add_view('defcne.views.Event',
+            attr='create_not_authed',
+            route_name='defcne.e',
+            context=HTTPForbidden,
+            renderer='',
+            request_method='GET')
 
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
