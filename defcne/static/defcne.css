@@ -63,3 +63,10 @@ body > header > nav ul.nav li {
 #Content h1, #Content h2, #Content h3, #Content h4, #Content h5, #Content h6 {
     margin-top: 0px;
 }
+
+footer {
+    border-top: 1px #eee solid;
+    margin-top: 20px;
+    text-align: right;
+    font-size: 80%;
+}

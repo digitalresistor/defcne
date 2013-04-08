@@ -4,6 +4,8 @@
     This is all Pyr0's fault.
 
     Don't believe me? That's probably for the best.
+
+    Tech stack: Python, Pyramid, SQLAlchemy, Deform, PostgreSQL and hosted on FreeBSD
     -->
     <head><%block name="head">
         <title><%block name="title">DEFCON CnE</%block></title>
@@ -50,7 +52,9 @@
         </%block>
 
         <footer>
-        <%block name="footer"></%block>
+        <%block name="footer">
+        <div>Copyright (c) 2013 - <a href="${request.route_url('defcne', traverse='')}">DEFCnE</a>. Created by <a href="http://bertjwregeer.com/">Bert JW Regeer</a>. Powered by <a href="http://www.pylonsproject.org">Pyramid</a>.</div>
+        </%block>
         </footer>
     </body>
     <%block name="javascript_end">
