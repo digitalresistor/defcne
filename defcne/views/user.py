@@ -205,6 +205,25 @@ class User(object):
             appstruct = af.validate(controls)
             user = appstruct['_internal']['user']
 
+            if user.validated is False:
+                # Create new validation token
+                while 1:
+                    sp = transaction.savepoint()
+                    try:
+                        uservalidation = m.UserValidation(user_id=user.id, token=unicode(uuid4()))
+                        m.DBSession.add(uservalidation)
+                        m.DBSession.flush()
+                        break
+                    except IntegrityError, e:
+                        sp.rollback()
+                        continue
+
+                validate_url = self.request.route_url('defcne.user', traverse='validate', _query=(('username', user.username), ('token', uservalidation.token)))
+
+                self.request.registry.notify(UserRegistered(self.request, self.context, user, validate_url=validate_url, token=uservalidation.token))
+                log.info("Resent validation email for \"{user}\" with token \"{token}\". {url}".format(user=user.username, token=uservalidation.token, url=validate_url))
+                return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='validate'))
+
             headers = remember(self.request, user.username)
             log.info('Logging in "{user}"'.format(user=user.username))
 
