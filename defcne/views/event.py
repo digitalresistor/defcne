@@ -327,7 +327,10 @@ class Event(object):
         e['name'] = event.name
         e['description'] = event.description
         e['website'] = event.website
+        e['tables'] = event.tables
+        e['chairs'] = event.chairs
         e['owner'] = [x.disp_uname for x in event.owner]
+        e['pocs'] = [x.name for x in event.pocs]
         e['url'] = {}
         e['url']['manage'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
         e['url']['edit'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit'))
