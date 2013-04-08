@@ -48,6 +48,7 @@ def upload_widget(node, kw):
 
 class EventPOC(colander.Schema):
     """Form that gets event point of contacts"""
+    id = colander.SchemaNode(colander.String(), widget=deform.widget.HiddenWidget(), title="id", default=-1)
     name = colander.SchemaNode(colander.String(), title="Name")
     email = colander.SchemaNode(colander.String(), title="Email address")
     cellphone = colander.SchemaNode(colander.String(), title="Cell phone", missing=unicode(''))
@@ -56,6 +57,7 @@ class EventPOCS(colander.SequenceSchema):
     poc = EventPOC(title="Staff")
 
 class EventPower(colander.Schema):
+    id = colander.SchemaNode(colander.String(), widget=deform.widget.HiddenWidget(), title="id", default=-1)
     amps = colander.SchemaNode(colander.Int(), title="Amps required")
     outlets = colander.SchemaNode(colander.Int(), title="Outlets required")
     justify = colander.SchemaNode(colander.String(), title="Justification", description="Please justify your requirement.")
@@ -64,6 +66,7 @@ class EventPowers(colander.SequenceSchema):
     power = EventPower()
 
 class EventDrop(colander.Schema):
+    id = colander.SchemaNode(colander.String(), widget=deform.widget.HiddenWidget(), title="id", default=-1)
     typeof = colander.SchemaNode(colander.String(), title="Preferred", default='copper', widget=deform.widget.SelectWidget(values=(('copper', 'Copper'), ('fiber', 'Fiber'))), description="Choice may not be available. We will do our best!")
     justify = colander.SchemaNode(colander.String(), title="Justification", description="Please justify your requirement.")
 
@@ -71,6 +74,7 @@ class EventDrops(colander.SequenceSchema):
     drop = EventDrop()
 
 class EventAP(colander.Schema):
+    id = colander.SchemaNode(colander.String(), widget=deform.widget.HiddenWidget(), title="id", default=-1)
     hwmac = colander.SchemaNode(colander.String(), title="Wireless MAC address")
     apbrand = colander.SchemaNode(colander.String(), title="Brand Name")
     ssid = colander.SchemaNode(colander.String(), title="SSID")
