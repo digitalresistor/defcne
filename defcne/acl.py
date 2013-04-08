@@ -10,11 +10,38 @@ from pyramid.security import (
         Everyone,
         )
 
+import models as m
+
+# The traversal for /user/
+
 class User(object):
     __acl__ = [
                 (Allow, Authenticated, 'view'),
                 (Allow, Authenticated, 'edit'),
               ]
+
+    def __init__(self, request):
+        pass
+
+    def __getitem__(self, key):
+        raise KeyError
+
+# The traversal for /u/
+
+class Username(object):
+    __acl__ = []
+
+    def __init__(self, request):
+        pass
+
+    def __getitem__(self, key):
+        raise KeyError
+
+
+# The traversal for /g/
+
+class Goons(object):
+    __acl__ = []
 
     def __init__(self, request):
         pass
