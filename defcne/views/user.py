@@ -124,6 +124,8 @@ class User(object):
 
             self.request.registry.notify(UserRegistered(self.request, self.context, user, validate_url=validate_url, token=uservalidation.token))
             log.info("Created a new user \"{user}\" with token \"{token}\". {url}".format(user=user.username, token=uservalidation.token, url=validate_url))
+
+            self.request.session.flash('Your account has been created, an validation email has been sent to your email address.', queue='user')
             return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='validate'))
         except ValidationFailure, e:
             return {
@@ -222,6 +224,7 @@ class User(object):
 
                 self.request.registry.notify(UserRegistered(self.request, self.context, user, validate_url=validate_url, token=uservalidation.token))
                 log.info("Resent validation email for \"{user}\" with token \"{token}\". {url}".format(user=user.username, token=uservalidation.token, url=validate_url))
+                self.request.session.flash('Your account still needs to be validated, please check your email account. The email has been resent to {email}'.format(email=user.email), queue='user')
                 return HTTPSeeOther(location = self.request.route_url('defcne.user', traverse='validate'))
 
             headers = remember(self.request, user.username)
@@ -320,6 +323,7 @@ class User(object):
             m.DBSession.query(m.UserTickets).filter(m.UserTickets.user_id == user.id).delete()
 
             self.request.session.flash('Password has been updated!', queue='user')
+            self.request.registry.notify(UserChangedPassword(self.request, self.context, user))
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
         except ValidationFailure, e:
             return {
@@ -368,6 +372,8 @@ class User(object):
             m.DBSession.add(userforgot)
 
             reset_url = self.request.route_url('defcne.user', traverse='reset', _query=(('username', user.username), ('token', userforgot.token)))
+
+            self.request.registry.notify(UserForgetPassword(self.request, self.context, user, reset_url=validate_url, token=userforgot.token))
             log.info("User \"{user}\" forgot password, generated token \"{token}\". {url}".format(user=user.username, token=userforgot.token, url=reset_url))
 
             location = self.request.route_url('defcne.user', traverse='reset')

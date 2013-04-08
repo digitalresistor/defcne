@@ -26,6 +26,10 @@ from ..forms import (
         EventForm,
         )
 
+from ..events import (
+        ContestEventCreated,
+        ContestEventUpdated,
+        )
 
 from .. import models as m
 
@@ -103,6 +107,7 @@ class Event(object):
             m.DBSession.add(event)
             m.DBSession.flush()
 
+            self.request.registry.notify(ContestEventCreated(self.request, self.context, event))
             self.request.session.flash('Your contest or event has been created. The staff has been notified!', queue='event')
             return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage')))
         except ValidationFailure, e:
@@ -309,6 +314,7 @@ class Event(object):
                 else:
                     event.aps.append(m.EventAP(hwmac=ap['hwmac'], apbrand=ap['apbrand'], ssid=ap['ssid']))
 
+            self.request.registry.notify(ContestEventUpdated(self.request, self.context, event))
             self.request.session.flash('Your contest/event has been updated!', queue='event')
             return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage')))
         except ValidationFailure, ef:
