@@ -27,7 +27,7 @@
             <ul class="nav">
                 <li><a href="${request.route_url('defcne')}">Home</a></li>
                 <li><a href="${request.route_url('defcne.e', traverse='')}">Events</a></li>
-                <li><a href="${request.route_url('defcne')}">Goons</a></li>
+                <!-- <li><a href="${request.route_url('defcne')}">Goons</a></li> -->
                 % if request.user.username is None:
                     <li><a href="${request.route_url('defcne.user', traverse='auth')}">Auth</a></li>
                 % else:
