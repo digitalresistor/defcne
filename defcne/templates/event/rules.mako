@@ -1,6 +1,5 @@
 <%inherit file="../site.mako" />
 
-<%block name="maincontent">
 <h1>Create Contest or Event</h1>
 
 
@@ -56,8 +55,5 @@
         </div>
     </div>
 </div>
-
-
-</%block>
 
 <%block name="title">${parent.title()} - Create Contest or Event</%block>
