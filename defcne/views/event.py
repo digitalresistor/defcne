@@ -106,7 +106,8 @@ class Event(object):
             m.DBSession.add(event)
             m.DBSession.flush()
 
-            return {}
+            self.request.session.flash('Your contest or event has been created. The staff has been notified!', queue='event')
+            return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage')))
         except ValidationFailure, e:
             return {
                 'form': e.render(),
