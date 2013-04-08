@@ -82,17 +82,31 @@ class EventAP(colander.Schema):
 class EventAPS(colander.SequenceSchema):
     ap = EventAP()
 
+@colander.deferred
+def deferred_event_verify_name_not_used(node, kw):
+    def event_verify_name_not_used(node, value):
+        if 'eventname' in kw:
+            if kw.get('eventname') == value:
+                return
 
-def event_verify_name_not_used(node, value):
-    if m.Event.find_event(value) != None:
-        raise colander.Invalid(node, msg='Event name already exists. Please choose another name.')
+        if m.Event.find_event(value) != None:
+            raise colander.Invalid(node, msg='Event name already exists. Please choose another name.')
+    return event_verify_name_not_used
 
-def event_verify_shortname_not_used(node, value):
-    if ' ' in value:
-        raise colander.Invalid(node, msg='Short name should not contain any spaces.')
+@colander.deferred
+def deferred_event_verify_shortname_not_used(node, kw):
+    def event_verify_shortname_not_used(node, value):
+        if ' ' in value:
+            raise colander.Invalid(node, msg='Short name should not contain any spaces.')
 
-    if m.Event.find_event_short(value) != None:
-        raise colander.Invalid(node, msg='Short name already exists. Please choose another name.')
+        if 'shortname' in kw:
+            if kw.get('shortname') == value:
+                return
+
+        if m.Event.find_event_short(value) != None:
+            raise colander.Invalid(node, msg='Short name already exists. Please choose another name.')
+
+    return event_verify_shortname_not_used
 
 def event_verify_website_name(node, value):
     if value == '':
@@ -111,8 +125,8 @@ def event_verify_website_name(node, value):
 
 class EventForm(CSRFSchema):
     """The Event registration form ... """
-    name = colander.SchemaNode(colander.String(), title="Contest/Event Name", validator=event_verify_name_not_used)
-    shortname = colander.SchemaNode(colander.String(), title="Short Name", description="A short name that doesn't include spaces", validator=event_verify_shortname_not_used)
+    name = colander.SchemaNode(colander.String(), title="Contest/Event Name", validator=deferred_event_verify_name_not_used)
+    shortname = colander.SchemaNode(colander.String(), title="Short Name", description="A short name that doesn't include spaces. Once created, it can't be changed!", validator=deferred_event_verify_shortname_not_used)
     description = colander.SchemaNode(colander.String(), title="Description", widget=deform.widget.TextAreaWidget(rows=5, cols=60))
     website = colander.SchemaNode(colander.String(), title="Website URL", missing=unicode(''), validator=event_verify_website_name)
     logo  = colander.SchemaNode(deform.FileData(), widget = upload_widget, missing=None)
