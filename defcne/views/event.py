@@ -108,7 +108,7 @@ class Event(object):
 
             if len(appstruct['otherrequests']['ticket']) != 0:
                 ticket = m.Ticket(ticket=appstruct['otherrequests']['ticket'], user=self.request.user.user)
-                event.ticket.append(ticket)
+                event.tickets.append(ticket)
 
             m.DBSession.add(event)
             m.DBSession.flush()
