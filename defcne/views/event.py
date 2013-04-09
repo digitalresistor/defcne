@@ -192,6 +192,7 @@ class Event(object):
         schema = EventForm().bind(request=self.request)
         if event.logo:
             schema['logo'].description = "A logo has already been uploaded. Uploading a new logo will overwrite the previous logo!"
+        del schema['otherrequests']
 
         f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
 
@@ -213,6 +214,7 @@ class Event(object):
 
         controls = self.request.POST.items()
         schema = EventForm().bind(request=self.request, eventname=event.disp_name, shortname=event.shortname)
+        del schema['otherrequests']
         f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
 
         try:
