@@ -36,10 +36,12 @@ defaults = {
         'user_groups': [
             (u'X-Istence', u'administrators'),
             (u'X-Istence', u'goons'),
+            (u'X-Istence', u'staff'),
             (u'pyr0', u'administrators'),
+            (u'pyr0', u'staff'),
             ],
         'defcon': [
-            (21, 'http://www.defcon.org'),
+            (21, u'http://www.defcon.org'),
             ]
         }
 
