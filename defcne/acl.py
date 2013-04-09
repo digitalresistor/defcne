@@ -62,7 +62,7 @@ class Events(object):
     def __getitem__(self, key):
         try:
             if key == 'create':
-                return EventCreate(self.request)
+                return EventCreate(self, self.request)
 
             dc = int(key)
             return DefconEvent(self, dc)
@@ -71,7 +71,9 @@ class Events(object):
             raise KeyError
 
 class EventCreate(object):
-    def __init__(self, request):
+    def __init__(self, parent, request):
+        self.__parent__ = parent
+        self.__name__ = 'create'
         self.request = request
 
     def __getitem__(self, key):

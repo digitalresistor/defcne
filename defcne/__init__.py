@@ -235,7 +235,6 @@ def add_views(config):
             attr='create',
             route_name='defcne.e',
             context=acl.EventCreate,
-            name='',
             renderer='event/form.mako',
             request_method='GET',
             permission='create')
