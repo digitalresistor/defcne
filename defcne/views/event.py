@@ -123,6 +123,10 @@ class Event(object):
         else:
             return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse='guidelines'))
 
+    def not_authed(self):
+        self.request.status_int = 404
+        return {}
+
     def guidelines(self):
         return {}
 

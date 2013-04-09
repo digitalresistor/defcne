@@ -314,11 +314,16 @@ def add_views(config):
             permission='edit',
             check_csrf=True)
 
+    # If the user attempts to access a page that requires authorization, but
+    # they are not logged in, instead of sending them to the login page, we
+    # simply send them a not found page. Maybe not as nice for the user if they
+    # thought they were logged in, but at least management URL's don't get
+    # "advertised" with a "please login =)"
     config.add_view('defcne.views.Event',
-            attr='create_not_authed',
-            route_name='defcne.e',
+            attr='not_authed',
             context=HTTPForbidden,
-            renderer='',
+            containment=acl.Event,
+            renderer='not_found.mako',
             request_method='GET')
 
     # Error pages
