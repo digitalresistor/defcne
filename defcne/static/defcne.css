@@ -72,11 +72,17 @@ footer {
 }
 
 .extrainfo {
-    border: 1px #000 solid;
+    border: 1px #ddd solid;
     margin-bottom: 20px;
+}
+
+.extrainfo p {
     padding: 10px;
 }
 
 .extrainfo .userdate {
     border-top: 1px #eee solid;
+    background-color: #f7f7f9;
+    padding: 10px;
+    padding-top: 5px;
 }

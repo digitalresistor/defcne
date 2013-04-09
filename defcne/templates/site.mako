@@ -5,7 +5,7 @@
 
     Don't believe me? That's probably for the best.
 
-    Tech stack: Python, Pyramid, SQLAlchemy, Deform, PostgreSQL and hosted on FreeBSD
+    Tech stack: FreeBSD, PostgreSQL, Python, Pyramid, SQLAlchemy, Deform, Bootstrap
     -->
     <head><%block name="head">
         <title><%block name="title">DEFCON CnE</%block></title>
