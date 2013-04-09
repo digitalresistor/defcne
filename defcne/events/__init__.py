@@ -30,7 +30,7 @@ class ContestEventUpdated(ContestEventEvents):
     pass
 
 
-class ContestEventTicket(object):
+class ContestEventTicket(ContestEventEvents):
     def __init__(self, ticket, *args, **kw):
         self.ticket = ticket
         super(ContestEventTicket, self).__init__(*args, **kw)
