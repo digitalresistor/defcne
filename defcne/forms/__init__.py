@@ -12,3 +12,7 @@ from User import (
 from Event import (
         EventForm,
         )
+
+from Ticket import (
+        TicketForm,
+        )
