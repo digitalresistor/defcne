@@ -50,8 +50,24 @@ def user_forgotpassword(event):
     message = Message(subject="DEFCnE Reset Account", sender="defcne@defcne.net", recipients=[event.user.email], body=text)
     get_mailer(event.request).send(message)
 
+
+__user_passwordupdated__ = """DEFCnE Password Updated
+
+You, hopefully, changed your password. If you have not changed your password,
+your account was most likely compromised.
+
+If you think your account may have been compromised, reset your password and
+change it!
+
+Thanks,
+DEFCnE Team"""
+
 def user_passwordupdated(event):
-    pass
+    # Send the user an email when their password is updated
+
+    text = __user_passwordupdated__
+    message = Message(subject="DEFCnE Password Updated", sender="defcne@defcne.net", recipients=[event.user.email], body=text)
+    get_mailer(event.request).send(message)
 
 def cne_created(event):
     pass
