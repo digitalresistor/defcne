@@ -64,6 +64,7 @@ class Event(Base):
     drops = relationship("EventWiredDrop")
     aps = relationship("EventAP")
     owner = relationship("User", secondary="user_events", lazy="join")
+    tickets = relationship("Ticket")
 
     _name = __table__.c.name
     _shortname = __table__.c.shortname
