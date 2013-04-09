@@ -351,3 +351,58 @@ class Event(object):
                 'event': e,
                 }
 
+    def extrainfo(self):
+        event = self.context.event
+
+        e = {}
+        e['name'] = event.name
+        e['tickets'] = m.Ticket.find_event_tickets(event.id)
+        e['url'] = {}
+        e['url']['manage'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit'))
+        e['url']['extrainfo'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'extrainfo'))
+
+        schema = TicketForm().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        return {
+                'page_title': 'Additional info for contest/event: {}'.format(event.disp_name),
+                'event': e,
+                'form': f.render(),
+                }
+
+    def extrainfo_submit(self):
+        event = self.context.event
+
+        e = {}
+        e['name'] = event.name
+        e['tickets'] = []
+        e['url'] = {}
+        e['url']['manage'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit'))
+        e['url']['extrainfo'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'extrainfo'))
+
+        controls = self.request.POST.items()
+        schema = TicketForm().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            if len(appstruct['ticket']) == 0:
+                return HTTPSeeOther(location = self.request.current_route_url())
+
+            ticket = m.Ticket(ticket=appstruct['ticket'], user=self.request.user.user)
+            event.tickets.append(ticket)
+
+            self.request.registry.notify(ContestEventTicketUpdated(ticket, self.request, self.context, event))
+            self.request.session.flash('Your updated information has been added.', queue='event_info')
+            return HTTPSeeOther(location = self.request.current_route_url())
+
+        except ValidationFailure, ef:
+            return {
+                'page_title': 'Additional info for contest/event: {}'.format(event.disp_name),
+                'event': e,
+                'form': ef.render(),
+                }
+
