@@ -314,6 +314,25 @@ def add_views(config):
             permission='edit',
             check_csrf=True)
 
+    config.add_view('defcne.views.Event',
+            attr='extrainfo',
+            route_name='defcne.e',
+            name='extrainfo',
+            context=acl.Event,
+            renderer='event/extrainfo.mako',
+            request_method='GET',
+            permission='edit')
+
+    config.add_view('defcne.views.Event',
+            attr='extrainfo_submit',
+            route_name='defcne.e',
+            name='extrainfo',
+            context=acl.Event,
+            renderer='event/extrainfo.mako',
+            request_method='POST',
+            permission='edit',
+            check_csrf=True)
+
     # If the user attempts to access a page that requires authorization, but
     # they are not logged in, instead of sending them to the login page, we
     # simply send them a not found page. Maybe not as nice for the user if they
