@@ -53,6 +53,7 @@ class Goons(object):
 
 class Events(object):
     __acl__ = [
+                (Allow, "group:adminstrators", ALL_PERMISSIONS),
                 (Allow, Authenticated, 'create'),
             ]
 
@@ -98,10 +99,10 @@ class Event(object):
     def __acl__(self):
 
         acl = [
-                (Allow, "group:administrators", 'edit'),
-                (Allow, "group:administrators", 'view'),
+                (Allow, "group:administrators", ALL_PERMISSIONS),
                 (Allow, "group:staff", 'edit'),
                 (Allow, "group:staff", 'view'),
+                (Allow, "group:staff", 'manage'),
                 ]
 
         for user in self.event.owner:
@@ -121,8 +122,7 @@ class Event(object):
 
 class Magic(object):
     __acl__ = [
-                (Allow, 'group:administrators', 'view'),
-                (Allow, 'group:administrators', 'edit'),
+                (Allow, 'group:administrators', ALL_PERMISSIONS),
                 (Allow, 'group:staff', 'view'),
                 (Allow, 'group:staff', 'edit'),
               ]
