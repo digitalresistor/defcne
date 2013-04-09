@@ -12,6 +12,7 @@ from csrf import CSRFSchema
 
 from .. import models as m
 
+from Ticket import TicketForm
 
 @colander.deferred
 def upload_widget(node, kw):
@@ -112,4 +113,5 @@ class EventForm(CSRFSchema):
     wirelessap = EventAPS(title="Wireless AP", description="If you require your own wireless access point (we don't provide hardware), we need the details to give on to the DEFCON NOC", default=list())
     represent = colander.SchemaNode(colander.String(), title="Representation", description="Who will be representing this contest/event on stage. Black badge events will be at DEFCON closing ceremonies, non-black badge events will be at CnE closing ceremonies. You will be notified if you are a black badge event or not.")
     numparticipants = colander.SchemaNode(colander.Int(), title="Number of Participants", description="This is a rough estimate of the expected number of participants.", default=0)
+    otherrequests = TicketForm(title="Extra Requests:")
 
