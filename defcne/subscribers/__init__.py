@@ -3,6 +3,8 @@
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
 
+from .. import models as m
+
 __user_created__ = """DEFCnE Account Validation
 
 Sorry, slight detour, just want to make sure you can receive emails from us!
@@ -69,8 +71,29 @@ def user_passwordupdated(event):
     message = Message(subject="DEFCnE Password Updated", sender="defcne@defcne.net", recipients=[event.user.email], body=text)
     get_mailer(event.request).send(message)
 
+__staff_eventcreated__ = """DEFCnE Contest/Event Created
+
+A new contest event: "{contest_name}" has been created by "{contest_owner}".
+
+You can manage the event by going to:
+
+{event_manage_url}
+
+You'll want to make sure you are logged in before attempting to access the above URL.
+
+Cheers,
+DEFCnE's Little Helper Bot
+"""
+
 def cne_created(event):
-    pass
+    manage_url = event.request.route_url('defcne.e', traverse=(event.cne.dc, event.cne.shortname, 'manage'))
+    text = __staff_eventcreated__.format(contest_name=event.cne.disp_name, contest_owner=event.request.user.user.disp_uname, event_manage_url=manage_url)
+
+    staff_list = m.Group.find_group(u'staff').users
+    staff_emails = [user.email for user in staff_list]
+
+    message = Message(subject="DEFCnE Contest/Event Created", sender="defcne@defcne.net", recipients=staff_emails, body=text)
+    get_mailer(event.request).send(message)
 
 def cne_updated(event):
     pass
