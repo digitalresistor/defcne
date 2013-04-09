@@ -233,19 +233,37 @@ def add_views(config):
     config.add_view('defcne.views.Event',
             attr='create',
             route_name='defcne.e',
-            name='create',
+            context=acl.EventCreate,
+            name='',
             renderer='event/form.mako',
             request_method='GET',
-            permission='authenticated')
+            permission='create')
+
+    config.add_view('defcne.views.Event',
+            attr='create',
+            route_name='defcne.e',
+            context=acl.EventCreate,
+            name='letsgo',
+            renderer='event/form.mako',
+            request_method='GET',
+            permission='create')
 
     config.add_view('defcne.views.Event',
             attr='create_submit',
             route_name='defcne.e',
-            name='create',
+            context=acl.EventCreate,
+            name='letsgo',
             renderer='event/form.mako',
             request_method='POST',
-            permission='authenticated',
+            permission='create',
             check_csrf=True)
+
+    config.add_view('defcne.views.Event',
+            attr='create_not_authed',
+            context=HTTPForbidden,
+            containment=acl.EventCreate,
+            renderer='event/accountneeded.mako',
+            request_method='GET')
 
     # /e/
     config.add_view('defcne.views.Event',

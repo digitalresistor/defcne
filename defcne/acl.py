@@ -53,7 +53,7 @@ class Goons(object):
 
 class Events(object):
     __acl__ = [
-                (Allow, Authenticated, 'authenticated'),
+                (Allow, Authenticated, 'create'),
             ]
 
     def __init__(self, request):
@@ -61,11 +61,21 @@ class Events(object):
 
     def __getitem__(self, key):
         try:
+            if key == 'create':
+                return EventCreate(self.request)
+
             dc = int(key)
             return DefconEvent(self, dc)
 
         except ValueError:
             raise KeyError
+
+class EventCreate(object):
+    def __init__(self, request):
+        self.request = request
+
+    def __getitem__(self, key):
+        raise KeyError
 
 class DefconEvent(object):
     def __init__(self, events, dc):

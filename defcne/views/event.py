@@ -41,7 +41,7 @@ class Event(object):
         self.request = request
 
     def create(self):
-        if 'letsgo' in self.request.subpath:
+        if 'letsgo' == self.request.path.split('/')[-1]:
             schema = EventForm().bind(request=self.request)
             f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
             return {
@@ -118,14 +118,7 @@ class Event(object):
                 }
 
     def create_not_authed(self):
-        if 'create' not in self.request.path:
-            self.request.override_renderer = 'not_found.mako'
-            self.request.status_int = 404
-            return {}
-
-        self.request.override_renderer='event/accountneeded.mako'
-
-        if 'letsgo' in self.request.subpath:
+        if 'letsgo' == self.request.path.split('/')[-1]:
             return {}
         else:
             return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse='guidelines'))
