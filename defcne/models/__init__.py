@@ -24,3 +24,7 @@ from Defcon import (
         Defcon
         )
 
+from Tickets import (
+        Ticket,
+        )
+
