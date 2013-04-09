@@ -12,33 +12,6 @@ from csrf import CSRFSchema
 
 from .. import models as m
 
-"""
-Questions:
-
-    1. Contest name
-    2. Contest description (markdown?)
-    3. Contest website
-    4. Contest logo (upload file)
-    5. Contest POC (Add additional staff members here)
-        1. Name/Email Address/Cell phone
-    6. Contest POC cell phone
-    7. Days and hours of operation (open ended)
-    8. Do you need power?
-    9. Tables you are requesting
-    11. How many chairs?
-    12. Wired access to DefCon network
-        1. How many drops
-        2. Copper or Fiber (Fiber may not be available)
-        3. Justify why you need it
-    13. Are you planning on having a wireless AP?
-        1. Hardware address/AP brand/SSID
-    14. Who will be representing your contest or event at closing?
-    15. Please provide a rudimentary schedule of your primary in room contact
-    16. Will you use the stage and microphone in the contest area to make announcements?
-    18. Expected number of participants
-    19. General requests ... (trash cans, small farm animals, lube ... you know, anything else.)
-
-"""
 
 @colander.deferred
 def upload_widget(node, kw):
