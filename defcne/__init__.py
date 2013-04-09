@@ -67,6 +67,7 @@ def main(global_config, **settings):
     deform_bootstrap.includeme(config)
 
     config.set_request_property(auth.current_user, 'user', reify=True)
+    config.include('pyramid_mailer')
     return config.make_wsgi_app()
 
 def add_routes(config):
