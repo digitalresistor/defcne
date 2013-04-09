@@ -31,12 +31,12 @@ from sqlalchemy.orm import (
 from sqlalchemy.ext.hybrid import hybrid_property
 
 status_types = {
-        0: 'Pending',
-        1: 'Under Review',
-        2: 'More Information Requested',
-        3: 'Rejected',
-        4: 'Accepted',
-        5: 'Published',
+        0: u'Pending',
+        1: u'Under Review',
+        2: u'More Information Requested',
+        3: u'Rejected',
+        4: u'Accepted',
+        5: u'Published',
         }
 
 class Event(Base):
