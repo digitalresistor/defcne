@@ -24,11 +24,13 @@ from deform import (Form, ValidationFailure)
 
 from ..forms import (
         EventForm,
+        TicketForm,
         )
 
 from ..events import (
         ContestEventCreated,
         ContestEventUpdated,
+        ContestEventTicketUpdated,
         )
 
 from .. import models as m
@@ -103,6 +105,10 @@ class Event(object):
 
             event.owner.append(self.request.user.user)
             event.dc = 21;
+
+            if len(appstruct['otherrequests']['ticket']) != 0:
+                ticket = m.Ticket(ticket=appstruct['otherrequests']['ticket'], user=self.request.user.user)
+                event.ticket.append(ticket)
 
             m.DBSession.add(event)
             m.DBSession.flush()
