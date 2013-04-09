@@ -16,6 +16,10 @@ from sqlalchemy import (
         Unicode,
         )
 
+from sqlalchemy.orm import (
+        relationship,
+        )
+
 from User import User
 
 class Group(Base):
@@ -25,9 +29,12 @@ class Group(Base):
             Column('description', Unicode(256)),
             )
 
+    users = relationship("User", secondary="user_groups")
+
     @classmethod
     def find_group(cls, name):
         return DBSession.query(cls).filter(cls.name == name).first()
+
 
 class UserGroups(Base):
     __table__ = Table('user_groups', Base.metadata,
