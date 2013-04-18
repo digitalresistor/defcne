@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Defcon Contest and Events</title>
+        <title>DEF CON Contest and Events</title>
     </head>
     <body>
         Unable to connect to the database ...

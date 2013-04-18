@@ -8,7 +8,7 @@
     Tech stack: FreeBSD, PostgreSQL, Python, Pyramid, SQLAlchemy, Deform, Bootstrap
     -->
     <head><%block name="head">
-        <title><%block name="title">DEFCON CnE</%block></title>
+        <title><%block name="title">DEF CON CnE</%block></title>
         <link rel="shortcut icon" href="${request.static_url('defcne:static/favicon.ico')}">
         <%block name="stylesheets">
             <link rel="stylesheet" href="${request.static_url('defcne:static/bootstrap/css/bootstrap.min.css')}" type="text/css" />
@@ -21,7 +21,7 @@
         <header class="masthead">
         <%block name="header">
         <h1><a href="${request.route_url('defcne')}">DEFCnE</a></h1>
-        <p class="muted">Defcon Contests and Events</p>
+        <p class="muted">DEF CON Contests and Events</p>
         </%block>
         <%block name="navigation">
         <nav>

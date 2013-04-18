@@ -54,7 +54,7 @@ _auth_explain = """
 _create_explain = """
 <p>If you already have a user account, you may wish to <a href="{auth_url}">authenticate</a>.</p>
 <h3>Why do I need an account?</h3>
-<p>You only need to create a user account when you are planning on submitting a contest or event to run at DEFCON. We require an account so that we have a central location to contact event owners/event staff.</p>
+<p>You only need to create a user account when you are planning on submitting a contest or event to run at DEF CON. We require an account so that we have a central location to contact event owners/event staff.</p>
 <p>It also allows us to track who is in charge of what events so that we don't have any imposters attempting to impersonate you and or your contest.</p>
 """
 

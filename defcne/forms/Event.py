@@ -109,9 +109,9 @@ class EventForm(CSRFSchema):
     power = EventPowers(title="Power required", default=list())
     tables = colander.SchemaNode(colander.Int(), title="Tables", default=0)
     chairs = colander.SchemaNode(colander.Int(), title="Chairs", default=0)
-    wiredaccess = EventDrops(title="Wired access", description="If you need wired access to the DEFCON network let us know.", default=list())
-    wirelessap = EventAPS(title="Wireless AP", description="If you require your own wireless access point (we don't provide hardware), we need the details to give on to the DEFCON NOC", default=list())
-    represent = colander.SchemaNode(colander.String(), title="Representation", description="Who will be representing this contest/event on stage. Black badge events will be at DEFCON closing ceremonies, non-black badge events will be at CnE closing ceremonies. You will be notified if you are a black badge event or not.")
+    wiredaccess = EventDrops(title="Wired access", description="If you need wired access to the DEF CON network let us know.", default=list())
+    wirelessap = EventAPS(title="Wireless AP", description="If you require your own wireless access point (we don't provide hardware), we need the details to give on to the DEF CON NOC", default=list())
+    represent = colander.SchemaNode(colander.String(), title="Representation", description="Who will be representing this contest/event on stage. Black badge events will be at DEF CON closing ceremonies, non-black badge events will be at CnE closing ceremonies. You will be notified if you are a black badge event or not.")
     numparticipants = colander.SchemaNode(colander.Int(), title="Number of Participants", description="This is a rough estimate of the expected number of participants.", default=0)
     otherrequests = TicketForm(title="Extra Requests:")
 

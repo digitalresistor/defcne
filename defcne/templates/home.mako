@@ -1,10 +1,10 @@
 <%inherit file="site.mako" />
 
 <div class="jumbotron">
-    <h1>DEFCON</h1>
+    <h1>DEF CON</h1>
     <h1>Contests and Events</h1>
     <p class="lead">
-        This years contests and events at DEFCON are going to be absolutely fantastic!
+        This years contests and events at DEF CON are going to be absolutely fantastic!
     </p>
 </div>
 <hr>
@@ -12,7 +12,7 @@
     <div class="row-fluid">
         <div class="span6">
             <h3><a href="${request.route_url('defcne.e', traverse='')}">Events</a></h3>
-            <p>Learn about the events that are going to be at DEFCON</p>
+            <p>Learn about the events that are going to be at DEF CON</p>
             &gt;&gt; <a href="${request.route_url('defcne.e', traverse='')}">See all events</a>
         </div>
         <!--
