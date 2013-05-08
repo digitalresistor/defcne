@@ -184,6 +184,7 @@ class Event(object):
         astruct['description'] = event.description
         astruct['numparticipants'] = event.numparticipants
         astruct['tables'] = event.tables
+        astruct['chairs'] = event.chairs
         astruct['power'] = [{'id': p.id, 'outlets': p.outlets, 'amps': p.amps, 'justify': p.justification} for p in event.power]
         astruct['pocs'] = [{'id': p.id, 'email': p.email, 'cellphone': p.cellphone, 'name': p.name} for p in event.pocs]
         astruct['wiredaccess'] = [{'id': w.id, 'justify': w.justification, 'typeof': w.typeof} for w in event.drops]
