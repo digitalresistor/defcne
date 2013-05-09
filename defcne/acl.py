@@ -81,17 +81,23 @@ class Events(object):
     def __getitem__(self, key):
         try:
             if key == 'create':
-                return EventCreate(self, self.request)
+                item = EventCreate(self.request)
 
-            dc = int(key)
-            return DefconEvent(self, dc)
+            else:
+                dc = int(key)
+                item = DefconEvent(dc)
+
+            item.__parent__ = self
+
+            return item
 
         except ValueError:
             raise KeyError
 
 class EventCreate(object):
-    def __init__(self, parent, request):
-        self.__parent__ = parent
+    __name__ = 'create'
+
+    def __init__(self, request):
         self.__name__ = 'create'
         self.request = request
 
@@ -99,8 +105,7 @@ class EventCreate(object):
         raise KeyError
 
 class DefconEvent(object):
-    def __init__(self, events, dc):
-        self.__parent__ = events
+    def __init__(self, dc):
         self.__name__ = dc
         self.dc = dc
 
@@ -110,7 +115,10 @@ class DefconEvent(object):
         if event is None:
             return None
         else:
-            return Event(self, event)
+            item = Event(event)
+            item.__parent__ = self
+
+            return item
 
 class Event(object):
     @property
@@ -128,8 +136,7 @@ class Event(object):
             acl.append((Allow, "userid:{id}".format(id=user.id), 'manage'))
         return acl
 
-    def __init__(self, dc, event):
-        self.__parent__ = self.dc = dc
+    def __init__(self, event):
         self.event = event
         self.__name__ = event.shortname
 
