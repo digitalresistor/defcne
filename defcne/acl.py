@@ -12,9 +12,15 @@ from pyramid.security import (
 
 import models as m
 
+class FakeRoot(object):
+    __name__ = None
+    __parent__ = None
+
 # The traversal for /user/
 
 class User(object):
+    __name__ = 'user'
+    __parent__ = FakeRoot()
     __acl__ = [
                 (Allow, Authenticated, 'view'),
                 (Allow, Authenticated, 'edit'),
@@ -29,6 +35,8 @@ class User(object):
 # The traversal for /u/
 
 class Username(object):
+    __name__ = 'u'
+    __parent__ = FakeRoot()
     __acl__ = []
 
     def __init__(self, request):
@@ -41,6 +49,8 @@ class Username(object):
 # The traversal for /g/
 
 class Goons(object):
+    __name__ = 'g'
+    __parent__ = FakeRoot()
     __acl__ = []
 
     def __init__(self, request):
@@ -52,6 +62,8 @@ class Goons(object):
 # The traversal for /e/
 
 class Events(object):
+    __name__ = 'e'
+    __parent__ = FakeRoot()
     __acl__ = [
                 (Allow, "group:adminstrators", ALL_PERMISSIONS),
                 (Allow, Authenticated, 'create'),
@@ -121,6 +133,8 @@ class Event(object):
 # The traversal for /magic/
 
 class Magic(object):
+    __name__ = 'magic'
+    __parent__ = FakeRoot()
     __acl__ = [
                 (Allow, 'group:administrators', ALL_PERMISSIONS),
                 (Allow, 'group:staff', 'view'),
