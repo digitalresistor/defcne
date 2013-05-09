@@ -149,13 +149,26 @@ class Magic(object):
     __parent__ = FakeRoot()
     __acl__ = [
                 (Allow, 'group:administrators', ALL_PERMISSIONS),
-                (Allow, 'group:staff', 'view'),
-                (Allow, 'group:staff', 'edit'),
+                (Allow, "group:staff", 'magic'),
               ]
 
     def __init__(self, request):
-        pass
+        self.request = request
 
     def __getitem__(self, key):
-        raise KeyError
+        item = None
+
+        if key == 'e':
+            item = Events(self.request)
+
+        if key == 'u':
+            item = Usernames(self.request)
+
+        if item == None:
+            return KeyError
+
+        print item
+        item.__parent__ = self
+
+        return item
 
