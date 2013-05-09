@@ -34,7 +34,7 @@ class User(object):
 
 # The traversal for /u/
 
-class Username(object):
+class Usernames(object):
     __name__ = 'u'
     __parent__ = FakeRoot()
     __acl__ = []
@@ -45,6 +45,12 @@ class Username(object):
     def __getitem__(self, key):
         raise KeyError
 
+class Username(object):
+    def __init__(self, username):
+        self.__name__ = username
+
+    def __getitem__(self, key):
+        raise KeyError
 
 # The traversal for /g/
 
