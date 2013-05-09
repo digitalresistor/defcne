@@ -123,7 +123,6 @@ class DefconEvent(object):
 class Event(object):
     @property
     def __acl__(self):
-
         acl = [
                 (Allow, "group:administrators", ALL_PERMISSIONS),
                 (Allow, "group:staff", 'edit'),
@@ -132,8 +131,8 @@ class Event(object):
                 ]
 
         for user in self.event.owner:
-            acl.append((Allow, "userid:{id}".format(id=user.id), 'edit'))
-            acl.append((Allow, "userid:{id}".format(id=user.id), 'manage'))
+            acl.append((Allow, "userid:{id}".format(id=user.id), ('edit', 'view', 'manage')))
+
         return acl
 
     def __init__(self, event):
