@@ -15,10 +15,13 @@ import transaction
 from sqlalchemy.exc import IntegrityError
 from deform import (Form, ValidationFailure)
 
-#from ..forms import (
-#        )
+from ..forms import (
+        EventManagement,
+        TicketForm,
+        )
 
 from .. import models as m
+from ..models.Event import status_types
 
 class Magic(object):
     """View for Magic functionality"""
