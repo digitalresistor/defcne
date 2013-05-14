@@ -11,6 +11,10 @@ from urlparse import urlparse
 from csrf import CSRFSchema
 
 from .. import models as m
+from ..models.Event import (
+        status_types,
+        badge_types,
+        )
 
 from Ticket import TicketForm
 
@@ -114,4 +118,19 @@ class EventForm(CSRFSchema):
     represent = colander.SchemaNode(colander.String(), title="Representation", description="Who will be representing this contest/event on stage. Black badge events will be at DEF CON closing ceremonies, non-black badge events will be at CnE closing ceremonies. You will be notified if you are a black badge event or not.")
     numparticipants = colander.SchemaNode(colander.Int(), title="Number of Participants", description="This is a rough estimate of the expected number of participants.", default=0)
     otherrequests = TicketForm(title="Extra Requests:")
+
+class EventBadge(colander.Schema):
+    id = colander.SchemaNode(colander.Integer(), widget=deform.widget.HiddenWidget(), title="id", default=-1)
+    typeof = colander.SchemaNode(colander.Int(), title="Badge Type", default=0, widget=deform.widget.SelectWidget(values=[(key, value) for (key, value) in badge_types.items()]), description="Badge type")
+    amount = colander.SchemaNode(colander.Int(), title="Amount", default=0, description="The amount of badges of this type that should be made available")
+    why = colander.SchemaNode(colander.String(), missing=u'', description="Add a reason for the amount requested, for our records.")
+
+class EventBadges(colander.SequenceSchema):
+    badge = EventBadge(title="Badges")
+
+class EventManagement(CSRFSchema):
+    status = colander.SchemaNode(colander.Int(), title="Status", default='0', widget=deform.widget.SelectWidget(values=[(key, value) for (key, value) in status_types.items()]), description="Change status of contest/event")
+    badges = EventBadges(description="Add types of badges and amount for this contest/event")
+    blackbadge = colander.SchemaNode(colander.Bool(), title="Black Badge", default=False, description="Whether this event is a black badge event or not")
+    email = colander.SchemaNode(colander.Bool(), title="Send Email", default=False, description="Send an email notifying contest owners of change?")
 

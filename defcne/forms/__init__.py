@@ -11,6 +11,7 @@ from User import (
 
 from Event import (
         EventForm,
+        EventManagement,
         )
 
 from Ticket import (
