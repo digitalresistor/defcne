@@ -345,6 +345,107 @@ def add_views(config):
             renderer='not_found.mako',
             request_method='GET')
 
+    # /magic/
+    config.add_view('defcne.views.Magic',
+            attr='main',
+            route_name='defcne.magic',
+            name='',
+            context=acl.Magic,
+            renderer='magic/main.mako',
+            request_method='GET',
+            permission='magic')
+
+    config.add_view('defcne.views.Magic',
+            attr='dcyears',
+            route_name='defcne.magic',
+            name='',
+            context=acl.Events,
+            containment=acl.Magic,
+            request_method='GET',
+            permission='magic')
+
+    config.add_view('defcne.views.Magic',
+            attr='dcevents',
+            route_name='defcne.magic',
+            name='',
+            context=acl.DefconEvent,
+            containment=acl.Magic,
+            renderer='magic/events.mako',
+            request_method='GET',
+            permission='magic')
+
+    config.add_view('defcne.views.Magic',
+            attr='event',
+            route_name='defcne.magic',
+            name='',
+            context=acl.Event,
+            containment=acl.Magic,
+            renderer='magic/event.mako',
+            request_method='GET',
+            permission='magic')
+
+    config.add_view('defcne.views.Magic',
+            attr='manage',
+            route_name='defcne.magic',
+            name='manage',
+            context=acl.Event,
+            containment=acl.Magic,
+            renderer='magic/edit.mako',
+            request_method='GET',
+            permission='magic')
+
+    config.add_view('defcne.views.Magic',
+            attr='manage_submit',
+            route_name='defcne.magic',
+            name='manage',
+            context=acl.Event,
+            containment=acl.Magic,
+            renderer='magic/edit.mako',
+            request_method='POST',
+            permission='magic',
+            check_csrf=True)
+
+    config.add_view('defcne.views.Event',
+            attr='edit',
+            route_name='defcne.magic',
+            name='edit',
+            context=acl.Event,
+            containment=acl.Magic,
+            renderer='magic/edit.mako',
+            request_method='GET',
+            permission='magic')
+
+    config.add_view('defcne.views.Event',
+            attr='edit_submit',
+            route_name='defcne.magic',
+            name='edit',
+            context=acl.Event,
+            containment=acl.Magic,
+            renderer='magic/edit.mako',
+            request_method='POST',
+            permission='magic',
+            check_csrf=True)
+
+    config.add_view('defcne.views.Magic',
+            attr='user',
+            route_name='defcne.magic',
+            name='',
+            context=acl.Username,
+            containment=acl.Magic,
+            renderer='magic/user.mako',
+            request_method='GET',
+            permission='magic')
+
+    config.add_view('defcne.views.Magic',
+            attr='users',
+            route_name='defcne.magic',
+            name='',
+            context=acl.Usernames,
+            containment=acl.Magic,
+            renderer='magic/users.mako',
+            request_method='GET',
+            permission='magic')
+
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
 
