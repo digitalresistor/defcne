@@ -28,7 +28,9 @@ class Magic(object):
         self.request = request
 
     def main(self):
-        return {}
+        return {
+                'page_title': 'Magic Portal',
+                }
 
     def dcyears(self):
         return {}
