@@ -163,7 +163,26 @@ class Magic(object):
                     }
 
     def users(self):
-        return {}
+        all_users = m.DBSession.query(m.User).order_by(m.User.disp_uname.desc()).all()
+
+        users = []
+
+        for user in all_users:
+            u = {}
+            u['username'] = user.disp_uname
+            u['email'] = user.email
+            u['validated'] = user.validated
+            u['groups'] = [x.name for x in user.groups]
+
+            u['view_url'] = self.request.resource_url(self.context, user.username)
+            u['edit_url'] = self.request.resource_url(self.context, user.username, 'edit')
+            users.append(u)
+
+
+        return {
+                'page_title': 'All Registered Users',
+                'users': users,
+                }
 
     def user(self):
         return {}
