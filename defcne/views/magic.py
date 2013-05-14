@@ -57,6 +57,44 @@ class Magic(object):
                 'events': events,
                 }
 
+    def event(self):
+        event = self.context.event
+
+        e = {}
+        e['name'] = event.name
+        e['shortname'] = event.shortname
+        e['description'] = event.description
+        e['website'] = event.website
+        e['logo'] = self.request.registry.settings['defcne.upload_path'] + event.logo if event.logo else ''
+        e['hrsofoperation'] = event.hrsofoperation
+        e['tables'] = event.tables
+        e['chairs'] = event.chairs
+        e['represent'] = event.represent
+        e['numparticipants'] = event.numparticipants
+        e['blackbadge'] = event.blackbadge
+        e['status'] = status_types[event.status]
+
+        e['pocs'] = [x.name for x in event.pocs]
+        e['power'] = [{'amps': x.amps, 'outlets': x.outlets, 'justification': x.justification} for x in event.power]
+        e['drops'] = [{'typeof': x.typeof, 'justification': x.justification} for x in event.drops]
+        e['aps'] = [{'hwmac': x.hwmac, 'apbrand': x.apbrand, 'ssid': x.ssid} for x in event.aps]
+        e['owner'] = [x.disp_uname for x in event.owner]
+        e['ticket_count'] = len(m.Ticket.find_event_tickets(event.id))
+        e['tickets'] = m.Ticket.find_event_tickets(event.id)
+
+        e['edit_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname, 'edit'))
+        e['manage_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname, 'manage'))
+        e['magic_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname))
+
+        schema = TicketForm().bind(request=self.request)
+        f = Form(schema, action=self.request.resource_url(self.context, 'extrainfo'), buttons=('submit',))
+
+        return {
+                'page_title': '{}'.format(event.disp_name),
+                'event': e,
+                'form': f.render()
+                }
+
 
     def users(self):
         return {}
