@@ -39,6 +39,12 @@ status_types = {
         5: u'Published',
         }
 
+badge_types = {
+        0: u'Human',
+        1: u'Contest and Events',
+        2: u'Other',
+        }
+
 class Event(Base):
     __table__ = Table('events', Base.metadata,
             Column('id', Integer, primary_key=True, unique=True),
@@ -136,3 +142,13 @@ class UserEvents(Base):
 
             PrimaryKeyConstraint('userid', 'eventid'),
             )
+
+class EventBadges(Base):
+    __table__ = Table('event_badges', Base.metadata,
+            Column('event_id', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE"), nullable=False),
+            Column('id', Integer, primary_key=True, unique=True),
+            Column('type', Integer),
+            Column('amount', Integer),
+            Column('reason', Unicode),
+            )
+    CheckConstraint(__table__.c.type.in_(badge_types.keys()))

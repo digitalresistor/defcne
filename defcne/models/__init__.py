@@ -18,6 +18,7 @@ from Event import (
         EventPower,
         EventWiredDrop,
         EventAP,
+        EventBadges,
         )
 
 from Defcon import (
