@@ -322,7 +322,12 @@ class Event(object):
 
             self.request.registry.notify(ContestEventUpdated(self.request, self.context, event))
             self.request.session.flash('Your contest/event has been updated!', queue='event')
-            return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage')))
+
+            # Depending on what route was matched we do something different.
+            if self.request.matched_route.name == "defcne.magic":
+                return HTTPSeeOther(location = self.request.resource_url(self.context))
+            else:
+                return HTTPSeeOther(location = self.request.resource_url(self.context, 'manage'))
         except ValidationFailure, ef:
             return {
                 'form': ef.render(),
