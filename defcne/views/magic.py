@@ -95,6 +95,69 @@ class Magic(object):
                 'form': f.render()
                 }
 
+    def manage(self):
+        event = self.context.event
+
+        astruct = {}
+        astruct['status'] = event.status
+        astruct['blackbadge'] = event.blackbadge
+
+        # Get badges
+        badges = m.DBSession.query(m.EventBadges).filter(m.EventBadges.event_id == event.id).all()
+
+        astruct['badges'] = [{'id': x.id, 'typeof': x.type, 'amount': x.amount, 'why': x.reason} for x in badges]
+
+        schema = EventManagement().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        return {
+                'form': f.render(astruct),
+                'page_title': 'Manage Event: {}'.format(event.disp_name),
+                }
+
+    def manage_submit(self):
+        event = self.context.event
+
+        controls = self.request.POST.items()
+        schema = EventManagement().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            event.status = appstruct['status']
+            event.blackbadge = appstruct['blackbadge']
+
+            badges = m.DBSession.query(m.EventBadges).filter(m.EventBadges.event_id == event.id).all()
+
+            new_badge_ids= set([p['id'] for p in appstruct['badges'] if p['id'] != -1])
+            cur_badge_ids = set([p.id for p in badges])
+            del_badge_ids = cur_badge_ids - new_badge_ids
+
+            if len(del_badge_ids):
+                for badge in badges:
+                    if badge.id in del_badge_ids:
+                        m.DBSession.delete(badge)
+
+            for badge in appstruct['badges']:
+                print badge
+                if badge['id'] in cur_badge_ids:
+                    cur_badge = [p for p in badges if p.id == badge['id']][0]
+                    cur_badge.type = badge['typeof']
+                    cur_badge.amount = badge['amount']
+                    cur_badge.reason = badge['why']
+                else:
+                    nbadge = m.EventBadges(event_id=event.id, type=badge['typeof'], amount=badge['amount'], reason=badge['why'])
+                    m.DBSession.add(nbadge)
+                    m.DBSession.flush()
+
+            self.request.session.flash('Event {} has been updated.'.format(event.disp_name), queue='magic')
+            return HTTPSeeOther(location = self.request.route_url('defcne.magic', traverse=('e')))
+        except ValidationFailure, e:
+            return {
+                    'form': e.render(),
+                    'page_title': 'Manage Event: {}'.format(event.disp_name),
+                    }
 
     def users(self):
         return {}
