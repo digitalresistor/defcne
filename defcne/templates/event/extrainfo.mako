@@ -6,18 +6,18 @@
         <div id="Content" class="span9">
             <h3>${page_title if page_title else ''}</h3>
             % if len(event['tickets']) == 0:
-                <p>No additional information for this contest/event. Feel free to send us a request below!</p>
+            <p>No additional information for this contest/event. Feel free to send us a request below!</p>
             % else:
             % for ticket in event['tickets']:
-                <div class="extrainfo"><p style="white-space: pre-wrap">${ticket.ticket}</p><div class="userdate" style="text-align: right;">${ticket.user.disp_uname}<br />${ticket.created.isoformat()}</div></div>
+            <div class="extrainfo"><p style="white-space: pre-wrap">${ticket.ticket}</p><div class="userdate" style="text-align: right;">${ticket.user.disp_uname}<br />${ticket.created.isoformat()}</div></div>
             % endfor
-                <p>Feel free to respond or add more information using the form below.</p>
+            <p>Feel free to respond or add more information using the form below.</p>
             % endif
             <hr />
-% if form:
-    <h4>Add more information:</h4>
-    ${form|n}
-% endif
+            % if form:
+            <h4>Add more information:</h4>
+            ${form|n}
+            % endif
         </div>
     </div>
 </div>

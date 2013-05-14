@@ -16,13 +16,13 @@
                 <li><b>Chairs</b>: ${event['chairs']}</li>
                 % if len(event['pocs']) != 0:
                 <li><b>Points of Contact</b>:
-                    <div>
+                <div>
                     <ul>
-                    % for poc in event['pocs']:
+                        % for poc in event['pocs']:
                         <li>${poc}</li>
-                    % endfor
+                        % endfor
                     </ul>
-                    </div>
+                </div>
                 </li>
                 % endif
             </ul>
