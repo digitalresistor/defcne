@@ -33,7 +33,7 @@ class Magic(object):
                 }
 
     def dcyears(self):
-        return {}
+        return HTTPSeeOther(location=self.request.route_url('defcne.magic', traverse=('e', '21')))
 
     def dcevents(self):
         return {}
