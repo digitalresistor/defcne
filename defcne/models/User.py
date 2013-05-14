@@ -9,6 +9,7 @@ from meta import DBSession
 
 from sqlalchemy import (
         Boolean,
+        CheckConstraint,
         Column,
         DateTime,
         ForeignKey,
@@ -45,6 +46,7 @@ class User(Base):
 
     groups = relationship("Group", secondary="user_groups", lazy="joined")
     tickets = relationship("UserTickets", lazy="noload")
+    profileinfo = relationship("UserProfile", lazy="noload")
 
     _username = __table__.c.username
     _email = __table__.c.email
@@ -100,6 +102,27 @@ class User(Base):
             return user
 
         return None
+
+profile_types = {
+            1: 'Email',
+            2: 'Web',
+            3: 'Twitter',
+            4: 'pgp',
+            5: 'Phone',
+            6: 'Messaging',
+            9999: 'Other',
+        }
+
+class UserProfile(Base):
+    __table__ = Table('user_profile', Base.metadata,
+            Column('id', Integer, primary_key=True, unique=True),
+            Column('user_id', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
+            Column('type', Integer),
+            Column('data', Unicode),
+            Column('permission', Integer, ForeignKey('groups.id', onupdate="CASCADE", ondelete="CASCADE")),
+
+            )
+    CheckConstraint(__table__.c.type.in_(profile_types.keys()))
 
 class UserValidation(Base):
     __table__ = Table('user_validation', Base.metadata,
