@@ -43,11 +43,19 @@ class Usernames(object):
         pass
 
     def __getitem__(self, key):
-        raise KeyError
+        user = m.User.find_user(key)
+
+        if user is None:
+            raise KeyError
+
+        item = Username(user)
+        item.__parent__ = self
+        return item
 
 class Username(object):
-    def __init__(self, username):
-        self.__name__ = username
+    def __init__(self, user):
+        self.user = user
+        self.__name__ = user.username
 
     def __getitem__(self, key):
         raise KeyError
