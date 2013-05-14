@@ -6,8 +6,13 @@
         <div id="Content" class="span9">
             <h3>${page_title if page_title else ''}</h3>
             <p>You have no notices today.</p>
+            <p><b>Status:</b> ${event['status']}</p>
             <p><b>Description:</b></p>
             <p style="white-space: pre-wrap">${event['description']}</p>
+            % if len(event['logo']) != 0:
+            <p><b>logo</b>:</p>
+            <p><img src="${request.static_url(event['logo'])}" style="max-height: 200px; max-width: 200px;"></p>
+            % endif
             <ul>
                 % if len(event['website']) != 0:
                 <li><b>Website</b>: ${event['website']}</li>

@@ -338,12 +338,14 @@ class Event(object):
         e = {}
         e['name'] = event.name
         e['description'] = event.description
+        e['logo'] = self.request.registry.settings['defcne.upload_path'] + event.logo if event.logo else ''
         e['website'] = event.website
         e['tables'] = event.tables
         e['chairs'] = event.chairs
         e['owner'] = [x.disp_uname for x in event.owner]
         e['pocs'] = [x.name for x in event.pocs]
         e['requests'] = m.Ticket.count_event_tickets(event.id)
+        e['status'] = status_types[event.status]
         e['url'] = {}
         e['url']['manage'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
         e['url']['edit'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit'))
