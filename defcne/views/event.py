@@ -34,6 +34,7 @@ from ..events import (
         )
 
 from .. import models as m
+from ..models.Event import status_types
 
 class Event(object):
     """View for Event functionality"""
