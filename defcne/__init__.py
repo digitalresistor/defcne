@@ -448,6 +448,27 @@ def add_views(config):
             permission='magic')
 
     config.add_view('defcne.views.Magic',
+            attr='user_edit',
+            route_name='defcne.magic',
+            name='edit',
+            context=acl.Username,
+            containment=acl.Magic,
+            renderer='magic/edit.mako',
+            request_method='GET',
+            permission='magic')
+
+    config.add_view('defcne.views.Magic',
+            attr='user_edit_submit',
+            route_name='defcne.magic',
+            name='edit',
+            context=acl.Username,
+            containment=acl.Magic,
+            renderer='magic/edit.mako',
+            request_method='POST',
+            permission='magic',
+            check_csrf=True)
+
+    config.add_view('defcne.views.Magic',
             attr='users',
             route_name='defcne.magic',
             name='',
