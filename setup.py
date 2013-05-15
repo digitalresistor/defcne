@@ -24,7 +24,7 @@ requires = [
     ]
 
 setup(name='defcne',
-      version='0.0',
+      version='0.0c',
       description='defcne',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
