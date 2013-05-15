@@ -18,6 +18,7 @@ from deform import (Form, ValidationFailure)
 from ..forms import (
         EventManagement,
         TicketForm,
+        MagicUserEdit,
         )
 
 from .. import models as m
