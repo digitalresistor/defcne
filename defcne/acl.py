@@ -141,6 +141,9 @@ class Event(object):
         for user in self.event.owner:
             acl.append((Allow, "userid:{id}".format(id=user.id), ('edit', 'view', 'manage')))
 
+        if self.event.status == 5:
+            acl.append((Allow, Everyone, 'view'))
+
         return acl
 
     def __init__(self, event):
