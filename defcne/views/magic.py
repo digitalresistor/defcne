@@ -186,7 +186,7 @@ class Magic(object):
 
             badges = m.DBSession.query(m.EventBadges).filter(m.EventBadges.event_id == event.id).all()
 
-            new_badge_ids= set([p['id'] for p in appstruct['badges'] if p['id'] != -1])
+            new_badge_ids = set([p['id'] for p in appstruct['badges'] if p['id'] != -1])
             cur_badge_ids = set([p.id for p in badges])
             del_badge_ids = cur_badge_ids - new_badge_ids
 
