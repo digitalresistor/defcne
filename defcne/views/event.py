@@ -161,7 +161,7 @@ class Event(object):
 
         return {
                 'events': events,
-                'page_title': 'DEF CON {0}'.format(self.context.__name__),
+                'page_title': 'DEF CON {0} Contests/Events'.format(self.context.__name__),
                 }
 
     def event(self):
