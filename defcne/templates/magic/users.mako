@@ -34,7 +34,7 @@
                             % endif
                         </td>
                         <td>
-                            <a href="${user['edit_url']}" class="btn btn-small btn-danger">Modify User</a>
+                            <a href="${user['edit_url']}" class="btn btn-small btn-danger">Edit User</a>
                         </td>
                     </tr>
                     % endfor
