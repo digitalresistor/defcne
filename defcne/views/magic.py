@@ -98,6 +98,59 @@ class Magic(object):
                 'form': f.render()
                 }
 
+    def event_extrainfo(self):
+        event = self.context.event
+
+        controls = self.request.POST.items()
+        schema = TicketForm().bind(request=self.request)
+        f = Form(schema, action=self.request.resource_url(self.context), buttons=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            if len(appstruct['ticket']) == 0:
+                return HTTPSeeOther(location = self.request.resource_url(self.context))
+
+            ticket = m.Ticket(ticket=appstruct['ticket'], user=self.request.user.user)
+            event.tickets.append(ticket)
+
+            #self.request.registry.notify(ContestEventTicketUpdated(ticket, self.request, self.context, event))
+            self.request.session.flash('The information has been added to the event', queue='event')
+            return HTTPSeeOther(location = self.request.resource_url(self.context))
+
+        except ValidationFailure, failed:
+            e = {}
+            e['name'] = event.name
+            e['shortname'] = event.shortname
+            e['description'] = event.description
+            e['website'] = event.website
+            e['logo'] = self.request.registry.settings['defcne.upload_path'] + event.logo if event.logo else ''
+            e['hrsofoperation'] = event.hrsofoperation
+            e['tables'] = event.tables
+            e['chairs'] = event.chairs
+            e['represent'] = event.represent
+            e['numparticipants'] = event.numparticipants
+            e['blackbadge'] = event.blackbadge
+            e['status'] = status_types[event.status]
+
+            e['pocs'] = [x.name for x in event.pocs]
+            e['power'] = [{'amps': x.amps, 'outlets': x.outlets, 'justification': x.justification} for x in event.power]
+            e['drops'] = [{'typeof': x.typeof, 'justification': x.justification} for x in event.drops]
+            e['aps'] = [{'hwmac': x.hwmac, 'apbrand': x.apbrand, 'ssid': x.ssid} for x in event.aps]
+            e['owner'] = [x.disp_uname for x in event.owner]
+            e['ticket_count'] = len(m.Ticket.find_event_tickets(event.id))
+            e['tickets'] = m.Ticket.find_event_tickets(event.id)
+
+            e['edit_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname, 'edit'))
+            e['manage_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname, 'manage'))
+            e['magic_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname))
+
+            return {
+                    'page_title': '{}'.format(event.disp_name),
+                    'event': e,
+                    'form': failed.render()
+                    }
+
     def manage(self):
         event = self.context.event
 
