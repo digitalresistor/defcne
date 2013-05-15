@@ -35,6 +35,10 @@ class Group(Base):
     def find_group(cls, name):
         return DBSession.query(cls).filter(cls.name == name).first()
 
+    @classmethod
+    def find_group_by_id(cls, id):
+        return DBSession.query(cls).get(id)
+
 
 class UserGroups(Base):
     __table__ = Table('user_groups', Base.metadata,
