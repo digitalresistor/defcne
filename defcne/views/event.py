@@ -165,7 +165,18 @@ class Event(object):
                 }
 
     def event(self):
-        return {}
+        event = self.context.event
+        e = {}
+        e['name'] = event.name
+        e['description'] = event.description
+        e['website'] = event.website
+        e['owner'] = [x.disp_uname for x in event.owner]
+        e['url'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname))
+
+        return {
+                'page_title': '{}'.format(event.disp_name),
+                'event': e,
+                }
 
     def edit(self):
         event = self.context.event
