@@ -385,6 +385,17 @@ def add_views(config):
             permission='magic')
 
     config.add_view('defcne.views.Magic',
+            attr='event_extrainfo',
+            route_name='defcne.magic',
+            name='extrainfo',
+            context=acl.Event,
+            containment=acl.Magic,
+            renderer='magic/event.mako',
+            request_method='POST',
+            permission='magic',
+            check_csrf=True)
+
+    config.add_view('defcne.views.Magic',
             attr='manage',
             route_name='defcne.magic',
             name='manage',
