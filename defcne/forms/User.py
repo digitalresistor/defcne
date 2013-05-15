@@ -13,6 +13,8 @@ from ..models import (
         UserForgot,
         )
 
+from .. import models as m
+
 @colander.deferred
 def deferred_username_default(node, kw):
     request = kw.get('request')
@@ -150,3 +152,20 @@ class ResetForm(CSRFSchema):
     """The validation form, where the user enters their token"""
     username = colander.SchemaNode(colander.String(), title="Username")
     token = colander.SchemaNode(colander.String(), title="Reset token")
+
+@colander.deferred
+def deferred_group_select(node, kw):
+    groups = m.DBSession.query(m.Group).all();
+    choices = [(x.id, '{} - {}'.format(x.name, x.description)) for x in groups]
+    return deform.widget.SelectWidget(values=choices)
+
+class Group(colander.Schema):
+    group_id = colander.SchemaNode(colander.Int(), title="", default=0, missing=0, widget=deferred_group_select, description="The group the user is a part of.")
+
+class Groups(colander.SequenceSchema):
+    group = Group(title="Group")
+
+class MagicUserEdit(CSRFSchema):
+    groups = Groups()
+    validated = colander.SchemaNode(colander.Bool(), title="Validated", default=True, description="User is validated (email has been verified)")
+

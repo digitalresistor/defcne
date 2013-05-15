@@ -7,6 +7,7 @@ from User import (
         LostPassword,
         ResetForm,
         SetPassword,
+        MagicUserEdit,
         )
 
 from Event import (
