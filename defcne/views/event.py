@@ -156,6 +156,7 @@ class Event(object):
             e['description'] = event.description
             e['website'] = event.website
             e['owner'] = [x.disp_uname for x in event.owner]
+            e['url'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname))
             events.append(e)
 
         return {
