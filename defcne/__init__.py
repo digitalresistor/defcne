@@ -284,7 +284,8 @@ def add_views(config):
             route_name='defcne.e',
             context=acl.Event,
             renderer='event/one.mako',
-            request_method='GET')
+            request_method='GET',
+            permission='view')
 
     config.add_view('defcne.views.Event',
             attr='manage',
