@@ -240,3 +240,52 @@ class Magic(object):
     def user(self):
         return {}
 
+    def user_edit(self):
+        user = self.context.user
+
+        schema = MagicUserEdit().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        a = {}
+        a['groups'] = [{'group_id': x.id} for x in user.groups]
+        a['validated'] = user.validated
+
+        return {
+                'page_title': 'Editing user: {}'.format(user.disp_uname),
+                'form': f.render(a),
+                }
+
+    def user_edit_submit(self):
+        user = self.context.user
+
+        controls = self.request.POST.items()
+        schema = MagicUserEdit().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), button=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            current_groups = set([x.id for x in user.groups])
+            selected_groups = set([x['group_id'] for x in appstruct['groups']])
+            new_groups = selected_groups - current_groups
+            rem_groups = current_groups - selected_groups
+
+            for g in new_groups:
+                group = m.Group.find_group_by_id(g)
+                user.groups.append(group)
+
+            if len(rem_groups):
+                for g in user.groups:
+                    if g.id in rem_groups:
+                        user.groups.remove(g)
+
+            user.validated = appstruct['validated']
+
+            self.request.session.flash('User {} has been modified.'.format(user.disp_uname), queue='magic')
+            return HTTPSeeOther(location = self.request.route_url('defcne.magic', traverse=('u')))
+        except ValidationFailure, e:
+            return {
+                    'form': e.render(),
+                    'page_title': 'Editing user: {}'.format(user.disp_uname),
+                    }
+
