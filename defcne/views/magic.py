@@ -217,7 +217,7 @@ class Magic(object):
                     }
 
     def users(self):
-        all_users = m.DBSession.query(m.User).order_by(m.User.disp_uname.desc()).all()
+        all_users = m.DBSession.query(m.User).order_by(m.User.disp_uname.asc()).all()
 
         users = []
 
