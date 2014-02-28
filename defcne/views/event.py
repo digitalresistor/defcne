@@ -13,8 +13,17 @@ import string
 
 from uuid import uuid4
 
+from pyramid.view import (
+        view_config,
+        view_defaults,
+        )
 from pyramid.security import authenticated_userid
-from pyramid.httpexceptions import HTTPSeeOther, HTTPInternalServerError, HTTPNotFound
+from pyramid.httpexceptions import (
+        HTTPSeeOther,
+        HTTPInternalServerError,
+        HTTPNotFound,
+        HTTPForbidden,
+        )
 from pyramid.renderers import render_to_response
 
 import transaction
@@ -36,6 +45,7 @@ from ..events import (
 from .. import models as m
 from ..models.event import status_types
 
+@view_defaults(route_name='defcne.e')
 class Event(object):
     """View for Event functionality"""
 
@@ -43,6 +53,8 @@ class Event(object):
         self.context = context
         self.request = request
 
+    @view_config(context='..acl.EventCreate', renderer='event/form.mako', permission='create')
+    @view_config(context='..acl.EventCreate', renderer='event/form.mako', permission='create', name='letsgo')
     def create(self):
         if 'letsgo' == self.request.path.split('/')[-1]:
             schema = EventForm().bind(request=self.request)
@@ -55,6 +67,8 @@ class Event(object):
         else:
             return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse='guidelines'))
 
+
+    @view_config(context='..acl.EventCreate', name='letsgo', renderer='event/form.mako', permission='create', request_method='POST')
     def create_submit(self):
         controls = self.request.POST.items()
         schema = EventForm().bind(request=self.request)
@@ -123,23 +137,32 @@ class Event(object):
                 'page_title': 'Create Contest or Event',
                 'explanation': None,
                 }
-
+    @view_config(context=HTTPForbidden, containment='..acl.EventCreate', renderer='event/accountneeded.mako')
     def create_not_authed(self):
         if 'letsgo' == self.request.path.split('/')[-1]:
             return {}
         else:
             return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse='guidelines'))
 
+    # If the user attempts to access a page that requires authorization, but
+    # they are not logged in, instead of sending them to the login page, we
+    # simply send them a not found page. Maybe not as nice for the user if they
+    # thought they were logged in, but at least management URL's don't get
+    # "advertised" with a "please login =)"
+    @view_config(context=HTTPForbidden, containment='..acl.Event', renderer='not_found.mako')
     def not_authed(self):
         self.request.status_int = 404
         return {}
 
+    @view_config(name='guidelines', renderer='event/rules.mako')
     def guidelines(self):
         return {}
 
+    @view_config(context='..acl.Events')
     def main(self):
         return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse='21'))
 
+    @view_config(context='..acl.DefconEvent', renderer='event/all.mako')
     def defcon(self):
         dc = m.Defcon.find_defcon_events(self.context.__name__)
 
@@ -164,6 +187,7 @@ class Event(object):
                 'page_title': 'DEF CON {0} Contests/Events'.format(self.context.__name__),
                 }
 
+    @view_config(context='..acl.Event', renderer='event/one.mako', permission='view')
     def event(self):
         event = self.context.event
         e = {}
@@ -178,6 +202,7 @@ class Event(object):
                 'event': e,
                 }
 
+    @view_config(context='..acl.Event', name='edit', renderer='event/edit.mako', permission='edit')
     def edit(self):
         event = self.context.event
 
@@ -216,6 +241,7 @@ class Event(object):
                 'form': f.render(astruct),
                 }
 
+    @view_config(context='..acl.Event', name='edit', renderer='event/edit.mako', permission='edit', request_method='POST')
     def edit_submit(self):
         event = self.context.event
 
@@ -350,6 +376,7 @@ class Event(object):
 
         return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'edit')))
 
+    @view_config(context='..acl.Event', name='manage', renderer='event/manage.mako', permission='manage')
     def manage(self):
         event = self.context.event
 
@@ -374,6 +401,7 @@ class Event(object):
                 'event': e,
                 }
 
+    @view_config(context='..acl.Event', name='extrainfo', renderer='event/extrainfo.mako', permission='edit')
     def extrainfo(self):
         event = self.context.event
 
@@ -394,6 +422,7 @@ class Event(object):
                 'form': f.render(),
                 }
 
+    @view_config(context='..acl.Event', name='extrainfo', renderer='event/extrainfo.mako', permission='edit', request_method='POST')
     def extrainfo_submit(self):
         event = self.context.event
 
