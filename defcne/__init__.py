@@ -95,10 +95,6 @@ def add_routes(config):
     config.add_route('defcne.magic', '/magic/*traverse', factory=acl.Magic)
 
 def add_views(config):
-    config.add_view('defcne.views.home.home',
-            route_name='defcne',
-            renderer='home.mako')
-
     config.scan('.views')
 
     # /e/guidelines (GET)
