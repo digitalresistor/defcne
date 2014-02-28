@@ -11,7 +11,7 @@ from urlparse import urlparse
 from csrf import CSRFSchema
 
 from .. import models as m
-from ..models.Event import (
+from ..models.event import (
         status_types,
         badge_types,
         )

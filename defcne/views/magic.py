@@ -22,7 +22,7 @@ from ..forms import (
         )
 
 from .. import models as m
-from ..models.Event import status_types
+from ..models.event import status_types
 
 class Magic(object):
     """View for Magic functionality"""
@@ -53,8 +53,6 @@ class Magic(object):
             e['manage_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname, 'manage'))
             e['magic_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname))
             events.append(e)
-
-        print events
 
         return {
                 'page_title': 'All Events',
@@ -197,7 +195,6 @@ class Magic(object):
                         m.DBSession.delete(badge)
 
             for badge in appstruct['badges']:
-                print badge
                 if badge['id'] in cur_badge_ids:
                     cur_badge = [p for p in badges if p.id == badge['id']][0]
                     cur_badge.type = badge['typeof']

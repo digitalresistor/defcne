@@ -1,18 +1,18 @@
 from meta import DBSession, Base
 
-from Group import ( 
+from group import (
         Group,
         UserGroups,
         )
 
-from User import (
+from user import (
         User,
         UserValidation,
         UserTickets,
         UserForgot,
         )
 
-from Event import (
+from event import (
         Event,
         EventPOC,
         EventPower,
@@ -21,11 +21,11 @@ from Event import (
         EventBadges,
         )
 
-from Defcon import (
+from defcon import (
         Defcon
         )
 
-from Tickets import (
+from tickets import (
         Ticket,
         )
 

@@ -33,7 +33,7 @@ from ..forms.User import (
         )
 
 from .. import models as m
-from ..models.Event import status_types as event_status_types
+from ..models.event import status_types as event_status_types
 
 from ..auth import (
         remember,

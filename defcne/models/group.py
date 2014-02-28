@@ -20,7 +20,7 @@ from sqlalchemy.orm import (
         relationship,
         )
 
-from User import User
+from user import User
 
 class Group(Base):
     __table__ = Table('groups', Base.metadata,
