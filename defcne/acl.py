@@ -153,6 +153,10 @@ class Event(object):
     def __getitem__(self, key):
         raise KeyError
 
+class Badges(object):
+    def __init__(self):
+        pass
+
 # The traversal for /magic/
 
 class Magic(object):
@@ -175,10 +179,12 @@ class Magic(object):
         if key == 'u':
             item = Usernames(self.request)
 
+        if key == 'badges':
+            item = Badges()
+
         if item == None:
             return KeyError
 
-        print item
         item.__parent__ = self
 
         return item

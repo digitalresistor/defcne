@@ -354,6 +354,16 @@ def add_views(config):
             request_method='GET',
             permission='magic')
 
+    config.add_view('defcne.views.Magic',
+            attr='badges',
+            route_name='defcne.magic',
+            name='',
+            context=acl.Badges,
+            containment=acl.Magic,
+            renderer='magic/badges.mako',
+            request_method='GET',
+            permission='magic')
+
     # Error pages
     #config.add_view('usingnamespace.views.errors.db_failed', context=DBAPIError, renderer='db_failed.mako')
 
