@@ -7,12 +7,11 @@ README = open(os.path.join(here, 'README.txt')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
-    'pyramid',
+    'pyramid>=1.5b1',
     'SQLAlchemy',
     'psycopg2',
     'transaction',
     'pyramid_tm',
-    'pyramid_debugtoolbar',
     'zope.sqlalchemy',
     'waitress',
     'cryptacular',
@@ -21,6 +20,11 @@ requires = [
     'deform_bootstrap',
     'pyramid_deform',
     'pyramid_mailer',
+    'pyramid_mako',
+    ]
+
+development = requires + [
+    'pyramid_debugtoolbar',
     ]
 
 setup(name='defcne',
@@ -42,6 +46,9 @@ setup(name='defcne',
       zip_safe=False,
       test_suite='defcne',
       install_requires=requires,
+      extras_require = {
+          'develop': development
+          },
       entry_points="""\
       [paste.app_factory]
       main = defcne:main
