@@ -41,7 +41,7 @@ If you can't click the link, you can use the following information instead:
 url: {reset_url_nodata}
 username: {username}
 token: {token}
-
+ 
 Thanks,
 DEFCnE Team"""
 

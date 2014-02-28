@@ -29,7 +29,16 @@
                 <div>
                     <ul>
                         % for poc in event['pocs']:
-                        <li>${poc}</li>
+                        <li>${poc['name']}
+                            <ul>
+                            <li>
+                            ${poc['cellphone']}
+                            </li>
+                            <li>
+                            ${poc['email']}
+                            </li>
+                            </ul>
+                        </li>
                         % endfor
                     </ul>
                 </div>

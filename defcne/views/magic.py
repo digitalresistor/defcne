@@ -22,7 +22,10 @@ from ..forms import (
         )
 
 from .. import models as m
-from ..models.event import status_types
+from ..models.event import (
+        status_types,
+        badge_types,
+        )
 
 class Magic(object):
     """View for Magic functionality"""
@@ -40,7 +43,16 @@ class Magic(object):
         return HTTPSeeOther(location=self.request.route_url('defcne.magic', traverse=('e', '21')))
 
     def dcevents(self):
-        all_events = m.DBSession.query(m.Event).filter(m.Event.dc == self.context.__name__).order_by(m.Event.name.asc()).all()
+        all_events = m.DBSession.query(m.Event).filter(m.Event.dc == self.context.__name__).order_by(m.Event.name.asc())
+
+        if 'filter' in self.request.GET:
+            try:
+                filterby = int(self.request.GET['filter'])
+                all_events = all_events.filter(m.Event.status == filterby)
+            except ValueError:
+                pass
+
+        all_events = all_events.all()
 
         events = []
         for event in all_events:
@@ -76,7 +88,7 @@ class Magic(object):
         e['blackbadge'] = event.blackbadge
         e['status'] = status_types[event.status]
 
-        e['pocs'] = [x.name for x in event.pocs]
+        e['pocs'] = [{'name': x.name, 'cellphone': x.cellphone, 'email': x.email} for x in event.pocs]
         e['power'] = [{'amps': x.amps, 'outlets': x.outlets, 'justification': x.justification} for x in event.power]
         e['drops'] = [{'typeof': x.typeof, 'justification': x.justification} for x in event.drops]
         e['aps'] = [{'hwmac': x.hwmac, 'apbrand': x.apbrand, 'ssid': x.ssid} for x in event.aps]
@@ -286,4 +298,40 @@ class Magic(object):
                     'form': e.render(),
                     'page_title': 'Editing user: {}'.format(user.disp_uname),
                     }
+    
+    def badges(self):
+        all_events = m.DBSession.query(m.Event).filter(m.Event.dc == 21).order_by(m.Event.name.asc()).all()
 
+        badgecnt = {}
+
+        for btype in badge_types.keys():
+            badgecnt[btype] = 0
+
+        events = []
+        for event in all_events:
+            if event.status not in [4, 5]:
+                continue
+
+            e = {}
+            e['name'] = event.disp_name
+            e['status'] = status_types[event.status]
+            e['blackbadge'] = event.blackbadge
+            e['edit_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname, 'edit'))
+            e['manage_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname, 'manage'))
+            e['magic_url'] = self.request.route_url('defcne.magic', traverse=('e', event.dc, event.shortname))
+
+            # Get badges
+            badges = m.DBSession.query(m.EventBadges).filter(m.EventBadges.event_id == event.id).all()
+            e['badges'] = [{'id': x.id, 'typeof': badge_types[x.type], 'amount': x.amount} for x in badges]
+            
+            for badge in badges:
+                badgecnt[badge.type] = badgecnt[badge.type] + 1
+
+            events.append(e)
+
+        badgecnts = [{'name': badge_types[key], 'amount': value} for (key, value) in badgecnt.items()]
+
+        return {
+                'events': events,
+                'count': badgecnts,
+                }
