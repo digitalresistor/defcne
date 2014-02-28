@@ -7,6 +7,10 @@ log = logging.getLogger(__name__)
 
 from uuid import uuid4
 
+from pyramid.view import (
+        view_config,
+        view_defaults,
+        )
 from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPSeeOther, HTTPNotFound
 
@@ -73,6 +77,7 @@ _reset_explain = """
 <p>If you remember your password, you may instead wish to <a href="{auth_url}">authenticate</a>. If you don't have an account, you may <a href="{create_url}">create an account</a>.</p>
 """
 
+@view_defaults(route_name='defcne.user')
 class User(object):
     """View for User functionality"""
 
@@ -80,6 +85,7 @@ class User(object):
         self.context = context
         self.request = request
 
+    @view_config(name='create', renderer='user/form.mako')
     def create(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -92,6 +98,7 @@ class User(object):
                 'explanation': _create_explain.format(auth_url=self.request.route_url('defcne.user', traverse='auth')),
                 }
 
+    @view_config(name='create', renderer='user/form.mako', request_method='POST')
     def create_submit(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -157,7 +164,7 @@ class User(object):
                     'page_title': 'Validate Email Address',
                     'explanation': _validate_explain,
                     }
-
+    @view_config(name='validate', renderer='user/form.mako')
     def validate(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -175,6 +182,7 @@ class User(object):
                 'explanation': _validate_explain,
                 }
 
+    @view_config(name='validate', renderer='user/form.mako', request_method='POST')
     def validate_submit(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -182,6 +190,7 @@ class User(object):
         controls = self.request.POST.items()
         return self._validate_form(controls)
 
+    @view_config(name='auth', renderer='user/form.mako')
     def auth(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -197,6 +206,7 @@ class User(object):
                 'explanation': _auth_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), forgot_url=self.request.route_url('defcne.user', traverse='forgot')),
                 }
 
+    @view_config(name='auth', renderer='user/form.mako', request_method='POST')
     def auth_submit(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -247,10 +257,12 @@ class User(object):
                     'explanation': _auth_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), forgot_url=self.request.route_url('defcne.user', traverse='forgot')),
                     }
 
+    @view_config(name='deauth')
     def deauth(self):
         headers = forget(self.request)
         return HTTPSeeOther(location = self.request.route_url('defcne'), headers=headers)
 
+    @view_config(renderer='user/user.mako', permission='view')
     def user(self):
         events = m.DBSession.query(m.Event).filter(m.Event.owner.contains(self.request.user.user)).order_by(m.Event.disp_name).all()
         eventlist = []
@@ -266,6 +278,7 @@ class User(object):
                 'events': eventlist,
                 }
 
+    @view_config(name='edit', renderer='user/form_menu.mako', permission='edit')
     def edit(self):
         # Redirect to the right location if the user just went to /user/edit/
         if len(self.request.subpath) == 0:
@@ -279,6 +292,7 @@ class User(object):
 
         raise HTTPNotFound()
 
+    @view_config(name='edit', renderer='user/form_menu.mako', permission='edit', request_method='POST')
     def edit_submit(self):
         if 'password' == self.request.subpath[0]:
             return self.edit_password_submit()
@@ -341,6 +355,7 @@ class User(object):
     def edit_profile_submit(self):
         return {}
 
+    @view_config(name='forgot', renderer='user/form.mako')
     def forgot(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -353,6 +368,7 @@ class User(object):
                 'explanation': _forgot_password_explain.format(create_url=self.request.route_url('defcne.user', traverse='create'), auth_url=self.request.route_url('defcne.user', traverse='auth')),
                 }
 
+    @view_config(name='forgot', renderer='user/form.mako', request_method='POST')
     def forgot_submit(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -408,7 +424,7 @@ class User(object):
                     'page_title': 'Reset Password',
                     'explanation': _reset_explain.format(auth_url=self.request.route_url('defcne.user', traverse='auth'), create_url=self.request.route_url('defcne.user', traverse='create')),
                     }
-
+    @view_config(name='reset', renderer='user/form.mako')
     def reset(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -425,7 +441,7 @@ class User(object):
                 'page_title': 'Reset Password',
                 'explanation': _reset_explain.format(auth_url=self.request.route_url('defcne.user', traverse='auth'), create_url=self.request.route_url('defcne.user', traverse='create')),
                 }
-
+    @view_config(name='reset', renderer='user/form.mako', request_method='POST')
     def reset_submit(self):
         if authenticated_userid(self.request) is not None:
             return HTTPSeeOther(self.request.route_url('defcne.user', traverse=''))
@@ -433,6 +449,7 @@ class User(object):
         controls = self.request.POST.items()
         return self._validate_form(controls)
 
+    @view_config(name='profile', renderer='user/profile.mako', request_method='GET', permission='view')
     def profile(self):
         pfields = []
 
