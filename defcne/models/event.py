@@ -69,7 +69,7 @@ class Event(Base):
     power = relationship("EventPower")
     drops = relationship("EventWiredDrop")
     aps = relationship("EventAP")
-    owner = relationship("User", secondary="user_events", lazy="join")
+    owner = relationship("User", secondary="user_events", lazy="joined")
     tickets = relationship("Ticket")
 
     _name = __table__.c.name
