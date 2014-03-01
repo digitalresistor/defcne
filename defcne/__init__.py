@@ -6,7 +6,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from pyramid.config import Configurator
-from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid.session import SignedCookieSessionFactory
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 
@@ -40,10 +40,10 @@ def main(global_config, **settings):
         log.error('defcne.upload_path is not set. Refusing to start.')
         quit(-1)
 
-    _session_factory = UnencryptedCookieSessionFactoryConfig(
+    _session_factory = SignedCookieSessionFactory(
             settings['pyramid.secretcookie'],
-            cookie_httponly=True,
-            cookie_max_age=864000
+            httponly=True,
+            max_age=864000
             )
 
     _authn_policy = AuthTktAuthenticationPolicy(
