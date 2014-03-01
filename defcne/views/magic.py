@@ -7,8 +7,15 @@ log = logging.getLogger(__name__)
 
 from uuid import uuid4
 
+from pyramid.view import (
+        view_config,
+        view_defaults,
+        )
 from pyramid.security import authenticated_userid
-from pyramid.httpexceptions import HTTPSeeOther, HTTPNotFound
+from pyramid.httpexceptions import (
+        HTTPSeeOther,
+        HTTPNotFound,
+        )
 
 import transaction
 
@@ -27,6 +34,7 @@ from ..models.event import (
         badge_types,
         )
 
+@view_defaults(context='..acl.Magic', containment='..acl.Magic', route_name='defcne.magic', permission='magic')
 class Magic(object):
     """View for Magic functionality"""
 
@@ -34,14 +42,17 @@ class Magic(object):
         self.context = context
         self.request = request
 
+    @view_config(containment=None, renderer='magic/main.mako')
     def main(self):
         return {
                 'page_title': 'Magic Portal',
                 }
 
+    @view_config(context='..acl.Events')
     def dcyears(self):
         return HTTPSeeOther(location=self.request.route_url('defcne.magic', traverse=('e', '21')))
 
+    @view_config(context='..acl.DefconEvent', renderer='magic/events.mako')
     def dcevents(self):
         all_events = m.DBSession.query(m.Event).filter(m.Event.dc == self.context.__name__).order_by(m.Event.name.asc())
 
@@ -71,6 +82,7 @@ class Magic(object):
                 'events': events,
                 }
 
+    @view_config(context='..acl.Event', renderer='magic/event.mako')
     def event(self):
         event = self.context.event
 
@@ -109,6 +121,7 @@ class Magic(object):
                 'form': f.render()
                 }
 
+    @view_config(context='..acl.Event', name='extrainfo', request_method='POST')
     def event_extrainfo(self):
         event = self.context.event
 
@@ -162,6 +175,7 @@ class Magic(object):
                     'form': failed.render()
                     }
 
+    @view_config(context='..acl.Event', name='manage', renderer='magic/edit.mako')
     def manage(self):
         event = self.context.event
 
@@ -182,6 +196,8 @@ class Magic(object):
                 'page_title': 'Manage Event: {}'.format(event.disp_name),
                 }
 
+
+    @view_config(context='..acl.Event', name='manage', renderer='magic/edit.mako', request_method='POST')
     def manage_submit(self):
         event = self.context.event
 
@@ -225,6 +241,8 @@ class Magic(object):
                     'page_title': 'Manage Event: {}'.format(event.disp_name),
                     }
 
+
+    @view_config(context='..acl.Usernames', renderer='magic/user.mako')
     def users(self):
         all_users = m.DBSession.query(m.User).order_by(m.User.username.asc()).all()
 
@@ -247,9 +265,11 @@ class Magic(object):
                 'users': users,
                 }
 
+    @view_config(context='..acl.Username', renderer='magic/user.mako')
     def user(self):
         return {}
 
+    @view_config(context='..acl.Username', name='edit', renderer='magic/edit.mako')
     def user_edit(self):
         user = self.context.user
 
@@ -265,6 +285,8 @@ class Magic(object):
                 'form': f.render(a),
                 }
 
+
+    @view_config(context='..acl.Username', name='edit', renderer='magic/edit.mako', request_method='POST')
     def user_edit_submit(self):
         user = self.context.user
 
@@ -298,7 +320,7 @@ class Magic(object):
                     'form': e.render(),
                     'page_title': 'Editing user: {}'.format(user.disp_uname),
                     }
-    
+    @view_config(context='..acl.Badges', renderer='magic/badges.mako')
     def badges(self):
         all_events = m.DBSession.query(m.Event).filter(m.Event.dc == 21).order_by(m.Event.name.asc()).all()
 
@@ -323,7 +345,7 @@ class Magic(object):
             # Get badges
             badges = m.DBSession.query(m.EventBadges).filter(m.EventBadges.event_id == event.id).all()
             e['badges'] = [{'id': x.id, 'typeof': badge_types[x.type], 'amount': x.amount} for x in badges]
-            
+
             for badge in badges:
                 badgecnt[badge.type] = badgecnt[badge.type] + 1
 

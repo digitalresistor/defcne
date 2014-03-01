@@ -202,6 +202,7 @@ class Event(object):
                 'event': e,
                 }
 
+    @view_config(context='..acl.Event', containment='..acl.Magic', route_name='defcne.magic', name='edit', renderer='magic/edit.mako', permission='magic')
     @view_config(context='..acl.Event', name='edit', renderer='event/edit.mako', permission='edit')
     def edit(self):
         event = self.context.event
@@ -241,6 +242,7 @@ class Event(object):
                 'form': f.render(astruct),
                 }
 
+    @view_config(context='..acl.Event', containment='..acl.Magic', route_name='defcne.magic', name='edit', renderer='magic/edit.mako', request_method='POST', permission='magic')
     @view_config(context='..acl.Event', name='edit', renderer='event/edit.mako', permission='edit', request_method='POST')
     def edit_submit(self):
         event = self.context.event
