@@ -119,7 +119,7 @@ class Event(object):
                 event.aps.append(m.EventAP(hwmac=ap['hwmac'], apbrand=ap['apbrand'], ssid=ap['ssid']))
 
             event.owner.append(self.request.user.user)
-            event.dc = 21;
+            event.dc = 22;
 
             if len(appstruct['otherrequests']['ticket']) != 0:
                 ticket = m.Ticket(ticket=appstruct['otherrequests']['ticket'], user=self.request.user.user)
@@ -160,7 +160,7 @@ class Event(object):
 
     @view_config(context='..acl.Events')
     def main(self):
-        return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse='21'))
+        return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse='22'))
 
     @view_config(context='..acl.DefconEvent', renderer='event/all.mako')
     def defcon(self):

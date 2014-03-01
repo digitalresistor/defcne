@@ -50,7 +50,7 @@ class Magic(object):
 
     @view_config(context='..acl.Events')
     def dcyears(self):
-        return HTTPSeeOther(location=self.request.route_url('defcne.magic', traverse=('e', '21')))
+        return HTTPSeeOther(location=self.request.route_url('defcne.magic', traverse=('e', '22')))
 
     @view_config(context='..acl.DefconEvent', renderer='magic/events.mako')
     def dcevents(self):
@@ -322,7 +322,7 @@ class Magic(object):
                     }
     @view_config(context='..acl.Badges', renderer='magic/badges.mako')
     def badges(self):
-        all_events = m.DBSession.query(m.Event).filter(m.Event.dc == 21).order_by(m.Event.name.asc()).all()
+        all_events = m.DBSession.query(m.Event).filter(m.Event.dc == 22).order_by(m.Event.name.asc()).all()
 
         badgecnt = {}
 
