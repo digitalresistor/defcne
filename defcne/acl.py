@@ -35,7 +35,7 @@ class User(object):
 # The traversal for /u/
 
 class Usernames(object):
-    __name__ = 'u'
+    __name__ = 'users'
     __parent__ = FakeRoot()
     __acl__ = []
 
