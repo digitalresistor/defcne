@@ -86,7 +86,7 @@ DEFCnE's Little Helper Bot
 """
 
 def cne_created(event):
-    manage_url = event.request.route_url('defcne.e', traverse=(event.cne.dc, event.cne.shortname, 'manage'))
+    manage_url = event.request.route_url('defcne.e', traverse=(event.cne.dc, event.cne.id, 'manage'))
     text = __staff_eventcreated__.format(contest_name=event.cne.disp_name, contest_owner=event.request.user.user.disp_uname, event_manage_url=manage_url)
 
     staff_list = m.Group.find_group(u'staff').users
