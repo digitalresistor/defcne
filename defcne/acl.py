@@ -60,10 +60,10 @@ class Username(object):
     def __getitem__(self, key):
         raise KeyError
 
-# The traversal for /e/
+# The traversal for /events/
 
 class Events(object):
-    __name__ = 'e'
+    __name__ = 'events'
     __parent__ = FakeRoot()
     __acl__ = [
                 (Allow, "group:adminstrators", ALL_PERMISSIONS),
@@ -75,12 +75,8 @@ class Events(object):
 
     def __getitem__(self, key):
         try:
-            if key == 'create':
-                item = EventCreate(self.request)
-
-            else:
-                dc = int(key)
-                item = DefconEvent(dc)
+            dc = int(key)
+            item = DefconEvent(dc)
 
             item.__parent__ = self
 
@@ -89,23 +85,18 @@ class Events(object):
         except ValueError:
             raise KeyError
 
-class EventCreate(object):
-    __name__ = 'create'
-
-    def __init__(self, request):
-        self.__name__ = 'create'
-        self.request = request
-
-    def __getitem__(self, key):
-        raise KeyError
-
 class DefconEvent(object):
     def __init__(self, dc):
         self.__name__ = dc
         self.dc = dc
 
     def __getitem__(self, key):
-        event = m.Event.find_event_short(key)
+        try:
+            eid = int(key)
+        except ValueError:
+            return None
+
+        event = m.DBSession.query(m.Event).get(eid)
 
         if event is None:
             return None
@@ -123,10 +114,8 @@ class Event(object):
                 (Allow, "group:staff", 'edit'),
                 (Allow, "group:staff", 'view'),
                 (Allow, "group:staff", 'manage'),
+                (Allow, "userid:{id}".format(id=self.event.owner.id), ('edit', 'view', 'manage')),
                 ]
-
-        for user in self.event.owner:
-            acl.append((Allow, "userid:{id}".format(id=user.id), ('edit', 'view', 'manage')))
 
         if self.event.status == 5:
             acl.append((Allow, Everyone, 'view'))
@@ -135,7 +124,7 @@ class Event(object):
 
     def __init__(self, event):
         self.event = event
-        self.__name__ = event.shortname
+        self.__name__ = event.id
 
     def __getitem__(self, key):
         raise KeyError
