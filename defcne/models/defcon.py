@@ -17,13 +17,15 @@ from sqlalchemy.orm import (
         eagerload,
         )
 
+from cvebase import CVEBase
+
 class Defcon(Base):
     __table__ = Table('defcon', Base.metadata,
             Column('id', Integer, primary_key=True, unique=True, autoincrement=False),
             Column('url', Unicode(256), index=True),
             )
 
-    events = relationship("Event", lazy="noload")
+    cve = relationship("CVEBase", lazy="noload")
 
     @classmethod
     def find_defcon(cls, num):
@@ -31,5 +33,9 @@ class Defcon(Base):
 
     @classmethod
     def find_defcon_events(cls, num):
-        return DBSession.query(cls).filter(cls.id == num).options(eagerload('events')).first()
+        return DBSession.query(cls).filter(cls.id == num).filter(CVEBase.type == 'event').options(eagerload('cve')).first()
+
+    @classmethod
+    def find_defcon_contests(cls, num):
+        return DBSession.query(cls).filter(cls.id == num).filter(CVEBase.type == 'contest').options(eagerload('cve')).first()
 

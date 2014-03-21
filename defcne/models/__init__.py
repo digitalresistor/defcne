@@ -12,13 +12,21 @@ from user import (
         UserForgot,
         )
 
+from cvebase import (
+        CVEBase,
+        POC,
+        Power,
+        WiredInternet,
+        AccessPoint,
+        Badges,
+        )
+
 from event import (
         Event,
-        EventPOC,
-        EventPower,
-        EventWiredDrop,
-        EventAP,
-        EventBadges,
+        )
+
+from contest import (
+        Contest,
         )
 
 from defcon import (

@@ -39,6 +39,7 @@ class User(Base):
             Column('disp_uname', Unicode(128)), # The users display username. We cache the lowered username in username.
             Column('realname', Unicode(256), index=True),
             Column('email', Unicode(256), unique=True, index=True),
+            Column('cellphone', Unicode),
             Column('credentials', String(60)), # bcrypt
             Column('validated', Boolean, default=False),
             Column('credreset', Boolean, default=False),

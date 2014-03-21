@@ -2,8 +2,6 @@
 # Author: Bert JW Regeer <bertjw@regeer.org>
 # Created: 2013-03-09
 
-import datetime
-
 from meta import Base
 from meta import DBSession
 
@@ -19,6 +17,7 @@ from sqlalchemy import (
         String,
         Table,
         Unicode,
+        UnicodeText,
         and_,
         )
 
@@ -29,126 +28,71 @@ from sqlalchemy.orm import (
         )
 
 from sqlalchemy.ext.hybrid import hybrid_property
+from cvebase import CVEBase
 
-status_types = {
-        0: u'Pending',
-        1: u'Under Review',
-        2: u'More Information Requested',
-        3: u'Rejected',
-        4: u'Accepted',
-        5: u'Published',
-        }
 
-badge_types = {
-        0: u'Human',
-        1: u'Contest and Events',
-        2: u'Other',
-        }
-
-class Event(Base):
+class Event(CVEBase):
     __table__ = Table('events', Base.metadata,
-            Column('id', Integer, primary_key=True, unique=True),
-            Column('dc', Integer, ForeignKey('defcon.id', onupdate="CASCADE", ondelete="CASCADE")),
-            Column('name', Unicode, unique=True, nullable=False),
-            Column('disp_name', Unicode),
-            Column('shortname', Unicode, unique=True, nullable=False),
-            Column('description', Unicode),
-            Column('website', Unicode),
-            Column('logo', String),
-            Column('hrsofoperation', Unicode),
+            Column('id', Integer, ForeignKey('cve.id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
+            Column('onsite', Boolean),
+            Column('official', Boolean),
+            Column('security', Boolean),
+            Column('signage', UnicodeText),
+            )
+    __mapper_args__ = {
+                'polymorphic_identity': 'event',
+            }
+
+    space = relationship("EventSpace")
+
+    def from_appstruct(self, appstruct):
+        super(Event, self).from_appstruct(appstruct)
+
+        self.onsite = appstruct['onsite']
+        self.official = appstruct['official']
+        self.security = appstruct['security']
+        self.signage = appstruct['signage']
+
+    def to_appstruct(self):
+        ret = super(Event, self).to_appstruct()
+
+        ret.update(
+                    {
+                        'id': self.id,
+                        'onsite': self.onsite,
+                        'official': self.official,
+                        'security': self.security,
+                        'signage': self.signage,
+                    }
+                )
+
+        return ret
+
+
+class EventSpace(Base):
+    __table__ = Table('event_space', Base.metadata,
+            Column('event_id', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
             Column('tables', Integer),
             Column('chairs', Integer),
-            Column('represent', Unicode),
-            Column('numparticipants', Integer),
-            Column('blackbadge', Boolean, default=False),
-            Column('status', Integer, default=0),
-            )
-    CheckConstraint(__table__.c.status.in_(status_types.keys()))
-
-    pocs = relationship("EventPOC")
-    power = relationship("EventPower")
-    drops = relationship("EventWiredDrop")
-    aps = relationship("EventAP")
-    owner = relationship("User", secondary="user_events", lazy="joined")
-    tickets = relationship("Ticket")
-
-    _name = __table__.c.name
-    _shortname = __table__.c.shortname
-
-    @hybrid_property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        self.disp_name = value
-        self._name = value.lower()
-
-    @hybrid_property
-    def shortname(self):
-        return self._shortname
-
-    @shortname.setter
-    def shortname(self, value):
-        self._shortname = value.lower()
-
-    @classmethod
-    def find_event(cls, name):
-        return DBSession.query(cls).filter(cls.name == name.lower()).first()
-
-    @classmethod
-    def find_event_short(cls, name):
-        return DBSession.query(cls).filter(cls.shortname == name.lower()).first()
-
-class EventPOC(Base):
-    __table__ = Table('event_pocs', Base.metadata,
-            Column('event_id', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE")),
-            Column('id', Integer, primary_key=True, unique=True),
-            Column('name', Unicode),
-            Column('email', Unicode),
-            Column('cellphone', Unicode),
+            Column('stage', Boolean),
+            Column('location', UnicodeText),
+            Column('mobilebar', UnicodeText),
             )
 
-class EventPower(Base):
-    __table__ = Table('event_powers', Base.metadata,
-            Column('event_id', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE")),
-            Column('id', Integer, primary_key=True, unique=True),
-            Column('amps', Integer),
-            Column('outlets', Integer),
-            Column('justification', Unicode),
-            )
+    def from_appstruct(self, appstruct):
+        self.event_id = appstruct['event_id']
+        self.tables = appstruct['tables']
+        self.chairs = appstruct['chairs']
+        self.stage = appstruct['stage']
+        self.location = appstruct['location']
+        self.mobilebar = appstruct['mobilebar']
 
-class EventWiredDrop(Base):
-    __table__ = Table('event_drops', Base.metadata,
-            Column('event_id', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE")),
-            Column('id', Integer, primary_key=True, unique=True),
-            Column('typeof', Unicode),
-            Column('justification', Unicode),
-            )
-
-class EventAP(Base):
-    __table__ = Table('event_aps', Base.metadata,
-            Column('event_id', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE")),
-            Column('id', Integer, primary_key=True, unique=True),
-            Column('hwmac', Unicode),
-            Column('apbrand', Unicode),
-            Column('ssid', Unicode),
-            )
-
-class UserEvents(Base):
-    __table__ = Table('user_events', Base.metadata,
-            Column('userid', Integer, ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
-            Column('eventid', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE"), index=True),
-
-            PrimaryKeyConstraint('userid', 'eventid'),
-            )
-
-class EventBadges(Base):
-    __table__ = Table('event_badges', Base.metadata,
-            Column('event_id', Integer, ForeignKey('events.id', onupdate="CASCADE", ondelete="CASCADE"), nullable=False),
-            Column('id', Integer, primary_key=True, unique=True),
-            Column('type', Integer),
-            Column('amount', Integer),
-            Column('reason', Unicode),
-            )
-    CheckConstraint(__table__.c.type.in_(badge_types.keys()))
+    def to_appstruct(self):
+        return {
+                'event_id': self.event_id,
+                'tables': self.tables,
+                'chairs': self.chairs,
+                'stage': self.stage,
+                'location': self.location,
+                'mobilebar': self.mobilebar,
+                }
