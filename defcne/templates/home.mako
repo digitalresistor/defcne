@@ -2,9 +2,9 @@
 
 <div class="jumbotron">
     <h1>DEF CON</h1>
-    <h1>Contests and Events</h1>
+    <h2>Contests Events Villages</h2>
     <p class="lead">
-        This years contests and events at DEF CON are going to be absolutely fantastic!
+        This years contests, events and villages at DEF CON are going to be absolutely fantastic!
     </p>
 </div>
 <hr>
@@ -15,18 +15,13 @@
             <p>Learn about the events that are going to be at DEF CON</p>
             &gt;&gt; <a href="${request.route_url('defcne.e', traverse='')}">See all events</a>
         </div>
-        <!--
-        <div class="span4">
-            <h3><a href="#">Goons</a></h3>
-            <p>Learn more about the red badge wearing badasses that help make your conference experience awesome</p>
-            &gt;&gt; <a href="#">Learn more about the goons</a>
-        </div>
-        -->
         <div class="span6">
             <h3>Participate</h3>
-            &gt;&gt; <a href="${request.route_url('defcne.e', traverse='create')}">Create an event</a><br>
-            <!-- &gt;&gt; <a href="#">More info</a><br>
-            &gt;&gt; <a href="#">F.A.Q</a> -->
+            <ul>
+                <li><a href="${request.route_url('defcne', 'guidelines')}">FAQ/Guidelines for Contests/Events/Villages</a></li>
+                <li><a href="${request.route_url('defcne.c', traverse='create')}">Submit Contest proposal</a></li>
+                <li><a href="${request.route_url('defcne.e', traverse='create')}">Submit Event proposal</a></li>
+            </ul>
         </div>
     </div>
 </div>
