@@ -23,13 +23,12 @@ from sqlalchemy.exc import IntegrityError
 from deform import (Form, ValidationFailure)
 
 from ..forms import (
-        EventManagement,
         TicketForm,
         MagicUserEdit,
         )
 
 from .. import models as m
-from ..models.event import (
+from ..models.cvebase import (
         status_types,
         badge_types,
         )
@@ -50,7 +49,7 @@ class Magic(object):
 
     @view_config(context='..acl.Events')
     def dcyears(self):
-        return HTTPSeeOther(location=self.request.route_url('defcne.magic', traverse=('e', '22')))
+        return HTTPSeeOther(location=self.request.route_url('defcne.magic', traverse=('events', '22')))
 
     @view_config(context='..acl.DefconEvent', renderer='magic/events.mako')
     def dcevents(self):
