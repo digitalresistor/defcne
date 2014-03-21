@@ -60,19 +60,6 @@ class Username(object):
     def __getitem__(self, key):
         raise KeyError
 
-# The traversal for /g/
-
-class Goons(object):
-    __name__ = 'g'
-    __parent__ = FakeRoot()
-    __acl__ = []
-
-    def __init__(self, request):
-        pass
-
-    def __getitem__(self, key):
-        raise KeyError
-
 # The traversal for /e/
 
 class Events(object):
