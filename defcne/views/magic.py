@@ -241,7 +241,7 @@ class Magic(object):
                     }
 
 
-    @view_config(context='..acl.Usernames', renderer='magic/user.mako')
+    @view_config(context='..acl.Usernames', renderer='magic/users.mako')
     def users(self):
         all_users = m.DBSession.query(m.User).order_by(m.User.username.asc()).all()
 
