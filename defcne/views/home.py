@@ -8,3 +8,6 @@ from pyramid.view import view_config
 def home(request):
     return {}
 
+@view_config(context='pyramid.traversal.DefaultRootFactory', name='guidelines', renderer='guidelines.mako')
+def guidelines(self):
+    return {}
