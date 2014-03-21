@@ -37,7 +37,7 @@ from ..forms.User import (
         )
 
 from .. import models as m
-from ..models.event import status_types as event_status_types
+from ..models.cvebase import status_types as event_status_types
 
 from ..auth import (
         remember,
@@ -264,13 +264,20 @@ class User(object):
 
     @view_config(renderer='user/user.mako', permission='view')
     def user(self):
-        events = m.DBSession.query(m.Event).filter(m.Event.owner.contains(self.request.user.user)).order_by(m.Event.disp_name).all()
+        events = m.DBSession.query(m.CVEBase).filter(m.CVEBase.owner == self.request.user.user).order_by(m.CVEBase.disp_name).all()
+
         eventlist = []
         for event in events:
-            event_info = {}
-            event_info['name'] = event.disp_name
+            event_info = event.to_appstruct()
             event_info['status'] = event_status_types[event.status]
-            event_info['url'] = self.request.route_url('defcne.e', traverse=(event.dc, event.shortname, 'manage'))
+
+            if event.type == 'contest':
+                event_info['url'] = self.request.route_url('defcne.c', traverse=(event.dc, event.id, 'manage'))
+            if event.type == 'event':
+                event_info['url'] = self.request.route_url('defcne.e', traverse=(event.dc, event.id, 'manage'))
+            if event.type == 'village':
+                event_info['url'] = self.request.route_url('defcne.v', traverse=(event.dc, event.id, 'manage'))
+
             eventlist.append(event_info)
 
         return {
