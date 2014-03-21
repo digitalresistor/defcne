@@ -129,6 +129,76 @@ class Event(object):
     def __getitem__(self, key):
         raise KeyError
 
+# The traversal for /contests/
+
+class Contests(object):
+    __name__ = 'contests'
+    __parent__ = FakeRoot()
+    __acl__ = [
+                (Allow, "group:adminstrators", ALL_PERMISSIONS),
+                (Allow, Authenticated, 'create'),
+            ]
+
+    def __init__(self, request):
+        self.request = request
+
+    def __getitem__(self, key):
+        try:
+            dc = int(key)
+            item = DefconContest(dc)
+
+            item.__parent__ = self
+
+            return item
+
+        except ValueError:
+            raise KeyError
+
+class DefconContest(object):
+    def __init__(self, dc):
+        self.__name__ = dc
+        self.dc = dc
+
+    def __getitem__(self, key):
+        try:
+            cid = int(key)
+        except ValueError:
+            return None
+
+        contest = m.DBSession.query(m.Contest).get(cid)
+
+        if contest is None:
+            return None
+        else:
+            item = Contest(contest)
+            item.__parent__ = self
+
+            return item
+
+class Contest(object):
+    @property
+    def __acl__(self):
+        acl = [
+                (Allow, "group:administrators", ALL_PERMISSIONS),
+                (Allow, "group:staff", 'edit'),
+                (Allow, "group:staff", 'view'),
+                (Allow, "group:staff", 'manage'),
+                (Allow, "userid:{id}".format(id=self.contest.owner.id), ('edit', 'view', 'manage')),
+                ]
+
+        if self.contest.status == 5:
+            acl.append((Allow, Everyone, 'view'))
+
+        return acl
+
+    def __init__(self, contest):
+        self.contest = contest
+        self.__name__ = contest.id
+
+    def __getitem__(self, key):
+        raise KeyError
+
+
 class Badges(object):
     def __init__(self):
         pass
