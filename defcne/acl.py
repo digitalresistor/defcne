@@ -219,17 +219,20 @@ class Magic(object):
     def __getitem__(self, key):
         item = None
 
-        if key == 'e':
+        if key == 'events':
             item = Events(self.request)
 
-        if key == 'u':
+        if key == 'contests':
+            item = Contests(self.request)
+
+        if key == 'users':
             item = Usernames(self.request)
 
         if key == 'badges':
             item = Badges()
 
-        if item == None:
-            return KeyError
+        if item is None:
+            raise KeyError
 
         item.__parent__ = self
 
