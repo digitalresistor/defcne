@@ -10,9 +10,12 @@ from User import (
         MagicUserEdit,
         )
 
-from Event import (
+from event import (
         EventForm,
-        EventManagement,
+        )
+
+from contest import (
+        ContestForm,
         )
 
 from Ticket import (
