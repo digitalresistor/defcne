@@ -80,16 +80,13 @@ def add_routes(config):
     config.add_route('defcne', '/')
 
     # /u/*traverse
-    config.add_route('defcne.u', '/u/*traverse', factory=acl.Username)
+    #config.add_route('defcne.u', '/u/*traverse', factory=acl.Usernames)
 
     # /user/*traverse
     config.add_route('defcne.user', '/user/*traverse', factory=acl.User)
 
-    # /g/*traverse
-    config.add_route('defcne.g', '/g/*traverse', factory=acl.Goons)
-
     # /e/*traverse
-    config.add_route('defcne.e', '/e/*traverse', factory=acl.Events)
+    config.add_route('defcne.e', '/events/*traverse', factory=acl.Events)
 
     # /magic/*traverse
     config.add_route('defcne.magic', '/magic/*traverse', factory=acl.Magic)
