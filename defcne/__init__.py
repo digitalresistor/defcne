@@ -113,6 +113,6 @@ def add_events(config):
     config.add_subscriber('defcne.subscribers.user_passwordupdated',
             'defcne.events.UserChangedPassword')
     config.add_subscriber('defcne.subscribers.cne_created',
-            'defcne.events.ContestEventCreated')
+            'defcne.events.CVECreated')
     config.add_subscriber('defcne.subscribers.cne_updated',
-            'defcne.events.ContestEventUpdated')
+            'defcne.events.CVEUpdated')

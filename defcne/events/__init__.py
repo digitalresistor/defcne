@@ -16,28 +16,27 @@ class UserForgetPassword(UserEvents):
 class UserChangedPassword(UserEvents):
     pass
 
-class ContestEventEvents(object):
+class CVEEvents(object):
     def __init__(self, request, context, cne, **kw):
         self.request = request
         self.context = context
         self.cne = cne
         self.kw = kw
 
-class ContestEventCreated(ContestEventEvents):
+class CVECreated(CVEEvents):
     pass
 
-class ContestEventUpdated(ContestEventEvents):
+class CVEUpdated(CVEEvents):
     pass
 
-
-class ContestEventTicket(ContestEventEvents):
+class CVETicket(CVEEvents):
     def __init__(self, ticket, *args, **kw):
         self.ticket = ticket
         super(ContestEventTicket, self).__init__(*args, **kw)
 
-class ContestEventTicketCreated(ContestEventTicket):
+class CVETicketCreated(CVETicket):
     pass
 
-class ContestEventTicketUpdated(ContestEventTicket):
+class CVETicketUpdated(CVETicket):
     pass
 
