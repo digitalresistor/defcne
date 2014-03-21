@@ -42,6 +42,7 @@ defaults = {
             ],
         'defcon': [
             (21, u'http://www.defcon.org'),
+            (22, u'http://www.defcon.org'),
             ]
         }
 
