@@ -5,40 +5,52 @@
         <%include file="sidebar.mako" />
         <div id="Content" class="span9">
             <h3>${page_title if page_title else ''}</h3>
-            % if events:
+            % if cves:
             <table class="table table-striped table-condensed table-bordered">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Owner</th>
-                        <th>Status</th>
-                        <th>Black Badge</th>
-                        <th></th>
+                    % for (_, th, _) in listitems:
+                        <th>${th}</th>
+                    % endfor
                     </tr>
                 </thead>
                 <tbody>
-                    % for event in events:
-                    <tr>
-                        <td><a href="${event['magic_url']}">${event['name']}</a></td>
-                        <td>
-                            % for owner in event['owner']:
-                                ${owner}
-                            % endfor
-                        </td>
-                        <td>${event['status']}</td>
-                        <td>
-                            % if event['blackbadge']:
-                            <i class="icon-ok"></i>
+                % for cve in cves:
+                <tr>
+                    % for (it, _, type) in listitems:
+                    <td>
+                        % if type == 'text':
+                            ${cve[it]}
+                        % elif type == 'boolean':
+                            % if cve[it]:
+                                Yes
                             % else:
-                            <i class="icon-remove"></i>
+                                No
                             % endif
-                        </td>
-                        <td>
-                            <a href="${event['edit_url']}" class="btn btn-small btn-primary">Edit</a>
-                            <a href="${event['manage_url']}" class="btn btn-small btn-danger">Manage Event</a>
-                        </td>
-                    </tr>
+                        % elif type == 'url':
+                            <a href="${cve[it][1]}">${cve[it][0]}</a>
+                        % elif type == 'list':
+                            % if len(cve[it[1]]) > 0:
+                                % for li in cve[it[1]]:
+                                <br />
+                                <ul>
+                                % for (iit, ift, itype) in it[0]:
+                                    <li><b>${ift}</b>: ${li[iit]}</li>
+                                % endfor
+                                </ul>
+                                % endfor
+                            % else:
+                                None
+                            % endif
+                        % elif type == 'buttons':
+                            % for button in cve[it]:
+                                <a href="${button[1]}" class="btn btn-small btn-primary">${button[0]}</a>
+                            % endfor
+                        % endif
+                    </td>
                     % endfor
+                </tr>
+                % endfor
                 </tbody>
             </table>
             %endif
