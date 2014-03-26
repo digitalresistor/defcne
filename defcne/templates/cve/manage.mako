@@ -16,7 +16,9 @@
             <ul>
                 % for (it, ft, type) in listitems:
                     <li>
+                        % if len(ft) != 0:
                         <b>${ft}</b>:
+                        % endif
                         
                         % if type == 'text':
                             ${cve[it]}
