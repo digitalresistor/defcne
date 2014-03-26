@@ -8,7 +8,7 @@
             <p></p>
             <h3>Contests/Events/Villages</h3>
             % if not events or not len(events):
-            <p>You have no events or contests. You should go <a href="${request.route_url('defcne.e', traverse=('create'))}">create one</a>!</p>
+            <p>You haven't proposed any contest/events/villages yet... You should go <a href="${request.route_url('defcne', 'guidelines')}">propose one</a>!</p>
             % else:
                 <%include file="events.mako" args="events=events" />
             % endif
