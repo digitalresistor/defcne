@@ -57,13 +57,11 @@ def deferred_event_verify_name_not_used(node, kw):
 
     def event_verify_name_not_used(node, value):
         if 'origname' in kw:
-            if kw.get('origname') == value:
+            if kw.get('origname') == value.lower():
                 return
 
         if m.CVEBase.find(type, value) != None:
             raise colander.Invalid(node, msg='Name already exists, please choose a different name.')
-
-        print "We didn't find an existing entry"
 
     return event_verify_name_not_used
 
