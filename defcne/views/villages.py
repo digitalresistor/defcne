@@ -32,7 +32,7 @@ from sqlalchemy.exc import IntegrityError
 from deform import (Form, ValidationFailure)
 
 from ..forms import (
-        ContestForm,
+        VillageForm,
         TicketForm,
         )
 
@@ -46,29 +46,29 @@ from ..events import (
 from .. import models as m
 from ..models.cvebase import status_types
 
-@view_defaults(route_name='defcne.c')
-class Contest(object):
-    """View for Contest functionality"""
+@view_defaults(route_name='defcne.v')
+class Village(object):
+    """View for Village functionality"""
 
     def __init__(self, context, request):
         self.context = context
         self.request = request
 
-    @view_config(context='..acl.Contests', renderer='event/form.mako', permission='create', name='create')
+    @view_config(context='..acl.Villages', renderer='event/form.mako', permission='create', name='create')
     def create(self):
-        (schema, f) = ContestForm.create_form(request=self.request,
-            action=self.request.current_route_url(), type='contest')
+        (schema, f) = VillageForm.create_form(request=self.request,
+            action=self.request.current_route_url(), type='village')
         return {
                 'form': f.render(),
-                'page_title': 'Submit Contest Proposal',
+                'page_title': 'Submit Village Proposal',
                 'explanation': None,
                 }
 
-    @view_config(context='..acl.Contests', name='create', renderer='event/form.mako', permission='create', request_method='POST')
+    @view_config(context='..acl.Villages', name='create', renderer='event/form.mako', permission='create', request_method='POST')
     def create_submit(self):
         controls = self.request.POST.items()
-        (schema, f) = ContestForm.create_form(request=self.request,
-                action=self.request.current_route_url(), type='contest')
+        (schema, f) = VillageForm.create_form(request=self.request,
+                action=self.request.current_route_url(), type='village')
 
         try:
             appstruct = f.validate(controls)
@@ -89,22 +89,22 @@ class Contest(object):
             else:
                 logo_path = None
 
-            contest = m.Contest()
-            contest.from_appstruct(appstruct)
+            village = m.Village()
+            village.from_appstruct(appstruct)
 
-            contest.owner = self.request.user.user
-            contest.dc = 22;
+            village.owner = self.request.user.user
+            village.dc = 22;
 
             if appstruct['ticket']:
                 ticket = m.Ticket(ticket=appstruct['ticket'], user=self.request.user.user)
-                contest.tickets.append(ticket)
+                village.tickets.append(ticket)
 
-            m.DBSession.add(contest)
+            m.DBSession.add(village)
             m.DBSession.flush()
 
-            self.request.registry.notify(CVECreated(self.request, self.context, contest))
-            self.request.session.flash('Your contest has been created. You can make changes at any time. Staff has been notified.', queue='contest')
-            return HTTPSeeOther(location = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'manage')))
+            self.request.registry.notify(CVECreated(self.request, self.context, village))
+            self.request.session.flash('Your village has been created. You can make changes at any time. Staff has been notified.', queue='village')
+            return HTTPSeeOther(location = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'manage')))
         except ValidationFailure, e:
             if e.field['csrf_token'].error is not None:
                 e.field.error = e.field['csrf_token'].error
@@ -112,11 +112,11 @@ class Contest(object):
 
             return {
                 'form': e.render(),
-                'page_title': 'Submit Contest Proposal',
+                'page_title': 'Submit Village Proposal',
                 'explanation': None,
                 }
 
-    @view_config(context=HTTPForbidden, containment='..acl.Contests', renderer='event/accountneeded.mako')
+    @view_config(context=HTTPForbidden, containment='..acl.Villages', renderer='event/accountneeded.mako')
     def create_not_authed(self):
         return {}
 
@@ -125,70 +125,70 @@ class Contest(object):
     # simply send them a not found page. Maybe not as nice for the user if they
     # thought they were logged in, but at least management URL's don't get
     # "advertised" with a "please login =)"
-    @view_config(context=HTTPForbidden, containment='..acl.Contest', renderer='not_found.mako')
+    @view_config(context=HTTPForbidden, containment='..acl.Village', renderer='not_found.mako')
     def not_authed(self):
         self.request.status_int = 404
         return {}
 
-    @view_config(context='..acl.Contests')
+    @view_config(context='..acl.Villages')
     def main(self):
-        return HTTPSeeOther(location = self.request.route_url('defcne.c', traverse='22'))
+        return HTTPSeeOther(location = self.request.route_url('defcne.v', traverse='22'))
 
-    @view_config(context='..acl.DefconContest', renderer='cve/all.mako')
+    @view_config(context='..acl.DefconVillage', renderer='cve/all.mako')
     def defcon(self):
-        dc = m.Defcon.find_defcon_contests(self.context.__name__)
+        dc = m.Defcon.find_defcon_villages(self.context.__name__)
 
         if dc is None:
             return {
                     'page_title': 'DEF CON {0}'.format(self.context.__name__),
-                    'type': 'contests',
+                    'type': 'villages',
                     'events': []
                     }
 
-        contests = []
+        villages = []
 
-        for contest in dc.cve:
-            if contest.status != 5:
+        for village in dc.cve:
+            if village.status != 5:
                 continue
-            e = contest.to_appstruct()
-            e['url'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id))
-            contest.append(e)
+            e = village.to_appstruct()
+            e['url'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id))
+            village.append(e)
 
         return {
-                'events': contests,
+                'events': villages,
                 'page_title': 'DEF CON {0}'.format(self.context.__name__),
-                'type': 'contests',
+                'type': 'villages',
                 }
 
-    @view_config(context='..acl.Contest', renderer='event/one.mako', permission='view')
+    @view_config(context='..acl.Village', renderer='event/one.mako', permission='view')
     def event(self):
         event = self.context.event
         e = event.to_appstruct()
-        e['url'] = self.request.route_url('defcne.c', traverse=(event.dc, event.id))
+        e['url'] = self.request.route_url('defcne.v', traverse=(event.dc, event.id))
 
         return {
                 'page_title': '{}'.format(event.disp_name),
                 'event': e,
                 }
 
-    @view_config(context='..acl.Contest', containment='..acl.Magic', route_name='defcne.magic', name='edit', renderer='magic/edit.mako', permission='magic')
-    @view_config(context='..acl.Contest', name='edit', renderer='cve/edit.mako', permission='edit')
+    @view_config(context='..acl.Village', containment='..acl.Magic', route_name='defcne.magic', name='edit', renderer='magic/edit.mako', permission='magic')
+    @view_config(context='..acl.Village', name='edit', renderer='cve/edit.mako', permission='edit')
     def edit(self):
-        contest = self.context.contest
+        village = self.context.village
 
         e = {}
-        e['name'] = contest.disp_name
+        e['name'] = village.disp_name
         e['url'] = {}
-        e['url']['manage'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'manage'))
-        e['url']['edit'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'edit'))
-        e['url']['extrainfo'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'extrainfo'))
+        e['url']['manage'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'edit'))
+        e['url']['extrainfo'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'extrainfo'))
 
-        astruct = contest.to_appstruct()
+        astruct = village.to_appstruct()
 
-        (schema, f) = ContestForm.create_form(request=self.request,
-                action=self.request.current_route_url(), type='contest', origname=contest.name)
+        (schema, f) = VillageForm.create_form(request=self.request,
+                action=self.request.current_route_url(), type='village', origname=village.name)
 
-        if contest.logo:
+        if village.logo:
             schema['logo'].description = "A logo has already been uploaded. Uploading a new logo will overwrite the previous logo!"
         del astruct['logo']
         del schema['ticket']
@@ -196,29 +196,29 @@ class Contest(object):
         f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
 
         return {
-                'page_title': 'Edit Contest: {}'.format(contest.disp_name),
+                'page_title': 'Edit Village: {}'.format(village.disp_name),
                 'cve': e,
                 'form': f.render(astruct),
-                'type': 'contest',
+                'type': 'village',
                 }
 
-    @view_config(context='..acl.Contest', containment='..acl.Magic', route_name='defcne.magic', name='edit', renderer='magic/edit.mako', request_method='POST', permission='magic')
-    @view_config(context='..acl.Contest', name='edit', renderer='cve/edit.mako', permission='edit', request_method='POST')
+    @view_config(context='..acl.Village', containment='..acl.Magic', route_name='defcne.magic', name='edit', renderer='magic/edit.mako', request_method='POST', permission='magic')
+    @view_config(context='..acl.Village', name='edit', renderer='cve/edit.mako', permission='edit', request_method='POST')
     def edit_submit(self):
-        contest = self.context.contest
+        village = self.context.village
 
         e = {}
-        e['name'] = contest.disp_name
+        e['name'] = village.disp_name
         e['url'] = {}
-        e['url']['manage'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'manage'))
-        e['url']['edit'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'edit'))
-        e['url']['extrainfo'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'extrainfo'))
+        e['url']['manage'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'edit'))
+        e['url']['extrainfo'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'extrainfo'))
 
         controls = self.request.POST.items()
-        (schema, f) = ContestForm.create_form(request=self.request,
-                action=self.request.current_route_url(), type='contest', origname=contest.name)
+        (schema, f) = VillageForm.create_form(request=self.request,
+                action=self.request.current_route_url(), type='village', origname=village.name)
         del schema['ticket']
-        f = Form(schema, action=self.request.current_route_url(), buttons=ContestForm.__buttons__)
+        f = Form(schema, action=self.request.current_route_url(), buttons=VillageForm.__buttons__)
 
         try:
             appstruct = f.validate(controls)
@@ -241,10 +241,10 @@ class Contest(object):
 
             appstruct['logo_path'] = logo_path
 
-            self.request.registry.notify(CVEUpdated(self.request, self.context, contest))
-            self.request.session.flash('Your contest/contest has been updated!', queue='contest')
+            self.request.registry.notify(CVEUpdated(self.request, self.context, village))
+            self.request.session.flash('Your village/village has been updated!', queue='village')
 
-            contest.from_appstruct(appstruct)
+            village.from_appstruct(appstruct)
 
             # Depending on what route was matched we do something different.
             if self.request.matched_route.name == "defcne.magic":
@@ -258,26 +258,26 @@ class Contest(object):
 
             return {
                 'form': ef.render(),
-                'page_title': 'Edit Contest: {}'.format(contest.disp_name),
+                'page_title': 'Edit Village: {}'.format(village.disp_name),
                 'cve': e,
-                'type': 'contest',
+                'type': 'village',
                 }
 
-        return HTTPSeeOther(location = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'edit')))
+        return HTTPSeeOther(location = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'edit')))
 
-    @view_config(context='..acl.Contest', name='manage', renderer='cve/manage.mako', permission='manage')
+    @view_config(context='..acl.Village', name='manage', renderer='cve/manage.mako', permission='manage')
     def manage(self):
-        contest = self.context.contest
+        village = self.context.village
 
-        e = contest.to_appstruct()
-        e['logo'] = self.request.registry.settings['defcne.upload_path'] + contest.logo if contest.logo else ''
-        e['owner'] = contest.owner.disp_uname
-        e['requests'] = m.Ticket.count_tickets(contest.id)
-        e['status'] = status_types[contest.status]
+        e = village.to_appstruct()
+        e['logo'] = self.request.registry.settings['defcne.upload_path'] + village.logo if village.logo else ''
+        e['owner'] = village.owner.disp_uname
+        e['requests'] = m.Ticket.count_tickets(village.id)
+        e['status'] = status_types[village.status]
         e['url'] = {}
-        e['url']['manage'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'manage'))
-        e['url']['edit'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'edit'))
-        e['url']['extrainfo'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'extrainfo'))
+        e['url']['manage'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'edit'))
+        e['url']['extrainfo'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'extrainfo'))
 
         power_listitems = [
                 ('outlets', 'Outlets', 'text'),
@@ -312,54 +312,54 @@ class Contest(object):
                 ('screens', 'Screens', 'text'),
                 ((drop_listitems, 'drops'), 'Wired Ethernet', 'list'),
                 ((ap_listitems, 'aps'), 'Access Points', 'list'),
-                ('represent', 'Representation', 'text'),
                 ('numparticipants', 'Number of participants', 'text'),
                 ('years', 'Years Ran', 'text'),
                 ('signage', 'Signage', 'text'),
                 ((poc_listitems, 'pocs'), 'Points of Contact', 'list'),
-                ('blackbadge_consideration', 'Blackbadge', 'text'),
+                ('quiet_time', 'Quiet Time', 'boolean'),
+                ('sharing', 'Sharing', 'boolean'),
                 ]
 
         return {
-                'page_title': "Manage Contest: {}".format(contest.disp_name),
+                'page_title': "Manage Village: {}".format(village.disp_name),
                 'cve': e,
                 'listitems': listitems,
-                'type': 'Event',
+                'type': 'Village',
                 }
 
-    @view_config(context='..acl.Contest', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit')
+    @view_config(context='..acl.Village', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit')
     def extrainfo(self):
-        contest = self.context.contest
+        village = self.context.village
 
         e = {}
-        e['name'] = contest.name
-        e['tickets'] = m.Ticket.find_tickets(contest.id)
+        e['name'] = village.name
+        e['tickets'] = m.Ticket.find_tickets(village.id)
         e['url'] = {}
-        e['url']['manage'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'manage'))
-        e['url']['edit'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'edit'))
-        e['url']['extrainfo'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'extrainfo'))
+        e['url']['manage'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'edit'))
+        e['url']['extrainfo'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'extrainfo'))
 
         schema = TicketForm().bind(request=self.request)
         f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
 
         return {
-                'page_title': 'Additional info for contest: {}'.format(contest.disp_name),
+                'page_title': 'Additional info for village: {}'.format(village.disp_name),
                 'cve': e,
                 'form': f.render(),
-                'type': 'Contest',
+                'type': 'Village',
                 }
 
-    @view_config(context='..acl.Contest', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit', request_method='POST')
+    @view_config(context='..acl.Village', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit', request_method='POST')
     def extrainfo_submit(self):
-        contest = self.context.contest
+        village = self.context.village
 
         e = {}
-        e['name'] = contest.name
+        e['name'] = village.name
         e['tickets'] = []
         e['url'] = {}
-        e['url']['manage'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'manage'))
-        e['url']['edit'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'edit'))
-        e['url']['extrainfo'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'extrainfo'))
+        e['url']['manage'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'manage'))
+        e['url']['edit'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'edit'))
+        e['url']['extrainfo'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'extrainfo'))
 
         controls = self.request.POST.items()
         schema = TicketForm().bind(request=self.request)
@@ -372,10 +372,10 @@ class Contest(object):
                 return HTTPSeeOther(location = self.request.current_route_url())
 
             ticket = m.Ticket(ticket=appstruct['ticket'], user=self.request.user.user)
-            contest.tickets.append(ticket)
+            village.tickets.append(ticket)
 
-            self.request.registry.notify(CVETicketUpdated(ticket, self.request, self.context, contest))
-            self.request.session.flash('Your updated information has been added.', queue='contest_info')
+            self.request.registry.notify(CVETicketUpdated(ticket, self.request, self.context, village))
+            self.request.session.flash('Your updated information has been added.', queue='village_info')
             return HTTPSeeOther(location = self.request.current_route_url())
 
         except ValidationFailure, ef:
@@ -384,10 +384,9 @@ class Contest(object):
                 ef.field['csrf_token'].cstruct = self.request.session.get_csrf_token()
 
             return {
-                'page_title': 'Additional info for contest/contest: {}'.format(contest.disp_name),
+                'page_title': 'Additional info for village: {}'.format(village.disp_name),
                 'cve': e,
                 'form': ef.render(),
-                'type': 'Contest',
+                'type': 'Village',
                 }
-
 

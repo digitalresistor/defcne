@@ -40,6 +40,7 @@ from ..events import (
         CVECreated,
         CVEUpdated,
         CVEUpdated,
+        CVETicketUpdated,
         )
 
 from .. import models as m
@@ -138,7 +139,11 @@ class Event(object):
         dc = m.Defcon.find_defcon_events(self.context.__name__)
 
         if dc is None:
-            raise HTTPNotFound()
+            return {
+                    'page_title': 'DEF CON {0}'.format(self.context.__name__),
+                    'type': 'events',
+                    'events': []
+                    }
 
         events = []
 
@@ -186,7 +191,7 @@ class Event(object):
         if event.logo:
             schema['logo'].description = "A logo has already been uploaded. Uploading a new logo will overwrite the previous logo!"
         del astruct['logo']
-        #del schema['otherrequests']
+        del schema['ticket']
 
         f = Form(schema, action=self.request.current_route_url(), buttons=EventForm.__buttons__)
 
@@ -194,10 +199,11 @@ class Event(object):
                 'page_title': 'Edit contest/event: {}'.format(event.disp_name),
                 'event': e,
                 'form': f.render(astruct),
+                'type': 'event',
                 }
 
     @view_config(context='..acl.Event', containment='..acl.Magic', route_name='defcne.magic', name='edit', renderer='magic/edit.mako', request_method='POST', permission='magic')
-    @view_config(context='..acl.Event', name='edit', renderer='event/edit.mako', permission='edit', request_method='POST')
+    @view_config(context='..acl.Event', name='edit', renderer='cve/edit.mako', permission='edit', request_method='POST')
     def edit_submit(self):
         event = self.context.event
 
@@ -211,7 +217,7 @@ class Event(object):
         controls = self.request.POST.items()
         (schema, f) = EventForm.create_form(request=self.request,
                 action=self.request.current_route_url(), type='event', origname=event.disp_name)
-        #del schema['otherrequests']
+        del schema['ticket']
         f = Form(schema, action=self.request.current_route_url(), buttons=EventForm.__buttons__)
 
         try:
@@ -254,6 +260,7 @@ class Event(object):
                 'form': ef.render(),
                 'page_title': 'Edit contest/event: {}'.format(event.disp_name),
                 'event': e,
+                'type': 'event',
                 }
 
         return HTTPSeeOther(location = self.request.route_url('defcne.e', traverse=(event.dc, event.id, 'edit')))
@@ -278,13 +285,24 @@ class Event(object):
                 ('cellphone', 'Cellphone', 'text'),
                 ]
 
+        onsite_listitems = [
+                ('tables', 'Tables', 'text'),
+                ('chairs', 'Chairs', 'text'),
+                ('stage', 'Stage', 'boolean'),
+                ('location', 'Location', 'text'),
+                ('mobilebar', 'Mobile Bar', 'text'),
+                ]
+
         listitems = [
                 ('onsite', 'Onsite', 'boolean'),
                 ('official', 'Official', 'boolean'),
                 ('security', 'Security', 'boolean'),
                 ('signage', 'Signage', 'text'),
-                ((poc_listitems, 'pocs'), 'Points of Contact', 'list')
+                ((poc_listitems, 'pocs'), 'Points of Contact', 'list'),
                 ]
+
+        if e['onsite'] and 'space' in e:
+            listitems.append(((onsite_listitems, 'space'), 'Onsite Space Requirements', 'sub'))
 
         return {
                 'page_title': "Manage Event: {}".format(event.disp_name),
@@ -299,7 +317,7 @@ class Event(object):
 
         e = {}
         e['name'] = event.name
-        e['tickets'] = m.Ticket.find_event_tickets(event.id)
+        e['tickets'] = m.Ticket.find_tickets(event.id)
         e['url'] = {}
         e['url']['manage'] = self.request.route_url('defcne.e', traverse=(event.dc, event.id, 'manage'))
         e['url']['edit'] = self.request.route_url('defcne.e', traverse=(event.dc, event.id, 'edit'))
@@ -309,12 +327,13 @@ class Event(object):
         f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
 
         return {
-                'page_title': 'Additional info for contest/event: {}'.format(event.disp_name),
-                'event': e,
+                'page_title': 'Additional info for event: {}'.format(event.disp_name),
+                'cve': e,
                 'form': f.render(),
+                'type': 'Event',
                 }
 
-    @view_config(context='..acl.Event', name='extrainfo', renderer='event/extrainfo.mako', permission='edit', request_method='POST')
+    @view_config(context='..acl.Event', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit', request_method='POST')
     def extrainfo_submit(self):
         event = self.context.event
 
@@ -349,8 +368,9 @@ class Event(object):
                 ef.field['csrf_token'].cstruct = self.request.session.get_csrf_token()
 
             return {
-                'page_title': 'Additional info for contest/event: {}'.format(event.disp_name),
-                'event': e,
+                'page_title': 'Additional info for event: {}'.format(event.disp_name),
+                'cve': e,
                 'form': ef.render(),
+                'type': 'Event',
                 }
 
