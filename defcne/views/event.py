@@ -311,7 +311,7 @@ class Event(object):
                 'type': 'Event',
                 }
 
-    @view_config(context='..acl.Event', name='extrainfo', renderer='event/extrainfo.mako', permission='edit')
+    @view_config(context='..acl.Event', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit')
     def extrainfo(self):
         event = self.context.event
 
