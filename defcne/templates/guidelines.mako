@@ -126,8 +126,11 @@
             <div class="span3" style="text-align: center;">
                 <a href="${request.route_url('defcne.e', traverse='create')}" class="btn btn-primary">Submit Event Proposal</a>
             </div>
-            <div class="span6" style="text-align: center;">
-                <a href="${request.route_url('defcne')}" class="btn">Nevermind. No longer interested!</a>
+            <div class="span3" style="text-align: center;">
+                <a href="${request.route_url('defcne.v', traverse='create')}" class="btn btn-primary">Submit Village Proposal</a>
+            </div>
+            <div class="span3" style="text-align: center;">
+                <a href="${request.route_url('defcne')}" class="btn">No longer interested!</a>
             </div>
         </div>
     </div>
