@@ -17,7 +17,7 @@ num = 0
         <% num += 1 %>
         <tr>
             <td>${num}</td>
-            <td><a href="${event['url']}">${event['name']}</a></td>
+            <td><a href="${event['url']}">${event['disp_name']}</a></td>
             <td>${event['status']}</td>
             <td></td>
         </tr>
