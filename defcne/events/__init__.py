@@ -32,7 +32,7 @@ class CVEUpdated(CVEEvents):
 class CVETicket(CVEEvents):
     def __init__(self, ticket, *args, **kw):
         self.ticket = ticket
-        super(ContestEventTicket, self).__init__(*args, **kw)
+        super(CVETicket, self).__init__(*args, **kw)
 
 class CVETicketCreated(CVETicket):
     pass
