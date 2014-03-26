@@ -46,6 +46,7 @@ class Contest(CVEBase):
             Column('numparticipants', Integer),
             Column('years', Integer),
             Column('blackbadge', Boolean, default=False),
+            Column('blackbadge_consideration', UnicodeText),
             )
     __mapper_args__ = {
                 'polymorphic_identity': 'contest',
@@ -68,6 +69,7 @@ class Contest(CVEBase):
         self.represent = appstruct['represent']
         self.numparticipants = appstruct['numparticipants']
         self.years = appstruct['years']
+        self.blackbadge_consideration = appstruct['blackbadge_consideration']
 
         new_power_ids = set([p['id'] for p in appstruct['power'] if p['id'] != -1])
         cur_power_ids = set([p.id for p in self.power])
@@ -140,6 +142,7 @@ class Contest(CVEBase):
                         'numparticipants': self.numparticipants,
                         'years': self.years,
                         'blackbadge': self.blackbadge,
+                        'blackbadge_consideration': self.blackbadge_consideration,
                         'power': [power.to_appstruct() for power in self.power],
                         'drops': [drop.to_appstruct() for drop in self.drops],
                         'aps': [ap.to_appstruct() for ap in self.aps],
