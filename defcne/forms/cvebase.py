@@ -67,6 +67,10 @@ def deferred_event_verify_name_not_used(node, kw):
 
     return event_verify_name_not_used
 
+@colander.deferred
+def deferred_name_title(node, kw):
+    return '{} Name'.format(kw['type'].capitalize())
+
 def event_verify_website_name(node, value):
     if value == '':
         return
@@ -86,8 +90,8 @@ class CVEBase(CSRFSchema, SchemaFormMixin):
     __buttons__ = (deform.form.Button(name="Submit",),)
     
     id = colander.SchemaNode(colander.Integer(), widget=deform.widget.HiddenWidget(), title="id", missing=None)
-    name = colander.SchemaNode(colander.String(), validator=deferred_event_verify_name_not_used)
     oneliner = colander.SchemaNode(colander.String(), title="One line description", description="One line description")
+    name = colander.SchemaNode(colander.String(), validator=deferred_event_verify_name_not_used, title=deferred_name_title)
     description = colander.SchemaNode(colander.String(), title="Description", widget=deform.widget.TextAreaWidget(rows=5, cols=60))
     website = colander.SchemaNode(colander.String(), title="Website URL", missing=unicode(''), validator=event_verify_website_name)
     logo = colander.SchemaNode(deform.FileData(), widget=upload_widget, missing=None)
