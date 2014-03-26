@@ -53,6 +53,8 @@
                 % endfor
                 </tbody>
             </table>
+            % else:
+                Nothing found.
             %endif
         </div>
     </div>
