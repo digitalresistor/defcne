@@ -25,3 +25,8 @@ from village import (
 from Ticket import (
         TicketForm,
         )
+
+from badge import (
+        EventManagement,
+        EventBadge,
+        )
