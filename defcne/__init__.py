@@ -91,6 +91,9 @@ def add_routes(config):
     # /c/*traverse
     config.add_route('defcne.c', '/contests/*traverse', factory=acl.Contests)
 
+    # /v/*travarse
+    config.add_route('defcne.v', '/villages/*traverse', factory=acl.Villages)
+
     # /magic/*traverse
     config.add_route('defcne.magic', '/magic/*traverse', factory=acl.Magic)
 
