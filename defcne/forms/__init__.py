@@ -18,6 +18,10 @@ from contest import (
         ContestForm,
         )
 
+from village import (
+        VillageForm,
+        )
+
 from Ticket import (
         TicketForm,
         )
