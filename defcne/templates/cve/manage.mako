@@ -33,16 +33,25 @@
                         % elif type == 'list':
                             % if len(cve[it[1]]) > 0:
                                 % for li in cve[it[1]]:
-                                <br />
+                                <div>
                                 <ul>
                                     % for (iit, ift, itype) in it[0]:
                                         <li><b>${ift}</b>: ${li[iit]}</li>
                                     % endfor
                                 </ul>
+                                </div>
                                 % endfor
                             % else:
                                 None
                             % endif
+                        % elif type == 'sub':
+                            <div>
+                            <ul>
+                            % for (iit, ift, itype) in it[0]:
+                                <li><b>${ift}</b>: ${cve[it[1]][iit]}</li>
+                            % endfor
+                            </ul>
+                            </div>
                         % endif
                     </li>
                 % endfor
