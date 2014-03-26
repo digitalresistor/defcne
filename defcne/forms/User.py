@@ -46,6 +46,7 @@ class UserForm(CSRFSchema):
     username = colander.SchemaNode(colander.String(), title="Username", validator=validate_unique_username)
     realname = colander.SchemaNode(colander.String(), title="Name", missing=unicode(''))
     email    = colander.SchemaNode(colander.String(), title="Email address", validator=colander.All(colander.Length(max=254), validate_unique_email))
+    phone = colander.SchemaNode(colander.String(), title="Phone Number")
     password = colander.SchemaNode(
                 colander.String(),
                 validator=colander.Length(min=5),
