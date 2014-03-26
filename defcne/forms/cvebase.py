@@ -90,8 +90,8 @@ class CVEBase(CSRFSchema, SchemaFormMixin):
     __buttons__ = (deform.form.Button(name="Submit",),)
     
     id = colander.SchemaNode(colander.Integer(), widget=deform.widget.HiddenWidget(), title="id", missing=None)
-    oneliner = colander.SchemaNode(colander.String(), title="One line description", description="One line description")
     name = colander.SchemaNode(colander.String(), validator=deferred_event_verify_name_not_used, title=deferred_name_title)
+    oneliner = colander.SchemaNode(colander.String(), title="Summary", description="One line description")
     description = colander.SchemaNode(colander.String(), title="Description", widget=deform.widget.TextAreaWidget(rows=5, cols=60))
     website = colander.SchemaNode(colander.String(), title="Website URL", missing=unicode(''), validator=event_verify_website_name)
     logo = colander.SchemaNode(deform.FileData(), widget=upload_widget, missing=None)
