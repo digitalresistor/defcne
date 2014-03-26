@@ -199,6 +199,76 @@ class Contest(object):
         raise KeyError
 
 
+# The traversal for /villages/
+
+class Villages(object):
+    __name__ = 'villages'
+    __parent__ = FakeRoot()
+    __acl__ = [
+                (Allow, "group:adminstrators", ALL_PERMISSIONS),
+                (Allow, Authenticated, 'create'),
+            ]
+
+    def __init__(self, request):
+        self.request = request
+
+    def __getitem__(self, key):
+        try:
+            dc = int(key)
+            item = DefconVillage(dc)
+
+            item.__parent__ = self
+
+            return item
+
+        except ValueError:
+            raise KeyError
+
+class DefconVillage(object):
+    def __init__(self, dc):
+        self.__name__ = dc
+        self.dc = dc
+
+    def __getitem__(self, key):
+        try:
+            cid = int(key)
+        except ValueError:
+            return None
+
+        village = m.DBSession.query(m.Village).get(cid)
+
+        if village is None:
+            return None
+        else:
+            item = Village(village)
+            item.__parent__ = self
+
+            return item
+
+class Village(object):
+    @property
+    def __acl__(self):
+        acl = [
+                (Allow, "group:administrators", ALL_PERMISSIONS),
+                (Allow, "group:staff", 'edit'),
+                (Allow, "group:staff", 'view'),
+                (Allow, "group:staff", 'manage'),
+                (Allow, "userid:{id}".format(id=self.village.owner.id), ('edit', 'view', 'manage')),
+                ]
+
+        if self.village.status == 5:
+            acl.append((Allow, Everyone, 'view'))
+
+        return acl
+
+    def __init__(self, village):
+        self.village = village
+        self.__name__ = village.id
+
+    def __getitem__(self, key):
+        raise KeyError
+
+
 class Badges(object):
     def __init__(self):
         pass
@@ -224,6 +294,9 @@ class Magic(object):
 
         if key == 'contests':
             item = Contests(self.request)
+
+        if key == 'villages':
+            item = Villages(self.request)
 
         if key == 'users':
             item = Usernames(self.request)
