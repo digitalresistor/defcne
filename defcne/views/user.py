@@ -110,7 +110,7 @@ class User(object):
         try:
             appstruct = uf.validate(controls)
             # Add the user to the database
-            user = m.User(username=appstruct['username'], realname=appstruct['realname'], email=appstruct['email'], credentials=appstruct['password'])
+            user = m.User(username=appstruct['username'], realname=appstruct['realname'], email=appstruct['email'], credentials=appstruct['password'], cellphone=appstruct['phone'])
             m.DBSession.add(user)
             try:
                 m.DBSession.flush()
@@ -462,6 +462,7 @@ class User(object):
 
         pfields.append(('Real Name', self.request.user.user.realname))
         pfields.append(('Email', self.request.user.user.email))
+        pfields.append(('Phone', self.request.user.user.cellphone))
         return {
                 'page_title': 'User Profile',
                 'profile_fields': pfields,
