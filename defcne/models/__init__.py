@@ -29,6 +29,10 @@ from contest import (
         Contest,
         )
 
+from village import (
+        Village,
+        )
+
 from defcon import (
         Defcon
         )

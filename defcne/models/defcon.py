@@ -39,3 +39,7 @@ class Defcon(Base):
     def find_defcon_contests(cls, num):
         return DBSession.query(cls).filter(cls.id == num).filter(CVEBase.type == 'contest').options(eagerload('cve')).first()
 
+    @classmethod
+    def find_defcon_villages(cls, num):
+        return DBSession.query(cls).filter(cls.id == num).filter(CVEBase.type == 'village').options(eagerload('cve')).first()
+
