@@ -111,7 +111,7 @@
 
                 <li>There are two separate closing ceremonies, the Awards
                 Ceremony for Contests, Events, and Villages and second the main
-                closing ceremony. Your whole groupis expected to attend
+                closing ceremony. Your whole group is expected to attend
                 both!</li>
             </ol>
 
