@@ -197,7 +197,7 @@ class Event(object):
 
         return {
                 'page_title': 'Edit contest/event: {}'.format(event.disp_name),
-                'event': e,
+                'cve': e,
                 'form': f.render(astruct),
                 'type': 'event',
                 }
