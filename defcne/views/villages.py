@@ -184,6 +184,7 @@ class Village(object):
         e['url']['extrainfo'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id, 'extrainfo'))
 
         astruct = village.to_appstruct()
+        astruct['name'] = astruct['disp_name']
 
         (schema, f) = VillageForm.create_form(request=self.request,
                 action=self.request.current_route_url(), type='village', origname=village.name)

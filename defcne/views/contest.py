@@ -184,6 +184,7 @@ class Contest(object):
         e['url']['extrainfo'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id, 'extrainfo'))
 
         astruct = contest.to_appstruct()
+        astruct['name'] = astruct['disp_name']
 
         (schema, f) = ContestForm.create_form(request=self.request,
                 action=self.request.current_route_url(), type='contest', origname=contest.name)
