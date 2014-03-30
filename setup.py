@@ -28,7 +28,7 @@ development = requires + [
     ]
 
 setup(name='defcne',
-      version='0.0.5',
+      version='0.0.6',
       description='defcne',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
