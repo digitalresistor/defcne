@@ -24,21 +24,18 @@ defaults = {
         'groups': [
             (u'event_owners', u'Event owners'),
             (u'event_staff', u'Event staff'),
-            (u'event_maybe', u'Possible event owner. Once event is approved becomes an even owner'),
+            (u'event_maybe', u'Possible event owner. Once event is approved becomes an event owner'),
             (u'goons', u'Defcon Contests and Events goons'),
             (u'staff', u'Defcon staff'),
             (u'administrators', u'Site administrators')
             ],
         'users': [
             (u'X-Istence', u'Bert JW Regeer', u'xistence@0x58.com', 'testing123'),
-            (u'pyr0', u'Luke McOmie', u'pyr0303@gmail.com', 'testing123'),
             ],
         'user_groups': [
             (u'X-Istence', u'administrators'),
             (u'X-Istence', u'goons'),
             (u'X-Istence', u'staff'),
-            (u'pyr0', u'administrators'),
-            (u'pyr0', u'staff'),
             ],
         'defcon': [
             (21, u'http://www.defcon.org'),
