@@ -64,6 +64,13 @@ class Village(object):
                 'explanation': None,
                 }
 
+    @view_config(context='..acl.Villages', renderer='disabled.mako', permission='create', name='create', create_allowed=False)
+    def create_disabled(self):
+        self.request.response.status_int = 404
+        return {
+                'page_title': 'Submit Village Proposal',
+                }
+
     @view_config(context='..acl.Villages', name='create', renderer='event/form.mako', permission='create', request_method='POST', create_allowed=True)
     def create_submit(self):
         controls = self.request.POST.items()
