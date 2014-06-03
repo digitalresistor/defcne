@@ -6,6 +6,7 @@ import logging
 log = logging.getLogger(__name__)
 
 from pyramid.config import Configurator
+from pyramid.settings import asbool
 from pyramid.session import SignedCookieSessionFactory
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -24,9 +25,6 @@ import acl
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
-    engine = engine_from_config(settings, 'sqlalchemy.')
-    DBSession.configure(bind=engine)
-    config = Configurator(settings=settings)
 
     if not 'pyramid.secretcookie' in settings:
         log.error('pyramid.secretcookie is not set. Refusing to start.')
@@ -39,6 +37,16 @@ def main(global_config, **settings):
     if not 'defcne.upload_path' in settings:
         log.error('defcne.upload_path is not set. Refusing to start.')
         quit(-1)
+
+    if not 'defcne.registration_open' in settings:
+        log.error('defcne.registration_open is not set. Refusing to start.')
+        quit(-1)
+    else:
+        settings['defcne.registration_open'] = asbool(settings['defcne.registration_open'])
+
+    engine = engine_from_config(settings, 'sqlalchemy.')
+    DBSession.configure(bind=engine)
+    config = Configurator(settings=settings)
 
     _session_factory = SignedCookieSessionFactory(
             settings['pyramid.secretcookie'],
