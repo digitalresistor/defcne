@@ -54,7 +54,7 @@ class Village(object):
         self.context = context
         self.request = request
 
-    @view_config(context='..acl.Villages', renderer='event/form.mako', permission='create', name='create')
+    @view_config(context='..acl.Villages', renderer='event/form.mako', permission='create', name='create', create_allowed=True)
     def create(self):
         (schema, f) = VillageForm.create_form(request=self.request,
             action=self.request.current_route_url(), type='village')
@@ -64,7 +64,7 @@ class Village(object):
                 'explanation': None,
                 }
 
-    @view_config(context='..acl.Villages', name='create', renderer='event/form.mako', permission='create', request_method='POST')
+    @view_config(context='..acl.Villages', name='create', renderer='event/form.mako', permission='create', request_method='POST', create_allowed=True)
     def create_submit(self):
         controls = self.request.POST.items()
         (schema, f) = VillageForm.create_form(request=self.request,
