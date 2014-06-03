@@ -22,5 +22,16 @@ class EventBadges(colander.SequenceSchema):
 class EventManagement(CSRFSchema):
     status = colander.SchemaNode(colander.Int(), title="Status", default='0', widget=deform.widget.SelectWidget(values=[(key, value) for (key, value) in status_types.items()]), description="Change status of contest/event")
     badges = EventBadges(description="Add types of badges and amount for this contest/event")
+    #blackbadge = colander.SchemaNode(colander.Bool(), title="Black Badge", default=False, description="Whether this event is a black badge event or not")
+    #email = colander.SchemaNode(colander.Bool(), title="Send Email", default=False, description="Send an email notifying contest owners of change?")
+
+class ContestManagement(CSRFSchema):
+    status = colander.SchemaNode(colander.Int(), title="Status", default='0', widget=deform.widget.SelectWidget(values=[(key, value) for (key, value) in status_types.items()]), description="Change status of contest/event")
+    badges = EventBadges(description="Add types of badges and amount for this contest/event")
     blackbadge = colander.SchemaNode(colander.Bool(), title="Black Badge", default=False, description="Whether this event is a black badge event or not")
-    email = colander.SchemaNode(colander.Bool(), title="Send Email", default=False, description="Send an email notifying contest owners of change?")
+    #email = colander.SchemaNode(colander.Bool(), title="Send Email", default=False, description="Send an email notifying contest owners of change?")
+
+class VillageManagement(CSRFSchema):
+    status = colander.SchemaNode(colander.Int(), title="Status", default='0', widget=deform.widget.SelectWidget(values=[(key, value) for (key, value) in status_types.items()]), description="Change status of contest/event")
+    badges = EventBadges(description="Add types of badges and amount for this contest/event")
+    #email = colander.SchemaNode(colander.Bool(), title="Send Email", default=False, description="Send an email notifying contest owners of change?")
