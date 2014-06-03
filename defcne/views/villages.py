@@ -168,10 +168,10 @@ class Village(object):
                 }
 
     @view_config(context='..acl.Village', renderer='event/one.mako', permission='view')
-    def event(self):
-        event = self.context.event
-        e = event.to_appstruct()
-        e['url'] = self.request.route_url('defcne.v', traverse=(event.dc, event.id))
+    def village(self):
+        village = self.context.village
+        e = village.to_appstruct()
+        e['url'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id))
 
         return {
                 'page_title': '{}'.format(event.disp_name),

@@ -168,10 +168,10 @@ class Contest(object):
                 }
 
     @view_config(context='..acl.Contest', renderer='event/one.mako', permission='view')
-    def event(self):
-        event = self.context.event
-        e = event.to_appstruct()
-        e['url'] = self.request.route_url('defcne.c', traverse=(event.dc, event.id))
+    def contest(self):
+        contest = self.context.contest
+        e = contest.to_appstruct()
+        e['url'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id))
 
         return {
                 'page_title': '{}'.format(event.disp_name),
