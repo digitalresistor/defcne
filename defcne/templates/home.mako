@@ -13,10 +13,12 @@
         <div class="span6">
             <h3>Participate</h3>
             <ul>
+                % if create_enable:
                 <li><a href="${request.route_url('defcne', 'guidelines')}">FAQ/Guidelines for Contests/Events/Villages</a></li>
                 <li><a href="${request.route_url('defcne.c', traverse='create')}">Submit Contest proposal</a></li>
                 <li><a href="${request.route_url('defcne.e', traverse='create')}">Submit Event proposal</a></li>
                 <li><a href="${request.route_url('defcne.v', traverse='create')}">Submit Village proposal</a></li>
+                % endif
             </ul>
         </div>
         <div class="span6">

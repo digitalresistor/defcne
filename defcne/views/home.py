@@ -6,7 +6,7 @@ from pyramid.view import view_config
 
 @view_config(route_name='defcne', renderer='home.mako')
 def home(request):
-    return {}
+    return {'create_enable': request.registry.settings['defcne.registration_open']}
 
 @view_config(context='pyramid.traversal.DefaultRootFactory', name='guidelines', renderer='guidelines.mako')
 def guidelines(self):
