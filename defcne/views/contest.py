@@ -159,7 +159,7 @@ class Contest(object):
                 continue
             e = contest.to_appstruct()
             e['url'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id))
-            contest.append(e)
+            contests.append(e)
 
         return {
                 'events': contests,

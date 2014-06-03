@@ -159,7 +159,7 @@ class Village(object):
                 continue
             e = village.to_appstruct()
             e['url'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id))
-            village.append(e)
+            villages.append(e)
 
         return {
                 'events': villages,
