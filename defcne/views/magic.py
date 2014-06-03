@@ -26,6 +26,8 @@ from ..forms import (
         TicketForm,
         MagicUserEdit,
         EventManagement,
+        ContestManagement,
+        VillageManagement,
         )
 
 from .. import models as m
@@ -400,6 +402,85 @@ class Magic(object):
                     'form': failed.render()
                     }
 
+    @view_config(context='..acl.Contest', name='extrainfo', request_method='POST')
+    def contest_extrainfo(self):
+        contest = self.context.contest
+
+        controls = self.request.POST.items()
+        schema = TicketForm().bind(request=self.request)
+        f = Form(schema, action=self.request.resource_url(self.context), buttons=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            if len(appstruct['ticket']) == 0:
+                return HTTPSeeOther(location = self.request.resource_url(self.context))
+
+            ticket = m.Ticket(ticket=appstruct['ticket'], user=self.request.user.user)
+            contest.tickets.append(ticket)
+
+            #self.request.registry.notify(ContestContestTicketUpdated(ticket, self.request, self.context, contest))
+            self.request.session.flash('The information has been added to the contest', queue='event')
+            return HTTPSeeOther(location = self.request.resource_url(self.context))
+
+        except ValidationFailure, failed:
+            e = contest.to_appstruct()
+            e['logo'] = self.request.registry.settings['defcne.upload_path'] + contest.logo if contest.logo else ''
+            e['status'] = status_types[contest.status]
+            e['owner'] = contest.owner.disp_uname
+            e['ticket_count'] = len(m.Ticket.find_tickets(contest.id))
+            e['tickets'] = m.Ticket.find_tickets(contest.id)
+
+            e['edit_url'] = self.request.resource_url(self.context, contest.id, 'edit')
+            e['manage_url'] = self.request.resource_url(self.context, contest.id, 'manage')
+            e['magic_url'] = self.request.resource_url(self.context, contest.id)
+
+            return {
+                    'page_title': '{}'.format(contest.disp_name),
+                    'contest': e,
+                    'form': failed.render()
+                    }
+
+    @view_config(context='..acl.Village', name='extrainfo', request_method='POST')
+    def village_extrainfo(self):
+        village = self.context.village
+
+        controls = self.request.POST.items()
+        schema = TicketForm().bind(request=self.request)
+        f = Form(schema, action=self.request.resource_url(self.context), buttons=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            if len(appstruct['ticket']) == 0:
+                return HTTPSeeOther(location = self.request.resource_url(self.context))
+
+            ticket = m.Ticket(ticket=appstruct['ticket'], user=self.request.user.user)
+            village.tickets.append(ticket)
+
+            #self.request.registry.notify(VillageVillageTicketUpdated(ticket, self.request, self.context, village))
+            self.request.session.flash('The information has been added to the village', queue='event')
+            return HTTPSeeOther(location = self.request.resource_url(self.context))
+
+        except ValidationFailure, failed:
+            e = village.to_appstruct()
+            e['logo'] = self.request.registry.settings['defcne.upload_path'] + village.logo if village.logo else ''
+            e['status'] = status_types[village.status]
+            e['owner'] = village.owner.disp_uname
+            e['ticket_count'] = len(m.Ticket.find_tickets(village.id))
+            e['tickets'] = m.Ticket.find_tickets(village.id)
+
+            e['edit_url'] = self.request.resource_url(self.context, village.id, 'edit')
+            e['manage_url'] = self.request.resource_url(self.context, village.id, 'manage')
+            e['magic_url'] = self.request.resource_url(self.context, village.id)
+
+            return {
+                    'page_title': '{}'.format(village.disp_name),
+                    'village': e,
+                    'form': failed.render()
+                    }
+
+
     @view_config(context='..acl.Event', name='manage', renderer='magic/edit.mako')
     def event_manage(self):
         event = self.context.event
@@ -456,12 +537,144 @@ class Magic(object):
                     m.DBSession.add(nbadge)
                     m.DBSession.flush()
 
-            self.request.session.flash('Event {} has been updated.'.format(event.disp_name), queue='magic')
+            self.request.session.flash('Event {} has been updated.'.format(event.disp_name), queue='event')
             return HTTPSeeOther(location = self.request.resource_url(self.context))
         except ValidationFailure, e:
             return {
                     'form': e.render(),
                     'page_title': 'Manage Event: {}'.format(event.disp_name),
+                    }
+
+
+    @view_config(context='..acl.Contest', name='manage', renderer='magic/edit.mako')
+    def contest_manage(self):
+        contest = self.context.contest
+
+        astruct = {}
+        astruct['status'] = contest.status
+        astruct['blackbadge'] = contest.blackbadge
+
+        # Get badges
+        badges = m.DBSession.query(m.Badges).filter(m.Badges.cve_id == contest.id).all()
+
+        astruct['badges'] = [{'id': x.id, 'typeof': x.type, 'amount': x.amount, 'why': x.reason} for x in badges]
+
+        schema = ContestManagement().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        return {
+                'form': f.render(astruct),
+                'page_title': 'Manage Contest: {}'.format(contest.disp_name),
+                }
+
+
+    @view_config(context='..acl.Contest', name='manage', renderer='magic/edit.mako', request_method='POST')
+    def contest_manage_submit(self):
+        contest = self.context.contest
+
+        controls = self.request.POST.items()
+        schema = ContestManagement().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            contest.status = appstruct['status']
+            contest.blackbadge = appstruct['blackbadge']
+
+            badges = m.DBSession.query(m.Badges).filter(m.Badges.cve_id == contest.id).all()
+
+            new_badge_ids = set([p['id'] for p in appstruct['badges'] if p['id'] != -1])
+            cur_badge_ids = set([p.id for p in badges])
+            del_badge_ids = cur_badge_ids - new_badge_ids
+
+            if len(del_badge_ids):
+                for badge in badges:
+                    if badge.id in del_badge_ids:
+                        m.DBSession.delete(badge)
+
+            for badge in appstruct['badges']:
+                if badge['id'] in cur_badge_ids:
+                    cur_badge = [p for p in badges if p.id == badge['id']][0]
+                    cur_badge.type = badge['typeof']
+                    cur_badge.amount = badge['amount']
+                    cur_badge.reason = badge['why']
+                else:
+                    nbadge = m.Badges(cve_id=contest.id, type=badge['typeof'], amount=badge['amount'], reason=badge['why'])
+                    m.DBSession.add(nbadge)
+                    m.DBSession.flush()
+
+            self.request.session.flash('Contest {} has been updated.'.format(contest.disp_name), queue='event')
+            return HTTPSeeOther(location = self.request.resource_url(self.context))
+        except ValidationFailure, e:
+            return {
+                    'form': e.render(),
+                    'page_title': 'Manage Contest: {}'.format(contest.disp_name),
+                    }
+
+
+    @view_config(context='..acl.Village', name='manage', renderer='magic/edit.mako')
+    def village_manage(self):
+        village = self.context.village
+
+        astruct = {}
+        astruct['status'] = village.status
+
+        # Get badges
+        badges = m.DBSession.query(m.Badges).filter(m.Badges.cve_id == village.id).all()
+
+        astruct['badges'] = [{'id': x.id, 'typeof': x.type, 'amount': x.amount, 'why': x.reason} for x in badges]
+
+        schema = VillageManagement().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        return {
+                'form': f.render(astruct),
+                'page_title': 'Manage Village: {}'.format(village.disp_name),
+                }
+
+
+    @view_config(context='..acl.Village', name='manage', renderer='magic/edit.mako', request_method='POST')
+    def village_manage_submit(self):
+        village = self.context.village
+
+        controls = self.request.POST.items()
+        schema = VillageManagement().bind(request=self.request)
+        f = Form(schema, action=self.request.current_route_url(), buttons=('submit',))
+
+        try:
+            appstruct = f.validate(controls)
+
+            village.status = appstruct['status']
+
+            badges = m.DBSession.query(m.Badges).filter(m.Badges.cve_id == village.id).all()
+
+            new_badge_ids = set([p['id'] for p in appstruct['badges'] if p['id'] != -1])
+            cur_badge_ids = set([p.id for p in badges])
+            del_badge_ids = cur_badge_ids - new_badge_ids
+
+            if len(del_badge_ids):
+                for badge in badges:
+                    if badge.id in del_badge_ids:
+                        m.DBSession.delete(badge)
+
+            for badge in appstruct['badges']:
+                if badge['id'] in cur_badge_ids:
+                    cur_badge = [p for p in badges if p.id == badge['id']][0]
+                    cur_badge.type = badge['typeof']
+                    cur_badge.amount = badge['amount']
+                    cur_badge.reason = badge['why']
+                else:
+                    nbadge = m.Badges(cve_id=village.id, type=badge['typeof'], amount=badge['amount'], reason=badge['why'])
+                    m.DBSession.add(nbadge)
+                    m.DBSession.flush()
+
+            self.request.session.flash('Village {} has been updated.'.format(village.disp_name), queue='event')
+            return HTTPSeeOther(location = self.request.resource_url(self.context))
+        except ValidationFailure, e:
+            return {
+                    'form': e.render(),
+                    'page_title': 'Manage Village: {}'.format(village.disp_name),
                     }
 
 
