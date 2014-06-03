@@ -204,7 +204,7 @@ class Event(object):
         f = Form(schema, action=self.request.current_route_url(), buttons=EventForm.__buttons__)
 
         return {
-                'page_title': 'Edit contest/event: {}'.format(event.disp_name),
+                'page_title': 'Edit event: {}'.format(event.disp_name),
                 'cve': e,
                 'form': f.render(astruct),
                 'type': 'event',
@@ -316,7 +316,7 @@ class Event(object):
                 'page_title': "Manage Event: {}".format(event.disp_name),
                 'cve': e,
                 'listitems': listitems,
-                'type': 'Event',
+                'type': 'event',
                 }
 
     @view_config(context='..acl.Event', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit')
@@ -338,7 +338,7 @@ class Event(object):
                 'page_title': 'Additional info for event: {}'.format(event.disp_name),
                 'cve': e,
                 'form': f.render(),
-                'type': 'Event',
+                'type': 'event',
                 }
 
     @view_config(context='..acl.Event', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit', request_method='POST')
@@ -379,6 +379,6 @@ class Event(object):
                 'page_title': 'Additional info for event: {}'.format(event.disp_name),
                 'cve': e,
                 'form': ef.render(),
-                'type': 'Event',
+                'type': 'event',
                 }
 

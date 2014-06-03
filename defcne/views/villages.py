@@ -174,7 +174,7 @@ class Village(object):
         e['url'] = self.request.route_url('defcne.v', traverse=(village.dc, village.id))
 
         return {
-                'page_title': '{}'.format(event.disp_name),
+                'page_title': '{}'.format(village.disp_name),
                 'event': e,
                 }
 
@@ -332,7 +332,7 @@ class Village(object):
                 'page_title': "Manage Village: {}".format(village.disp_name),
                 'cve': e,
                 'listitems': listitems,
-                'type': 'Village',
+                'type': 'village',
                 }
 
     @view_config(context='..acl.Village', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit')
@@ -354,7 +354,7 @@ class Village(object):
                 'page_title': 'Additional info for village: {}'.format(village.disp_name),
                 'cve': e,
                 'form': f.render(),
-                'type': 'Village',
+                'type': 'village',
                 }
 
     @view_config(context='..acl.Village', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit', request_method='POST')

@@ -174,7 +174,7 @@ class Contest(object):
         e['url'] = self.request.route_url('defcne.c', traverse=(contest.dc, contest.id))
 
         return {
-                'page_title': '{}'.format(event.disp_name),
+                'page_title': '{}'.format(contest.disp_name),
                 'event': e,
                 }
 
@@ -332,7 +332,7 @@ class Contest(object):
                 'page_title': "Manage Contest: {}".format(contest.disp_name),
                 'cve': e,
                 'listitems': listitems,
-                'type': 'Event',
+                'type': 'contest',
                 }
 
     @view_config(context='..acl.Contest', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit')
@@ -354,7 +354,7 @@ class Contest(object):
                 'page_title': 'Additional info for contest: {}'.format(contest.disp_name),
                 'cve': e,
                 'form': f.render(),
-                'type': 'Contest',
+                'type': 'contest',
                 }
 
     @view_config(context='..acl.Contest', name='extrainfo', renderer='cve/extrainfo.mako', permission='edit', request_method='POST')
@@ -395,7 +395,7 @@ class Contest(object):
                 'page_title': 'Additional info for contest/contest: {}'.format(contest.disp_name),
                 'cve': e,
                 'form': ef.render(),
-                'type': 'Contest',
+                'type': 'contest',
                 }
 
 
