@@ -18,6 +18,10 @@
                 <li><a href="${request.route_url('defcne.c', traverse='create')}">Submit Contest proposal</a></li>
                 <li><a href="${request.route_url('defcne.e', traverse='create')}">Submit Event proposal</a></li>
                 <li><a href="${request.route_url('defcne.v', traverse='create')}">Submit Village proposal</a></li>
+                % else:
+                <li><a href="${request.route_url('defcne.c', traverse='')}">Contest</a></li>
+                <li><a href="${request.route_url('defcne.e', traverse='')}">Events</a></li>
+                <li><a href="${request.route_url('defcne.v', traverse='')}">Villages</a></li>
                 % endif
             </ul>
         </div>
