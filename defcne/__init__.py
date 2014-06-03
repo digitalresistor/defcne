@@ -116,6 +116,20 @@ def add_views(config):
     config.add_notfound_view('defcne.views.errors.not_found', renderer='not_found.mako', append_slash=True)
     config.add_forbidden_view('defcne.views.errors.forbidden', renderer='forbidden.mako')
 
+    class CreateAllowed(object):
+        def __init__(self, is_or_not, config):
+            self.is_or_not = is_or_not
+
+        def text(self):
+            return 'create_allowed = {}'.format(self.is_or_not)
+
+        phash = text
+
+        def __call__(self, context, request):
+            return request.registry.settings['defcne.registration_open'] == self.is_or_not
+
+    config.add_view_predicate('create_allowed', CreateAllowed)
+
 def add_events(config):
     config.add_subscriber('defcne.subscribers.user_created',
             'defcne.events.UserRegistered')
