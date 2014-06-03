@@ -29,4 +29,6 @@ from Ticket import (
 from badge import (
         EventManagement,
         EventBadge,
+        ContestManagement,
+        VillageManagement,
         )
