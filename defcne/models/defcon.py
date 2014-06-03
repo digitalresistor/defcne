@@ -15,6 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import (
         relationship,
         eagerload,
+        contains_eager,
         )
 
 from cvebase import CVEBase
@@ -33,13 +34,29 @@ class Defcon(Base):
 
     @classmethod
     def find_defcon_events(cls, num):
-        return DBSession.query(cls).filter(cls.id == num).filter(CVEBase.type == 'event').options(eagerload('cve')).first()
+        l = DBSession.query(cls).filter(cls.id == num).join(cls.cve).filter(CVEBase.type == 'event').options(contains_eager('cve')).all()
+
+        if len(l) == 0:
+            return None
+
+        return l[0]
 
     @classmethod
     def find_defcon_contests(cls, num):
-        return DBSession.query(cls).filter(cls.id == num).filter(CVEBase.type == 'contest').options(eagerload('cve')).first()
+        l = DBSession.query(cls).filter(cls.id == num).join(cls.cve).filter(CVEBase.type == 'contest').options(contains_eager('cve')).all()
+
+        if len(l) == 0:
+            return None
+
+        return l[0]
 
     @classmethod
     def find_defcon_villages(cls, num):
-        return DBSession.query(cls).filter(cls.id == num).filter(CVEBase.type == 'village').options(eagerload('cve')).first()
+        l = DBSession.query(cls).filter(cls.id == num).join(cls.cve).filter(CVEBase.type == 'village').options(contains_eager('cve')).all()
+
+        if len(l) == 0:
+            return None
+
+        return l[0]
+
 
